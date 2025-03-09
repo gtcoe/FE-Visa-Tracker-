@@ -27,7 +27,6 @@ const SignUpAuthentication = () => {
     <div className="bg-white border rounded-[20px] pb-15">
       <div className="flex justify-end items-center pt-8 pr-[33px]">
         <Image
-          priority
           src={visaisticLogo}
           alt="visaisticLogo"
           width={130}
