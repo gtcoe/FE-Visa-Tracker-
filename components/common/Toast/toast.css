@@ -1,0 +1,28 @@
+.Toastify .Toastify__close-button {
+    display: none;
+  }
+  .Toastify .Toastify__toast-container {
+    text-align: center;
+  }
+  .Toastify .Toastify__toast--info {
+    background: #f0b81f;
+    border-radius: 4px;
+  }
+  .Toastify .Toastify__toast--success {
+    background: #47a515;
+    border-radius: 4px;
+  }
+  .Toastify .Toastify__toast--error {
+    background: #b92736;
+    border-radius: 4px;
+  }
+  
+  .Toastify .Toastify__toast--warning {
+    background: #397ef5;
+    border-radius: 4px;
+  }
+  
+  .Toastify .Toastify__toast--dark {
+    background: #44454a;
+    border-radius: 4px;
+  }

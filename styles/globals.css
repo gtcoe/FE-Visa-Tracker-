@@ -1,0 +1,22 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* Force Poppins font everywhere */
+* {
+  font-family: 'Poppins', sans-serif !important;
+}
+
+html, body {
+  font-family: 'Poppins', sans-serif !important;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+input, button, textarea, select, option {
+  font-family: 'Poppins', sans-serif !important;
+}
+
+.font-sans {
+  font-family: 'Poppins', sans-serif !important;
+} 

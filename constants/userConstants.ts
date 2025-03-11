@@ -1,0 +1,47 @@
+export type UserStatus = 1 | 2 ;
+export type UserType = 1 | 2 | 3 ;
+export type UserTypeVisibleOnManageUsers = 1 | 2  ;
+
+export enum USER_STATUS {
+  ACTIVE= 1,
+  INACTIVE= 2,
+};
+
+export const USER_DISPLAY_STATUS_ACTIVE = "Active";
+export const USER_DISPLAY_STATUS_INACTIVE = "Inactive";
+
+export const USER_STATUS_REVERSE: Record<UserStatus, string> = {
+  [USER_STATUS.ACTIVE]: USER_DISPLAY_STATUS_ACTIVE,
+  [USER_STATUS.INACTIVE]: USER_DISPLAY_STATUS_INACTIVE,
+};
+
+export const USER_DISPLAY_STATUS_TYPE_MAPPING: Record<string, UserStatus> = {
+  USER_DISPLAY_STATUS_ACTIVE: USER_STATUS.ACTIVE,
+  USER_DISPLAY_STATUS_INACTIVE: USER_STATUS.INACTIVE,
+};
+
+export enum USER_TYPE {
+  ADMIN= 1,
+  MANAGER= 2,
+  CLIENT= 3,
+};
+
+export const USER_DISPLAY_TYPE_ADMIN = "Admin";
+export const USER_DISPLAY_TYPE_MANAGER = "Manager";
+export const USER_DISPLAY_TYPE_CLIENT = "Client";
+
+export const USER_TYPE_REVERSE: Record<UserType, string> = {
+  [USER_TYPE.ADMIN]: USER_DISPLAY_TYPE_ADMIN,
+  [USER_TYPE.MANAGER]: USER_DISPLAY_TYPE_MANAGER,
+  [USER_TYPE.CLIENT]: USER_DISPLAY_TYPE_CLIENT,
+};
+
+export const USER_DISPLAY_OWNERSHIP_TYPE_MAPPING: Record<string, UserStatus> = {
+  USER_DISPLAY_TYPE_ADMIN: USER_TYPE.ADMIN,
+  USER_DISPLAY_TYPE_MANAGER: USER_TYPE.MANAGER,
+};
+
+export const USER_TYPE_REVERSE_MANAGE_USERS: Record<1 | 2, string> = {
+  [USER_TYPE.ADMIN]: USER_DISPLAY_TYPE_ADMIN,
+  [USER_TYPE.MANAGER]: USER_DISPLAY_TYPE_MANAGER,
+};

@@ -2,6 +2,7 @@
 
 import React, { useState } from "react";
 import PasswordStatus from "./PasswordStatus";
+import CheckBox from "../common/CheckBox";
 import Image from "next/image";
 import visaisticLogo from "../../public/visaisticLogo.svg";
 import eyeOff from "../../public/eye-off.svg";
@@ -12,6 +13,7 @@ const SignUpAuthentication = () => {
   const [error, setError] = useState("");
   const [showPassword, setShowPassword] = useState(false);
   const [password, setPassword] = useState("");
+  const [isChecked, setIsChecked] = useState(false);
 
   const emailRegex = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
 
@@ -22,9 +24,11 @@ const SignUpAuthentication = () => {
       setError("");
     }
   };
+  const [checked, setChecked] = useState(false);
+
 
   return (
-    <div className="bg-white border rounded-[20px] pb-15">
+    <div className="bg-white border rounded-[20px] pb-15 w-[74%]">
       <div className="flex justify-end items-center pt-8 pr-[33px]">
         <Image
           src={visaisticLogo}
@@ -50,21 +54,23 @@ const SignUpAuthentication = () => {
             onBlur={handleEmailBlur}
             className={`${
               error === "" ? "border-[#969696]" : "border-red-600"
-            } border focus:border-[#0B498B]  text-black rounded-xl w-full p-4 font-normal text-[18px] placeholder-text-[#969696]`}
+            } border focus:border-[#0B498B] focus:outline-none text-black rounded-xl w-full p-4 font-normal text-[18px] placeholder:text-[#969696]`}
           />
           {error && (
             <p className="text-red-600 mt-[-16px] font-normal text-sm">
               {error}
             </p>
           )}
-          <div className="flex justify-between focus-within:border-[#0B498B] border border-[#969696] text-black rounded-xl w-full p-4 font-normal text-[18px] ">
-            <input
-              type={showPassword ? "text" : "password"}
-              value={password}
-              placeholder="Password"
-              className="placeholder-text-[#969696] w-full focus:outline-none "
-              onChange={(e) => setPassword(e.target.value)}
-            />
+          <div
+            className="flex justify-between items-center border border-[#969696] focus-within:border-[#0B498B] text-black rounded-xl w-full p-4 font-normal text-[18px]"
+          >
+              <input
+                type={showPassword ? "text" : "password"}
+                value={password}
+                placeholder="Password"
+                className="placeholder:text-[#969696] w-full focus:outline-none"
+                onChange={(e) => setPassword(e.target.value)}
+              />
             <button
               type="button"
               onClick={() => setShowPassword(!showPassword)}
@@ -80,21 +86,7 @@ const SignUpAuthentication = () => {
             </button>
           </div>
           <PasswordStatus status="none" />
-          <div className="flex items-center">
-            <label
-              htmlFor="loggedIn"
-              className="text-[14px] text-center flex items-center cursor-pointer text-black"
-            >
-              <input
-                type="checkbox"
-                id="loggedIn"
-                name="keepLoggedIn"
-                value="loggenIn"
-                className="size-5 mr-2"
-              />
-              Keep me logged in
-            </label>
-          </div>
+          <CheckBox label={"Keep me logged in"} state={isChecked} updateState={setIsChecked}/>
         </div>
         <div className="mt-2 w-full">
           <button className="rounded-xl bg-[#0B498B] py-4 text-center w-full text-white text-[18px] font-semibold cursor-pointer">
