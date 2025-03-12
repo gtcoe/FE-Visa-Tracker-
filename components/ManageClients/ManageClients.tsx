@@ -69,13 +69,13 @@ const ManageClients = () => {
         <div className="border-b border-[#E6EAF2]">
           <div className="flex">
             <button
-              className={`px-6 py-4 font-medium text-sm ${activeTab === 'list' ? 'text-[#0B498B] border-b-2 border-[#0B498B]' : 'text-[#696969]'}`}
+              className={`px-6 py-4 w-[159px] text-base ${activeTab === 'list' ? 'text-[#0B498B] border-b-4 border-[#0B498B] font-semibold' : 'text-[#696969] font-normal'}`}
               onClick={() => setActiveTab('list')}
             >
-              Client tracker
+              Client Tracker
             </button>
             <button
-              className={`px-6 py-4 font-medium text-sm ${activeTab === 'add' ? 'text-[#0B498B] border-b-2 border-[#0B498B]' : 'text-[#696969]'}`}
+              className={`px-6 py-4 w-[159px] text-base ${activeTab === 'add' ? 'text-[#0B498B] border-b-4 border-[#0B498B] font-semibold' : 'text-[#696969]'} font-normal`}
               onClick={() => setActiveTab('add')}
             >
               Add Client
@@ -83,7 +83,7 @@ const ManageClients = () => {
           </div>
         </div>
 
-        <div className="p-6">
+        <div className={`${activeTab === 'list' ? "px-6 py-[21.5px]" : "p-6"}`}>
           {activeTab === 'list' ? (
             <ClientsTable clients={clients} />
           ) : (

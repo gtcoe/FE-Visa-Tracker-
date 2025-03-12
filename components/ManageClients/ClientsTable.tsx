@@ -12,48 +12,49 @@ const ClientsTable = ({ clients }: ClientsTableProps) => {
 
   return (
     <div>
-      <h2 className="text-lg font-medium mb-4">Client Details</h2>
       <div className="overflow-x-auto">
-        <table className="min-w-full">
-          <thead className="bg-[#F9FAFB]">
-            <tr className="border-b border-[#E6EAF2]">
-              <th className="text-left py-3 text-[#696969] text-xs font-medium px-6 border-r border-[#E6EAF2] w-[10%]">TYPE</th>
-              <th className="text-left py-3 text-[#696969] text-xs font-medium px-6 border-r border-[#E6EAF2] w-[15%]">CLIENT NAME</th>
-              <th className="text-left py-3 text-[#696969] text-xs font-medium px-6 border-r border-[#E6EAF2] w-[20%]">ADDRESS</th>
-              <th className="text-left py-3 text-[#696969] text-xs font-medium px-6 border-r border-[#E6EAF2] w-[10%]">BRANCHES</th>
-              <th className="text-left py-3 text-[#696969] text-xs font-medium px-6 border-r border-[#E6EAF2] w-[15%]">OWNER NAME</th>
-              <th className="text-left py-3 text-[#696969] text-xs font-medium px-6 border-r border-[#E6EAF2] w-[15%]">OWNER PHONE</th>
-              <th className="text-left py-3 text-[#696969] text-xs font-medium px-6 w-[15%]">OWNER EMAIL ID</th>
-            </tr>
-          </thead>
-          <tbody>
-            {clients.map((client, index) => (
-              <tr key={client.id || index} className="border-b border-[#E6EAF2] last:border-b-0">
-                <td className="text-left py-4 text-[#696969] text-xs font-medium px-6 border-r border-[#E6EAF2]">
-                  {getClientType(client.type)}
-                </td>
-                <td className="text-left py-4 text-[#696969] text-xs font-medium px-6 border-r border-[#E6EAF2]">
-                  {client.name}
-                </td>
-                <td className="text-left py-4 text-[#696969] text-xs font-medium px-6 border-r border-[#E6EAF2]">
-                  {client.address}
-                </td>
-                <td className="text-left py-4 text-[#696969] text-xs font-medium px-6 border-r border-[#E6EAF2]">
-                  {client.branches}
-                </td>
-                <td className="text-left py-4 text-[#696969] text-xs font-medium px-6 border-r border-[#E6EAF2]">
-                  {client.ownerName}
-                </td>
-                <td className="text-left py-4 text-[#696969] text-xs font-medium px-6 border-r border-[#E6EAF2]">
-                  {client.ownerPhone}
-                </td>
-                <td className="text-left py-4 text-[#696969] text-xs font-medium px-6">
-                  {client.ownerEmail}
-                </td>
+        <div className="inline-block min-w-full border border-[#E6EAF2] rounded-[16px] overflow-hidden">
+          <table className="min-w-full">
+            <thead className="bg-[#F9FAFB]">
+              <tr className="border-b border-[#E6EAF2]">
+                <th className="text-center py-3 text-[#696969] text-xs font-medium px-6 border-r border-[#E6EAF2] w-[10%] tracking-[0.03em] first:rounded-tl-[16px] last:rounded-tr-[16px]">TYPE</th>
+                <th className="text-center py-3 text-[#696969] text-xs font-medium px-6 border-r border-[#E6EAF2] w-[15%] tracking-[0.03em]">CLIENT NAME</th>
+                <th className="text-center py-3 text-[#696969] text-xs font-medium px-6 border-r border-[#E6EAF2] w-[20%] tracking-[0.03em]">ADDRESS</th>
+                <th className="text-center py-3 text-[#696969] text-xs font-medium px-6 border-r border-[#E6EAF2] w-[10%] tracking-[0.03em]">BRANCHES</th>
+                <th className="text-center py-3 text-[#696969] text-xs font-medium px-6 border-r border-[#E6EAF2] w-[15%] tracking-[0.03em]">OWNER NAME</th>
+                <th className="text-center py-3 text-[#696969] text-xs font-medium px-6 border-r border-[#E6EAF2] w-[15%] tracking-[0.03em]">OWNER PHONE</th>
+                <th className="text-center py-3 text-[#696969] text-xs font-medium px-6 w-[15%] tracking-[0.03em] ">OWNER EMAIL ID</th>
               </tr>
-            ))}
-          </tbody>
-        </table>
+            </thead>
+            <tbody>
+              {clients.map((client, index) => (
+                <tr key={client.id || index} className="border-b border-[#E6EAF2] last:border-b-0">
+                  <td className="text-center py-4 text-xs font-medium px-6 border-r border-[#E6EAF2] text-[#1C1C1C]">
+                    {getClientType(client.type)}
+                  </td>
+                  <td className="text-center py-4 text-xs font-medium px-6 border-r border-[#E6EAF2] text-[#1C1C1C]">
+                    {client.name}
+                  </td>
+                  <td className="text-center py-4 text-xs font-medium px-6 border-r border-[#E6EAF2] text-[#1C1C1C]">
+                    {client.address}
+                  </td>
+                  <td className="text-center py-4 text-xs font-medium px-6 border-r border-[#E6EAF2] text-[#1C1C1C]">
+                    {client.branches}
+                  </td>
+                  <td className="text-center py-4 text-xs font-medium px-6 border-r border-[#E6EAF2] text-[#1C1C1C]">
+                    {client.ownerName}
+                  </td>
+                  <td className="text-center py-4 text-xs font-medium px-6 border-r border-[#E6EAF2] text-[#1C1C1C]">
+                    {client.ownerPhone}
+                  </td>
+                  <td className="text-center py-4 text-xs font-medium px-6 text-[#1C1C1C]">
+                    {client.ownerEmail}
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
       </div>
     </div>
   );
