@@ -5,6 +5,7 @@ import DropdownArrow from './DropdownArrow';
 export type DropdownOption = {
   value: string;
   label: string;
+  className?: string;
 };
 
 // Define props type for CustomDropdown
@@ -17,6 +18,7 @@ export type CustomDropdownProps = {
   placeholderColor?: string;
   optionColor?: string;
   className?: string;
+  variant?: 'default' | 'status';
 };
 
 /**
@@ -32,7 +34,8 @@ const CustomDropdown: React.FC<CustomDropdownProps> = ({
   placeholder = 'Select',
   placeholderColor = '#6A6A6A',
   optionColor = '#1C1C1C',
-  className = ''
+  className = '',
+  variant = 'default'
 }) => {
   const [isOpen, setIsOpen] = useState(false);
   const dropdownRef = useRef<HTMLDivElement>(null);

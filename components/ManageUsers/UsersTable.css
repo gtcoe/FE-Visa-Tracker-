@@ -1,0 +1,52 @@
+/* Custom styling for status dropdown options */
+select {
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  appearance: none;
+}
+
+select::-ms-expand {
+  display: none;
+}
+
+select option {
+  background-color: white;
+  color: #1C1C1C;
+  padding: 10px 15px;
+  transition: all 0.3s ease;
+}
+
+select option:hover {
+  background-color: #F5F5F5;
+}
+
+select option:checked {
+  background-color: rgba(11, 73, 139, 0.05);
+  color: #0B498B;
+}
+
+select option.active {
+  background-color: rgba(22, 163, 74, 0.1);
+  color: #16A34A;
+}
+
+select option.inactive {
+  background-color: rgba(220, 38, 38, 0.1);
+  color: #DC2626;
+}
+
+/* Dropdown arrow styling */
+.dropdown-wrapper {
+  position: relative;
+  display: inline-block;
+}
+
+.dropdown-wrapper::after {
+  content: '▼';
+  position: absolute;
+  top: 50%;
+  right: 10px;
+  transform: translateY(-50%);
+  pointer-events: none;
+  color: #8A8A8A;
+} 
