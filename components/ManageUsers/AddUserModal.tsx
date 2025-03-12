@@ -3,7 +3,7 @@ import { User } from './ManageUsers';
 import { USER_STATUS, USER_TYPE, USER_TYPE_REVERSE_MANAGE_USERS, USER_STATUS_REVERSE } from '../../constants/userConstants';
 import { ToastNotifySuccess, ToastNotifyError } from '../common/Toast';
 import { EMAIL_REGEX } from '../../constants/regex';
-import DropdownArrow from '../common/DropdownArrow';
+import CustomDropdown, { DropdownOption } from '../common/CustomDropdown';
 
 interface AddUserModalProps {
   onClose: () => void;
@@ -74,39 +74,33 @@ const AddUserModal = ({ onClose, onSubmit }: AddUserModalProps) => {
             <div>
               <label className="block text-xs font-normal text-[#1C1C1C] mb-2">Status</label>
               <div className="relative">
-                <select
-                  value={formData.status}
-                  onChange={(e) => setFormData({ ...formData, status: Number(e.target.value) as USER_STATUS })}
-                  className="w-full p-2 border border-[#E6EAF2] rounded-[4px] focus:outline-none focus:border-[#0B498B] text-black appearance-none bg-white text-sm font-normal px-[16px] py-[8px] cursor-pointer"
-                >
-                  {Object.entries(USER_STATUS_REVERSE).map(([key, value]) => (
-                    <option key={key} value={key} className="text-sm font-normal">
-                      {value}
-                    </option>
-                  ))}
-                </select>
-                <div className="absolute right-3 top-1/2 transform -translate-y-1/2 pointer-events-none">
-                  <DropdownArrow />
-                </div>
+                <CustomDropdown
+                  value={formData.status.toString()}
+                  onChange={(value) => setFormData({ 
+                    ...formData, 
+                    status: Number(value) as USER_STATUS 
+                  })}
+                  options={Object.entries(USER_STATUS_REVERSE).map(([key, value]) => ({
+                    value: key,
+                    label: value,
+                  }))}
+                />
               </div>
             </div>
             <div>
               <label className="block text-xs font-normal text-[#1C1C1C] mb-2">Ownership</label>
               <div className="relative">
-                <select
-                  value={formData.type}
-                  onChange={(e) => setFormData({ ...formData, type: Number(e.target.value) as USER_TYPE })}
-                  className="w-full p-2 border border-[#E6EAF2] rounded-[4px] focus:outline-none focus:border-[#0B498B] text-black appearance-none bg-white text-sm font-normal px-[16px] py-[8px] cursor-pointer"
-                >
-                  {Object.entries(USER_TYPE_REVERSE_MANAGE_USERS).map(([key, value]) => (
-                    <option key={key} value={key} className="text-sm font-normal">
-                      {value}
-                    </option>
-                  ))}
-                </select>
-                <div className="absolute right-3 top-1/2 transform -translate-y-1/2 pointer-events-none">
-                  <DropdownArrow />
-                </div>
+                <CustomDropdown
+                  value={formData.type.toString()}
+                  onChange={(value) => setFormData({ 
+                    ...formData, 
+                    type: Number(value) as USER_TYPE 
+                  })}
+                  options={Object.entries(USER_TYPE_REVERSE_MANAGE_USERS).map(([key, value]) => ({
+                    value: key,
+                    label: value,
+                  }))}
+                />
               </div>
             </div>
           </div>

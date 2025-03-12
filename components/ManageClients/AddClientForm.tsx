@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { Client } from './ManageClients';
-import DropdownArrow from '../common/DropdownArrow';
+import CustomDropdown, { DropdownOption } from '../common/CustomDropdown';
 import { ToastNotifySuccess, ToastNotifyError } from '../common/Toast';
 
 interface AddClientFormProps {
@@ -46,13 +46,44 @@ const AddClientForm = ({ onSubmit }: AddClientFormProps) => {
     ToastNotifySuccess("Client added successfully");
   };
 
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
-    const { name, value } = e.target;
+  const handleDropdownChange = (name: string) => (value: string) => {
     setFormData(prev => ({
       ...prev,
       [name]: name === 'type' ? Number(value) : value
     }));
   };
+
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const { name, value } = e.target;
+    setFormData(prev => ({
+      ...prev,
+      [name]: value
+    }));
+  };
+
+  const typeOptions: DropdownOption[] = [
+    { value: '1', label: 'Corporate' },
+    { value: '2', label: 'Agent' }
+  ];
+
+  const countryOptions: DropdownOption[] = [
+    { value: '', label: 'Select Country' },
+    { value: 'India', label: 'India' },
+    { value: 'USA', label: 'USA' },
+    { value: 'UK', label: 'UK' }
+  ];
+
+  const stateOptions: DropdownOption[] = [
+    { value: '', label: 'Select State' },
+    { value: 'Delhi', label: 'Delhi' },
+    { value: 'Maharashtra', label: 'Maharashtra' }
+  ];
+
+  const cityOptions: DropdownOption[] = [
+    { value: '', label: 'Select City' },
+    { value: 'New Delhi', label: 'New Delhi' },
+    { value: 'Mumbai', label: 'Mumbai' }
+  ];
 
   return (
     <div className="space-y-6">
@@ -61,20 +92,16 @@ const AddClientForm = ({ onSubmit }: AddClientFormProps) => {
         <div className="grid grid-cols-5 gap-x-[25px] gap-y-4">
           <div className="col-span-1">
             <label className="block text-xs text-[#1C1C1C] mb-2">Type</label>
-            <div className="relative">
-              <select
-                name="type"
-                value={formData.type}
-                onChange={handleChange}
-                className="w-full px-3 py-2 border border-[#E6EAF2] rounded-[8px] focus:outline-none focus:ring-2 focus:ring-[#0B498B]/20 text-[#1C1C1C] text-sm appearance-none focus:border-none"
-              >
-                <option value={1}>Corporate</option>
-                <option value={2}>Agent</option>
-              </select>
-              <div className="absolute right-3 top-1/2 transform -translate-y-1/2 pointer-events-none">
-                <DropdownArrow />
-              </div>
-            </div>
+            <CustomDropdown
+              name="type"
+              value={formData.type.toString()}
+              onChange={handleDropdownChange('type')}
+              options={typeOptions}
+              placeholderColor="#1C1C1C"
+              optionColor="#1C1C1C"
+              className="w-full"
+              placeholder="Select Type"
+            />
           </div>
           
           <div className="col-span-1">
@@ -115,60 +142,44 @@ const AddClientForm = ({ onSubmit }: AddClientFormProps) => {
 
           <div className="col-span-1">
             <label className="block text-xs text-[#1C1C1C] mb-2">Country</label>
-            <div className="relative">
-              <select
-                name="country"
-                value={formData.country}
-                onChange={handleChange}
-                className="w-full px-3 py-2 border border-[#E6EAF2] rounded-[8px] focus:outline-none focus:ring-2 focus:ring-[#0B498B]/20 focus:border-none text-[#6A6A6A] text-sm appearance-none"
-              >
-                <option value="">Select</option>
-                <option value="India">India</option>
-                <option value="USA">USA</option>
-                <option value="UK">UK</option>
-              </select>
-              <div className="absolute right-3 top-1/2 transform -translate-y-1/2 pointer-events-none">
-                <DropdownArrow />
-              </div>
-            </div>
+            <CustomDropdown
+              name="country"
+              value={formData.country || ''}
+              onChange={handleDropdownChange('country')}
+              options={countryOptions}
+              className="w-full"
+              placeholder="Select Country"
+              placeholderColor="#6A6A6A"
+              optionColor="#1C1C1C"
+            />
           </div>
 
           <div className="col-span-1">
             <label className="block text-xs text-[#1C1C1C] mb-2">State</label>
-            <div className="relative">
-              <select
-                name="state"
-                value={formData.state}
-                onChange={handleChange}
-                className="w-full px-3 py-2 border border-[#E6EAF2] rounded-[8px] focus:outline-none focus:ring-2 focus:ring-[#0B498B]/20 focus:border-none text-[#6A6A6A] text-sm appearance-none"
-              >
-                <option value="">Select</option>
-                <option value="Delhi">Delhi</option>
-                <option value="Maharashtra">Maharashtra</option>
-              </select>
-              <div className="absolute right-3 top-1/2 transform -translate-y-1/2 pointer-events-none">
-                <DropdownArrow />
-              </div>
-            </div>
+            <CustomDropdown
+              name="state"
+              value={formData.state || ''}
+              onChange={handleDropdownChange('state')}
+              options={stateOptions}
+              className="w-full"
+              placeholder="Select State"
+              placeholderColor="#6A6A6A"
+              optionColor="#1C1C1C"
+            />
           </div>
 
           <div className="col-span-1">
             <label className="block text-xs text-[#1C1C1C] mb-2">City</label>
-            <div className="relative">
-              <select
-                name="city"
-                value={formData.city}
-                onChange={handleChange}
-                className="w-full px-3 py-2 border border-[#E6EAF2] rounded-[8px] focus:outline-none focus:ring-2 focus:ring-[#0B498B]/20 focus:border-none text-[#6A6A6A] text-sm appearance-none"
-              >
-                <option value="">Select</option>
-                <option value="New Delhi">New Delhi</option>
-                <option value="Mumbai">Mumbai</option>
-              </select>
-              <div className="absolute right-3 top-1/2 transform -translate-y-1/2 pointer-events-none">
-                <DropdownArrow />
-              </div>
-            </div>
+            <CustomDropdown
+              name="city"
+              value={formData.city || ''}
+              onChange={handleDropdownChange('city')}
+              options={cityOptions}
+              className="w-full"
+              placeholder="Select City"
+              placeholderColor="#6A6A6A"
+              optionColor="#1C1C1C"
+            />
           </div>
 
           <div className="col-span-1">
