@@ -12,7 +12,7 @@ const StatusDetails = ({
     return (
       <div className="flex justify-center items-center py-12">
         <svg
-          className="animate-spin h-8 w-8 text-blue-600"
+          className="animate-spin h-8 w-8 text-[#0B498B]"
           xmlns="http://www.w3.org/2000/svg"
           fill="none"
           viewBox="0 0 24 24"
@@ -37,7 +37,7 @@ const StatusDetails = ({
 
   if (error) {
     return (
-      <div className="bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded">
+      <div className="bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded mx-6">
         {error}
       </div>
     );
@@ -45,151 +45,80 @@ const StatusDetails = ({
 
   if (applications.length === 0) {
     return (
-      <div className="text-center py-12 text-gray-500">
+      <div className="text-center py-12 text-gray-500 mx-6">
         No applications found. Please adjust your search criteria and try again.
       </div>
     );
   }
 
-  // Generate page numbers for pagination
-  const getPageNumbers = () => {
-    const pages = [];
-    const maxVisiblePages = 7; // Odd number works best
-    const halfVisible = Math.floor(maxVisiblePages / 2);
-
-    let startPage = Math.max(1, currentPage - halfVisible);
-    let endPage = Math.min(totalPages, startPage + maxVisiblePages - 1);
-
-    // Adjust if we're near the end
-    if (endPage - startPage + 1 < maxVisiblePages) {
-      startPage = Math.max(1, endPage - maxVisiblePages + 1);
+  // Function to get appropriate status badge styles
+  const getStatusBadgeStyles = (status: string) => {
+    switch (status.toLowerCase()) {
+      case 'approved':
+        return 'bg-green-100 text-green-800';
+      case 'in process':
+        return 'bg-yellow-100 text-yellow-800';
+      case 'rejected':
+        return 'bg-red-100 text-red-800';
+      case 'submitted':
+        return 'bg-blue-100 text-blue-800';
+      case 'doc received':
+        return 'bg-purple-100 text-purple-800';
+      case 'ready for collection':
+        return 'bg-indigo-100 text-indigo-800';
+      default:
+        return 'bg-gray-100 text-gray-800';
     }
+  };
 
-    // Add pages
-    for (let i = startPage; i <= endPage; i++) {
+  // Generate pagination numbers
+  const getPageNumbers = () => {
+    let pages = [];
+    const totalPagesCount = Math.min(totalPages, 20);
+    
+    for (let i = 1; i <= totalPagesCount; i++) {
       pages.push(i);
     }
-
+    
     return pages;
   };
 
   return (
-    <div>
-      <div className="overflow-x-auto">
-        <table className="min-w-full divide-y divide-gray-200">
-          <thead className="bg-gray-50">
-            <tr>
-              <th
-                scope="col"
-                className="px-3 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
-              >
-                REF NO
-              </th>
-              <th
-                scope="col"
-                className="px-3 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
-              >
-                HANDLING BRANCH
-              </th>
-              <th
-                scope="col"
-                className="px-3 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
-              >
-                ENTRY GENERATION BRANCH
-              </th>
-              <th
-                scope="col"
-                className="px-3 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
-              >
-                AGENT/ CORPORATE
-              </th>
-              <th
-                scope="col"
-                className="px-3 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
-              >
-                BILLIN TO COMPANY
-              </th>
-              <th
-                scope="col"
-                className="px-3 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
-              >
-                REFERRER
-              </th>
-              <th
-                scope="col"
-                className="px-3 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
-              >
-                COUNTRY
-              </th>
-              <th
-                scope="col"
-                className="px-3 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
-              >
-                VISA TYPE
-              </th>
-              <th
-                scope="col"
-                className="px-3 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
-              >
-                STATUS
-              </th>
-              <th
-                scope="col"
-                className="px-3 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
-              >
-                ACTION
-              </th>
+    <div className="px-6 pb-6">
+      <div className="overflow-x-auto -mx-6">
+        <table className="min-w-full">
+          <thead>
+            <tr className="bg-[#F9FAFB] border-b border-[#E6EAF2]">
+              <th className="py-3 px-4 text-left text-xs font-medium text-[#696969] uppercase">Ref No</th>
+              <th className="py-3 px-4 text-left text-xs font-medium text-[#696969] uppercase">Handling Branch</th>
+              <th className="py-3 px-4 text-left text-xs font-medium text-[#696969] uppercase">Entry Generation Branch</th>
+              <th className="py-3 px-4 text-left text-xs font-medium text-[#696969] uppercase">Agent/ Corporate</th>
+              <th className="py-3 px-4 text-left text-xs font-medium text-[#696969] uppercase">Billing to Company</th>
+              <th className="py-3 px-4 text-left text-xs font-medium text-[#696969] uppercase">Referrer</th>
+              <th className="py-3 px-4 text-left text-xs font-medium text-[#696969] uppercase">Country</th>
+              <th className="py-3 px-4 text-left text-xs font-medium text-[#696969] uppercase">Visa Type</th>
+              <th className="py-3 px-4 text-left text-xs font-medium text-[#696969] uppercase">Status</th>
+              <th className="py-3 px-4 text-left text-xs font-medium text-[#696969] uppercase">Action</th>
             </tr>
           </thead>
-          <tbody className="bg-white divide-y divide-gray-200">
-            {applications.map((app) => (
-              <tr key={app.refNo} className="hover:bg-gray-50">
-                <td className="px-3 py-4 whitespace-nowrap text-sm font-medium text-blue-600">
-                  {app.refNo}
-                </td>
-                <td className="px-3 py-4 whitespace-nowrap text-sm text-gray-900">
-                  {app.handlingBranch}
-                </td>
-                <td className="px-3 py-4 whitespace-nowrap text-sm text-gray-900">
-                  {app.entryGenerationBranch}
-                </td>
-                <td className="px-3 py-4 whitespace-nowrap text-sm text-gray-900">
-                  {app.agentCorporate}
-                </td>
-                <td className="px-3 py-4 whitespace-nowrap text-sm text-gray-900">
-                  {app.billingToCompany}
-                </td>
-                <td className="px-3 py-4 whitespace-nowrap text-sm text-gray-900">
-                  {app.referrer}
-                </td>
-                <td className="px-3 py-4 whitespace-nowrap text-sm text-gray-900">
-                  {app.country}
-                </td>
-                <td className="px-3 py-4 whitespace-nowrap text-sm text-gray-900">
-                  {app.visaType}
-                </td>
-                <td className="px-3 py-4 whitespace-nowrap">
-                  <span
-                    className={`px-2 inline-flex text-xs leading-5 font-semibold rounded-full 
-                    ${
-                      app.status === "Doc Received"
-                        ? "bg-yellow-100 text-yellow-800"
-                        : app.status === "Submitted"
-                        ? "bg-blue-100 text-blue-800"
-                        : app.status === "In Process"
-                        ? "bg-purple-100 text-purple-800"
-                        : app.status === "Ready for Collection"
-                        ? "bg-green-100 text-green-800"
-                        : "bg-gray-100 text-gray-800"
-                    }`}
-                  >
+          <tbody>
+            {applications.map((app, index) => (
+              <tr key={`${app.refNo}-${index}`} className="border-b border-[#E6EAF2]">
+                <td className="px-4 py-4 text-sm text-[#0B498B] font-medium">{app.refNo}</td>
+                <td className="px-4 py-4 text-sm text-[#1C1C1C]">{app.handlingBranch}</td>
+                <td className="px-4 py-4 text-sm text-[#1C1C1C]">{app.entryGenerationBranch}</td>
+                <td className="px-4 py-4 text-sm text-[#1C1C1C]">{app.agentCorporate}</td>
+                <td className="px-4 py-4 text-sm text-[#1C1C1C]">{app.billingToCompany}</td>
+                <td className="px-4 py-4 text-sm text-[#1C1C1C]">{app.referrer}</td>
+                <td className="px-4 py-4 text-sm text-[#1C1C1C]">{app.country}</td>
+                <td className="px-4 py-4 text-sm text-[#1C1C1C]">{app.visaType}</td>
+                <td className="px-4 py-4">
+                  <span className={`px-3 py-1 inline-flex text-xs font-medium rounded-full ${getStatusBadgeStyles(app.status)}`}>
                     {app.status}
                   </span>
                 </td>
-                <td className="px-3 py-4 whitespace-nowrap text-sm font-medium">
-                  <button className="text-blue-600 hover:text-blue-900">
-                    EDIT
-                  </button>
+                <td className="px-4 py-4 text-sm text-[#0B498B] font-medium uppercase">
+                  Edit
                 </td>
               </tr>
             ))}
@@ -199,77 +128,45 @@ const StatusDetails = ({
 
       {/* Pagination */}
       <div className="flex items-center justify-center mt-6">
-        <nav
-          className="relative z-0 inline-flex rounded-md shadow-sm -space-x-px"
-          aria-label="Pagination"
-        >
+        <div className="inline-flex items-center">
           <button
             onClick={() => onPageChange(currentPage - 1)}
             disabled={currentPage === 1}
-            className={`relative inline-flex items-center px-2 py-2 rounded-l-md border ${
-              currentPage === 1
-                ? "bg-gray-100 text-gray-400"
-                : "bg-white text-gray-500 hover:bg-gray-50"
-            } text-sm font-medium`}
+            className="flex items-center h-8 px-3 text-sm text-[#0B498B] border border-[#E6EAF2] rounded mr-2 hover:bg-[#F9FAFB] transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
           >
-            <span className="sr-only">Previous</span>
-            <svg
-              className="h-5 w-5"
-              xmlns="http://www.w3.org/2000/svg"
-              viewBox="0 0 20 20"
-              fill="currentColor"
-              aria-hidden="true"
-            >
-              <path
-                fillRule="evenodd"
-                d="M12.707 5.293a1 1 0 010 1.414L9.414 10l3.293 3.293a1 1 0 01-1.414 1.414l-4-4a1 1 0 010-1.414l4-4a1 1 0 011.414 0z"
-                clipRule="evenodd"
-              />
+            <svg className="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
             </svg>
-            <span className="ml-1">Prev</span>
+            Prev
           </button>
 
-          {getPageNumbers().map((page) => (
-            <button
-              key={page}
-              onClick={() => onPageChange(page)}
-              aria-current={page === currentPage ? "page" : undefined}
-              className={`relative inline-flex items-center px-4 py-2 border text-sm font-medium ${
-                page === currentPage
-                  ? "z-10 bg-blue-50 border-blue-500 text-blue-600"
-                  : "bg-white border-gray-300 text-gray-500 hover:bg-gray-50"
-              }`}
-            >
-              {page}
-            </button>
-          ))}
+          <div className="flex">
+            {getPageNumbers().map((page) => (
+              <button
+                key={page}
+                onClick={() => onPageChange(page)}
+                className={`w-8 h-8 flex items-center justify-center text-sm border mx-[2px] transition-colors ${
+                  page === currentPage
+                    ? "bg-[#0B498B] text-white border-[#0B498B]"
+                    : "bg-white text-[#1C1C1C] border-[#E6EAF2] hover:bg-[#F9FAFB]"
+                } rounded`}
+              >
+                {page}
+              </button>
+            ))}
+          </div>
 
           <button
             onClick={() => onPageChange(currentPage + 1)}
             disabled={currentPage === totalPages}
-            className={`relative inline-flex items-center px-2 py-2 rounded-r-md border ${
-              currentPage === totalPages
-                ? "bg-gray-100 text-gray-400"
-                : "bg-white text-gray-500 hover:bg-gray-50"
-            } text-sm font-medium`}
+            className="flex items-center h-8 px-3 text-sm text-[#0B498B] border border-[#E6EAF2] rounded ml-2 hover:bg-[#F9FAFB] transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
           >
-            <span className="mr-1">Next</span>
-            <span className="sr-only">Next</span>
-            <svg
-              className="h-5 w-5"
-              xmlns="http://www.w3.org/2000/svg"
-              viewBox="0 0 20 20"
-              fill="currentColor"
-              aria-hidden="true"
-            >
-              <path
-                fillRule="evenodd"
-                d="M7.293 14.707a1 1 0 010-1.414L10.586 10 7.293 6.707a1 1 0 011.414-1.414l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414 0z"
-                clipRule="evenodd"
-              />
+            Next
+            <svg className="w-4 h-4 ml-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
             </svg>
           </button>
-        </nav>
+        </div>
       </div>
     </div>
   );

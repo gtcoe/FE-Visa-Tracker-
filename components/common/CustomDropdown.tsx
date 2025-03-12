@@ -1,164 +1,113 @@
 import React, { useState, useRef, useEffect } from 'react';
-import DropdownArrow from './DropdownArrow';
 
-// Define types for dropdown options
-export type DropdownOption = {
-  value: string;
+export interface DropdownOption {
   label: string;
-  className?: string;
-};
+  value: string;
+}
 
-// Define props type for CustomDropdown
-export type CustomDropdownProps = {
+interface CustomDropdownProps {
   options: DropdownOption[];
   value: string;
   onChange: (value: string) => void;
-  name?: string;
   placeholder?: string;
-  placeholderColor?: string;
-  optionColor?: string;
   className?: string;
-  variant?: 'default' | 'status';
-};
+  disabled?: boolean;
+}
 
 /**
- * A fully customizable dropdown component
+ * A fully customizable dropdown component that matches the Figma design
  * @param {Object} props - Component properties
  * @returns {React.ReactElement} Rendered dropdown component
  */
-const CustomDropdown: React.FC<CustomDropdownProps> = ({ 
-  options, 
-  value, 
-  onChange, 
-  name,
-  placeholder = 'Select',
-  placeholderColor = '#6A6A6A',
-  optionColor = '#1C1C1C',
-  className = '',
-  variant = 'default'
-}) => {
+const CustomDropdown = ({
+  options,
+  value,
+  onChange,
+  placeholder = "Select",
+  className = "",
+  disabled = false,
+}: CustomDropdownProps) => {
   const [isOpen, setIsOpen] = useState(false);
   const dropdownRef = useRef<HTMLDivElement>(null);
 
-  // Close dropdown when clicking outside
+  // Find the selected option label
+  const selectedOption = options.find((option) => option.value === value);
+
+  // Handle click outside to close dropdown
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
-      if (dropdownRef.current && !dropdownRef.current.contains(event.target as Node)) {
+      if (
+        dropdownRef.current &&
+        !dropdownRef.current.contains(event.target as Node)
+      ) {
         setIsOpen(false);
       }
     };
 
-    document.addEventListener('mousedown', handleClickOutside);
+    document.addEventListener("mousedown", handleClickOutside);
     return () => {
-      document.removeEventListener('mousedown', handleClickOutside);
+      document.removeEventListener("mousedown", handleClickOutside);
     };
   }, []);
 
-  const handleSelect = (selectedValue: string) => {
-    onChange(selectedValue);
+  // Toggle dropdown
+  const toggleDropdown = () => {
+    if (!disabled) {
+      setIsOpen(!isOpen);
+    }
+  };
+
+  // Handle option selection
+  const handleOptionClick = (optionValue: string) => {
+    onChange(optionValue);
     setIsOpen(false);
   };
 
-  const selectedOption = options.find(opt => opt.value === value) || { 
-    label: placeholder, 
-    value: '' 
-  };
-
   return (
-    <div 
+    <div
       ref={dropdownRef}
-      className={`relative w-full ${className}`} 
-      role="combobox" 
-      aria-expanded={isOpen}
+      className={`relative w-full ${className}`}
     >
-      <div 
-        onClick={() => setIsOpen(!isOpen)}
-        className={`
-          w-full 
-          px-3 
-          py-2 
-          border 
-          border-[#E6EAF2] 
-          rounded-[8px] 
-          text-sm 
-          cursor-pointer 
-          flex 
-          items-center 
-          justify-between
-          transition-all 
-          duration-200 
-          ease-in-out
-          ${isOpen 
-            ? 'ring-2 ring-[#0B498B]/20 shadow-sm' 
-            : 'hover:border-[#0B498B]/30 hover:shadow-xs'
-          }
-        `}
-        aria-haspopup="listbox"
+      <div
+        onClick={toggleDropdown}
+        className={`flex items-center justify-between w-full h-10 px-3 text-left text-sm 
+          border border-[#E6EAF2] rounded 
+          ${disabled ? "bg-gray-100 cursor-not-allowed" : "bg-white cursor-pointer hover:border-[#0B498B]/30"}`}
       >
-        <span 
-          className={`
-            flex-grow 
-            truncate 
-            ${value === '' ? 'text-[#6A6A6A]' : 'text-[#1C1C1C]'}
-          `}
-          style={{ 
-            color: value === '' ? placeholderColor : optionColor 
-          }}
-        >
-          {selectedOption.label}
+        <span className={value ? "text-[#1C1C1C]" : "text-[#A0A0A0]"}>
+          {selectedOption ? selectedOption.label : placeholder}
         </span>
-        <div 
-          className={`
-            ml-2 
-            transition-transform 
-            duration-200 
-            ease-in-out 
-            ${isOpen ? 'rotate-180' : ''}
-          `}
+        <svg 
+          width="16" 
+          height="16" 
+          viewBox="0 0 16 16" 
+          fill="none" 
+          xmlns="http://www.w3.org/2000/svg"
+          className={`transition-transform duration-200 ${isOpen ? "transform rotate-180" : ""}`}
         >
-          <DropdownArrow />
-        </div>
+          <path 
+            d="M4 6L8 10L12 6" 
+            stroke="#A0A0A0" 
+            strokeWidth="1.5" 
+            strokeLinecap="round" 
+            strokeLinejoin="round"
+          />
+        </svg>
       </div>
+
       {isOpen && (
-        <ul 
-          className="
-            absolute 
-            z-50 
-            w-full 
-            border 
-            border-[#E6EAF2] 
-            rounded-[8px] 
-            mt-1 
-            bg-white 
-            shadow-lg 
-            max-h-60 
-            overflow-auto
-            py-1
-          "
-          role="listbox"
-        >
+        <div className="absolute z-10 w-full mt-1 bg-white border border-[#E6EAF2] rounded shadow-sm py-1 max-h-60 overflow-auto">
           {options.map((option) => (
-            <li
+            <div
               key={option.value}
-              onClick={() => handleSelect(option.value)}
-              className={`
-                px-3 
-                py-2 
-                cursor-pointer 
-                transition-colors 
-                duration-150 
-                ease-in-out
-                ${option.value === value 
-                  ? 'bg-[#0B498B]/5 text-[#0B498B]' 
-                  : 'hover:bg-[#F5F5F5] text-[#1C1C1C]'}
-              `}
-              role="option"
-              aria-selected={option.value === value}
+              onClick={() => handleOptionClick(option.value)}
+              className={`px-3 py-2 text-sm cursor-pointer hover:bg-[#F5F7FA] transition-colors
+                ${option.value === value ? "text-[#0B498B] font-medium" : "text-[#1C1C1C]"}`}
             >
               {option.label}
-            </li>
+            </div>
           ))}
-        </ul>
+        </div>
       )}
     </div>
   );

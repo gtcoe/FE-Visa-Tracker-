@@ -2,23 +2,22 @@
 
 // Form data interface
 export interface StatusFormData {
-  referenceNo: string;
-  customerType: string;
-  customer: string;
-  travelerName: string;
-  travelerPassportNo: string;
-  visaBranch: string;
-  entryGenerationBranch: string;
-  fromDate: string;
-  toDate: string;
-  queue: string;
-  status: string;
+  refNo: string;
+  branch: string;
+  agent: string;
+  billTo: string;
+  referer: string;
+  applicant: string;
   country: string;
-  billingToCompany: string;
+  visaType: string;
+  contactNo: string;
+  status: string;
+  dateFrom: string;
+  dateTo: string;
 }
 
 // Application data from API response
-export interface Application {
+export interface ApplicationData {
   refNo: string;
   handlingBranch: string;
   entryGenerationBranch: string;
@@ -32,17 +31,21 @@ export interface Application {
 
 // API response structure
 export interface StatusResponse {
-  applications: Application[];
+  applications: ApplicationData[];
   totalPages: number;
   currentPage: number;
   totalCount: number;
 }
 
 export interface StatusDetailsProps {
-  applications: Application[];
+  applications: ApplicationData[];
   isLoading: boolean;
   error: string | null;
   currentPage: number;
   totalPages: number;
   onPageChange: (page: number) => void;
+}
+
+export interface StatusFormProps {
+  onSearch: (data: any) => void;
 }
