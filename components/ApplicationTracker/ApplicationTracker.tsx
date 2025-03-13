@@ -1,81 +1,75 @@
+"use client";
+
 import { useState } from "react";
-import StatusDetails from "./StatusDetails";
-import {
-  Application,
-  StatusFormData,
-} from "@component/types/application-tracker";
 import StatusForm from "./StatusForm";
+import StatusDetails from "./StatusDetails";
+import { ApplicationData } from "@component/types/application-tracker";
+import { mockApplications } from "@component/data/mock-applications";
 
 const ApplicationTracker = () => {
-  const [applications, setApplications] = useState<Application[]>([]);
-  const [isLoading, setIsLoading] = useState(false);
+  const [searchData, setSearchData] = useState<any>(null);
+  const [applications, setApplications] = useState<ApplicationData[]>([]);
+  const [isLoading, setIsLoading] = useState<boolean>(false);
   const [error, setError] = useState<string | null>(null);
-  const [currentPage, setCurrentPage] = useState(1);
-  const [totalPages, setTotalPages] = useState(1);
+  const [currentPage, setCurrentPage] = useState<number>(1);
+  const [totalPages, setTotalPages] = useState<number>(1);
 
-  const handleStatusCheck = async (formData: StatusFormData) => {
+  const handleSearch = (data: any) => {
     setIsLoading(true);
     setError(null);
 
-    try {
-      // Build query parameters
-      const queryParams = new URLSearchParams();
-      Object.entries(formData).forEach(([key, value]) => {
-        if (value) queryParams.append(key, value);
-      });
-
-      // Add pagination
-      queryParams.append("page", currentPage.toString());
-
-      // Call API
-      const response = await fetch(`/api/status?${queryParams.toString()}`);
-
-      if (!response.ok) {
-        throw new Error(`Error ${response.status}: ${response.statusText}`);
+    // Simulate API call with a timeout
+    setTimeout(() => {
+      try {
+        // For demo purposes, we're using mock data
+        const filteredApplications = mockApplications;
+        setApplications(filteredApplications);
+        setTotalPages(Math.ceil(filteredApplications.length / 10));
+        setCurrentPage(1);
+        setSearchData(data);
+      } catch (err) {
+        setError("An error occurred while fetching data. Please try again.");
+      } finally {
+        setIsLoading(false);
       }
-
-      const result = await response.json();
-      setApplications(result.applications);
-      setTotalPages(result.totalPages || 1);
-    } catch (error) {
-      console.error("Error fetching status:", error);
-      setError("Failed to fetch status information. Please try again later.");
-      setApplications([]);
-    } finally {
-      setIsLoading(false);
-    }
+    }, 1000);
   };
 
   const handlePageChange = (page: number) => {
     setCurrentPage(page);
-    // If applications are already loaded, refetch with new page
-    if (applications.length > 0) {
-      // You'd need to store the last form data or extract it from the URL
-      // For now, we'll leave implementation details
-    }
+    // In a real app, you would fetch the specific page from the backend
+    // For now, we'll just update the current page state
   };
 
   return (
-    <div className="container mx-auto p-4 max-w-7xl">
-      <h1 className="text-2xl font-bold mb-6">Application Tracker</h1>
-
-      <div className="bg-white p-6 rounded-lg shadow-md mb-6 ">
-        <StatusForm onSubmit={handleStatusCheck} isLoading={isLoading} />
+    <div className="px-[80px]">
+      <div className="flex items-center pt-[32px] pb-[24px]">
+        <h1 className="text-[#1C1C1C] text-[28px] font-bold mt-0">
+          Application Tracker
+        </h1>
       </div>
 
-      <div className="bg-white p-6 rounded-lg shadow-md">
-        <h2 className="text-[#1C1C1C] text-xl font-semibold mb-4">
-          Status Details
-        </h2>
-        <StatusDetails
-          applications={applications}
-          isLoading={isLoading}
-          error={error}
-          currentPage={currentPage}
-          totalPages={totalPages}
-          onPageChange={handlePageChange}
-        />
+      <div className="bg-white rounded-lg border border-[#E6EAF2] shadow-sm mb-6">
+        <StatusForm onSearch={handleSearch} />
       </div>
+
+      {searchData && (
+        <div className="bg-white rounded-lg border border-[#E6EAF2] shadow-sm">
+          <div className="px-6 pt-6 pb-3 border-b border-[#E6EAF2]">
+            <h3 className="text-lg font-medium text-[#1C1C1C]">
+              Application Status
+            </h3>
+          </div>
+          <StatusDetails
+            applications={applications}
+            isLoading={isLoading}
+            error={error}
+            currentPage={currentPage}
+            totalPages={totalPages}
+            onPageChange={handlePageChange}
+          />
+        </div>
+      )}
     </div>
   );
 };
