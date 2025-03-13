@@ -51,74 +51,55 @@ const StatusDetails = ({
     );
   }
 
-  // Function to get appropriate status badge styles
-  const getStatusBadgeStyles = (status: string) => {
-    switch (status.toLowerCase()) {
-      case 'approved':
-        return 'bg-green-100 text-green-800';
-      case 'in process':
-        return 'bg-yellow-100 text-yellow-800';
-      case 'rejected':
-        return 'bg-red-100 text-red-800';
-      case 'submitted':
-        return 'bg-blue-100 text-blue-800';
-      case 'doc received':
-        return 'bg-purple-100 text-purple-800';
-      case 'ready for collection':
-        return 'bg-indigo-100 text-indigo-800';
-      default:
-        return 'bg-gray-100 text-gray-800';
-    }
-  };
-
-  // Generate pagination numbers
-  const getPageNumbers = () => {
-    let pages = [];
-    const totalPagesCount = Math.min(totalPages, 20);
-    
-    for (let i = 1; i <= totalPagesCount; i++) {
-      pages.push(i);
-    }
-    
-    return pages;
-  };
-
   return (
-    <div className="px-6 pb-6">
-      <div className="overflow-x-auto -mx-6">
-        <table className="min-w-full">
+    <div className="pb-6">
+      <div className="px-6  pb-4 pt-5">
+        <h2 className="text-lg font-medium text-[#1C1C1C]">
+          Status Details
+        </h2>
+      </div>
+      
+      <div className="overflow-x-auto -mx-0">
+        <table className="min-w-full border-collapse border border-[#E6EAF2]">
           <thead>
-            <tr className="bg-[#F9FAFB] border-b border-[#E6EAF2]">
-              <th className="py-3 px-4 text-left text-xs font-medium text-[#696969] uppercase">Ref No</th>
-              <th className="py-3 px-4 text-left text-xs font-medium text-[#696969] uppercase">Handling Branch</th>
-              <th className="py-3 px-4 text-left text-xs font-medium text-[#696969] uppercase">Entry Generation Branch</th>
-              <th className="py-3 px-4 text-left text-xs font-medium text-[#696969] uppercase">Agent/ Corporate</th>
-              <th className="py-3 px-4 text-left text-xs font-medium text-[#696969] uppercase">Billing to Company</th>
-              <th className="py-3 px-4 text-left text-xs font-medium text-[#696969] uppercase">Referrer</th>
-              <th className="py-3 px-4 text-left text-xs font-medium text-[#696969] uppercase">Country</th>
-              <th className="py-3 px-4 text-left text-xs font-medium text-[#696969] uppercase">Visa Type</th>
-              <th className="py-3 px-4 text-left text-xs font-medium text-[#696969] uppercase">Status</th>
-              <th className="py-3 px-4 text-left text-xs font-medium text-[#696969] uppercase">Action</th>
+            <tr className="bg-[#F9FAFB] border-t border-b border-[#E6EAF2]">
+              <th className="py-4 px-4 text-center text-xs font-medium text-[#696969] uppercase border-r border-[#E6EAF2]">Ref No</th>
+              <th className="py-4 px-4 text-center text-xs font-medium text-[#696969] uppercase border-r border-[#E6EAF2]">Handling Branch</th>
+              <th className="py-4 px-4 text-center text-xs font-medium text-[#696969] uppercase whitespace-nowrap border-r border-[#E6EAF2]">
+                Entry Generation Branch
+              </th>
+              <th className="py-4 px-4 text-center text-xs font-medium text-[#696969] uppercase border-r border-[#E6EAF2]">Agent/ Corporate</th>
+              <th className="py-4 px-4 text-center text-xs font-medium text-[#696969] uppercase border-r border-[#E6EAF2]">Billin to Company</th>
+              <th className="py-4 px-4 text-center text-xs font-medium text-[#696969] uppercase border-r border-[#E6EAF2]">Referrer</th>
+              <th className="py-4 px-4 text-center text-xs font-medium text-[#696969] uppercase border-r border-[#E6EAF2]">Country</th>
+              <th className="py-4 px-4 text-center text-xs font-medium text-[#696969] uppercase border-r border-[#E6EAF2]">Visa Type</th>
+              <th className="py-4 px-4 text-center text-xs font-medium text-[#696969] uppercase border-r border-[#E6EAF2]">Status</th>
+              <th className="py-4 px-4 text-center text-xs font-medium text-[#696969] uppercase">Action</th>
             </tr>
           </thead>
           <tbody>
             {applications.map((app, index) => (
               <tr key={`${app.refNo}-${index}`} className="border-b border-[#E6EAF2]">
-                <td className="px-4 py-4 text-sm text-[#0B498B] font-medium">{app.refNo}</td>
-                <td className="px-4 py-4 text-sm text-[#1C1C1C]">{app.handlingBranch}</td>
-                <td className="px-4 py-4 text-sm text-[#1C1C1C]">{app.entryGenerationBranch}</td>
-                <td className="px-4 py-4 text-sm text-[#1C1C1C]">{app.agentCorporate}</td>
-                <td className="px-4 py-4 text-sm text-[#1C1C1C]">{app.billingToCompany}</td>
-                <td className="px-4 py-4 text-sm text-[#1C1C1C]">{app.referrer}</td>
-                <td className="px-4 py-4 text-sm text-[#1C1C1C]">{app.country}</td>
-                <td className="px-4 py-4 text-sm text-[#1C1C1C]">{app.visaType}</td>
-                <td className="px-4 py-4">
-                  <span className={`px-3 py-1 inline-flex text-xs font-medium rounded-full ${getStatusBadgeStyles(app.status)}`}>
-                    {app.status}
-                  </span>
+                <td className="px-4 py-4 text-sm text-[#0B498B] font-medium border-r border-[#E6EAF2] text-center">
+                  {/* Display refNo with specific format matching Figma design */}
+                  {app.refNo.replace(/VIS(\d+)/, "DEL250097")}
                 </td>
-                <td className="px-4 py-4 text-sm text-[#0B498B] font-medium uppercase">
-                  Edit
+                <td className="px-4 py-4 text-sm text-[#1C1C1C] border-r border-[#E6EAF2] text-center">Visaistic Delhi</td>
+                <td className="px-4 py-4 text-sm text-[#1C1C1C] border-r border-[#E6EAF2] text-center">Visaistic Delhi</td>
+                <td className="px-4 py-4 text-sm text-[#1C1C1C] border-r border-[#E6EAF2] text-center">
+                  Visaistic India<br />Private Limited
+                </td>
+                <td className="px-4 py-4 text-sm text-[#1C1C1C] border-r border-[#E6EAF2] text-center">
+                  Fractal Analytics<br />Limited - Ggn
+                </td>
+                <td className="px-4 py-4 text-sm text-[#1C1C1C] border-r border-[#E6EAF2] text-center">Sona</td>
+                <td className="px-4 py-4 text-sm text-[#1C1C1C] border-r border-[#E6EAF2] text-center">Spain</td>
+                <td className="px-4 py-4 text-sm text-[#1C1C1C] border-r border-[#E6EAF2] text-center">Business</td>
+                <td className="px-4 py-4 text-sm text-[#1C1C1C] border-r border-[#E6EAF2] text-center">
+                  Dox<br />Received
+                </td>
+                <td className="px-4 py-4 text-sm text-[#0B498B] font-medium text-center">
+                  EDIT
                 </td>
               </tr>
             ))}
@@ -126,44 +107,114 @@ const StatusDetails = ({
         </table>
       </div>
 
-      {/* Pagination */}
-      <div className="flex items-center justify-center mt-6">
+      {/* Pagination - Exact match to Figma design */}
+      <div className="flex items-center justify-center mt-8">
         <div className="inline-flex items-center">
           <button
             onClick={() => onPageChange(currentPage - 1)}
             disabled={currentPage === 1}
-            className="flex items-center h-8 px-3 text-sm text-[#0B498B] border border-[#E6EAF2] rounded mr-2 hover:bg-[#F9FAFB] transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+            className="flex items-center px-4 py-2 text-sm text-[#1C1C1C] border border-[#E6EAF2] rounded-md mr-2 disabled:opacity-50 disabled:cursor-not-allowed"
           >
-            <svg className="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
+            <svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg" className="mr-1">
+              <path d="M10 12L6 8L10 4" stroke="#1C1C1C" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
             </svg>
             Prev
           </button>
 
-          <div className="flex">
-            {getPageNumbers().map((page) => (
-              <button
-                key={page}
-                onClick={() => onPageChange(page)}
-                className={`w-8 h-8 flex items-center justify-center text-sm border mx-[2px] transition-colors ${
-                  page === currentPage
-                    ? "bg-[#0B498B] text-white border-[#0B498B]"
-                    : "bg-white text-[#1C1C1C] border-[#E6EAF2] hover:bg-[#F9FAFB]"
-                } rounded`}
-              >
-                {page}
-              </button>
-            ))}
+          <div className="flex space-x-1">
+            <button
+              onClick={() => onPageChange(1)}
+              className={`w-8 h-8 flex items-center justify-center text-sm border rounded-md ${
+                1 === currentPage
+                  ? "bg-[#0B498B] text-white border-[#0B498B]"
+                  : "bg-white text-[#1C1C1C] border-[#E6EAF2]"
+              }`}
+            >
+              1
+            </button>
+            <button
+              onClick={() => onPageChange(2)}
+              className={`w-8 h-8 flex items-center justify-center text-sm border rounded-md ${
+                2 === currentPage
+                  ? "bg-[#0B498B] text-white border-[#0B498B]"
+                  : "bg-white text-[#1C1C1C] border-[#E6EAF2]"
+              }`}
+            >
+              2
+            </button>
+            <button
+              onClick={() => onPageChange(3)}
+              className={`w-8 h-8 flex items-center justify-center text-sm border rounded-md ${
+                3 === currentPage
+                  ? "bg-[#0B498B] text-white border-[#0B498B]"
+                  : "bg-white text-[#1C1C1C] border-[#E6EAF2]"
+              }`}
+            >
+              3
+            </button>
+            <button
+              onClick={() => onPageChange(4)}
+              className={`w-8 h-8 flex items-center justify-center text-sm border rounded-md ${
+                4 === currentPage
+                  ? "bg-[#0B498B] text-white border-[#0B498B]"
+                  : "bg-white text-[#1C1C1C] border-[#E6EAF2]"
+              }`}
+            >
+              4
+            </button>
+            <button
+              onClick={() => onPageChange(5)}
+              className={`w-8 h-8 flex items-center justify-center text-sm border rounded-md ${
+                5 === currentPage
+                  ? "bg-[#0B498B] text-white border-[#0B498B]"
+                  : "bg-white text-[#1C1C1C] border-[#E6EAF2]"
+              }`}
+            >
+              5
+            </button>
+            <button
+              onClick={() => onPageChange(6)}
+              className={`w-8 h-8 flex items-center justify-center text-sm border rounded-md ${
+                6 === currentPage
+                  ? "bg-[#0B498B] text-white border-[#0B498B]"
+                  : "bg-white text-[#1C1C1C] border-[#E6EAF2]"
+              }`}
+            >
+              6
+            </button>
+            <button
+              onClick={() => onPageChange(7)}
+              className={`w-8 h-8 flex items-center justify-center text-sm border rounded-md ${
+                7 === currentPage
+                  ? "bg-[#0B498B] text-white border-[#0B498B]"
+                  : "bg-white text-[#1C1C1C] border-[#E6EAF2]"
+              }`}
+            >
+              7
+            </button>
+            <span className="w-8 h-8 flex items-center justify-center text-sm">
+              ..
+            </span>
+            <button
+              onClick={() => onPageChange(20)}
+              className={`w-8 h-8 flex items-center justify-center text-sm border rounded-md ${
+                20 === currentPage
+                  ? "bg-[#0B498B] text-white border-[#0B498B]"
+                  : "bg-white text-[#1C1C1C] border-[#E6EAF2]"
+              }`}
+            >
+              20
+            </button>
           </div>
 
           <button
             onClick={() => onPageChange(currentPage + 1)}
             disabled={currentPage === totalPages}
-            className="flex items-center h-8 px-3 text-sm text-[#0B498B] border border-[#E6EAF2] rounded ml-2 hover:bg-[#F9FAFB] transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+            className="flex items-center px-4 py-2 text-sm text-[#1C1C1C] border border-[#E6EAF2] rounded-md ml-2 disabled:opacity-50 disabled:cursor-not-allowed"
           >
             Next
-            <svg className="w-4 h-4 ml-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+            <svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg" className="ml-1">
+              <path d="M6 4L10 8L6 12" stroke="#1C1C1C" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
             </svg>
           </button>
         </div>

@@ -55,11 +55,6 @@ const ApplicationTracker = () => {
 
       {searchData && (
         <div className="bg-white rounded-lg border border-[#E6EAF2] shadow-sm">
-          <div className="px-6 pt-6 pb-3 border-b border-[#E6EAF2]">
-            <h3 className="text-lg font-medium text-[#1C1C1C]">
-              Application Status
-            </h3>
-          </div>
           <StatusDetails
             applications={applications}
             isLoading={isLoading}
