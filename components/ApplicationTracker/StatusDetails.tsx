@@ -52,8 +52,8 @@ const StatusDetails = ({
   }
 
   return (
-    <div className="pb-6">
-      <div className="px-6  pb-4 pt-5">
+    <div className="pb-6 rounded-2xl overflow-hidden">
+      <div className="px-6 pb-4 pt-5">
         <h2 className="text-lg font-medium text-[#1C1C1C]">
           Status Details
         </h2>

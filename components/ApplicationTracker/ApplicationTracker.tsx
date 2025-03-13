@@ -49,12 +49,12 @@ const ApplicationTracker = () => {
         </h1>
       </div>
 
-      <div className="bg-white rounded-lg border border-[#E6EAF2] shadow-sm mb-6">
+      <div className="bg-white rounded-2xl border border-[#E6EAF2] shadow-sm mb-6 overflow-hidden">
         <StatusForm onSearch={handleSearch} />
       </div>
 
       {searchData && (
-        <div className="bg-white rounded-lg border border-[#E6EAF2] shadow-sm">
+        <div className="bg-white rounded-2xl border border-[#E6EAF2] shadow-sm overflow-hidden">
           <StatusDetails
             applications={applications}
             isLoading={isLoading}
