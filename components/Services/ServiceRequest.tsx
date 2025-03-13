@@ -93,9 +93,11 @@ const ServiceRequest = () => {
         {/* First Card - Form Fields */}
         <div className="bg-white rounded-2xl border border-[#E6EAF2] shadow-sm mb-6 overflow-hidden">
           <div className="p-6">
-            <div className="block text-sm font-medium text-[#1C1C1C] mb-2">
-                Title                
+            <div className="border-b border-[#E6EAF2] pb-2 mb-4">
+              <div className="text-sm font-medium text-[#1C1C1C]">
+                Title
               </div>
+            </div>
             
             {/* First Row - 5 Fields */}
             <div className="grid grid-cols-5 gap-4 mb-6">
