@@ -158,11 +158,17 @@ const StatusForm = ({ onSearch }: StatusFormProps) => {
             </label>
             <div className="relative">
               <input
-                type="text"
+                type="date"
                 value={formData.fromDate}
                 onChange={(e) => handleChange("fromDate", e.target.value)}
-                className="w-full h-10 px-3 border border-[#E6EAF2] rounded focus:outline-none focus:ring-1 focus:ring-[#0B498B] text-sm placeholder-[#A0A0A0]"
+                className="w-full h-10 px-3 border border-[#E6EAF2] rounded focus:outline-none focus:ring-1 focus:ring-[#0B498B] text-sm placeholder-[#A0A0A0] date-input"
                 placeholder="dd/mm/yyyy"
+                style={{ 
+                  colorScheme: 'light',
+                  appearance: 'none',
+                  WebkitAppearance: 'none',
+                  MozAppearance: 'none'
+                }}
               />
               <div className="absolute right-3 top-1/2 transform -translate-y-1/2 pointer-events-none">
                 <svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -181,11 +187,17 @@ const StatusForm = ({ onSearch }: StatusFormProps) => {
             </label>
             <div className="relative">
               <input
-                type="text"
+                type="date"
                 value={formData.toDate}
                 onChange={(e) => handleChange("toDate", e.target.value)}
-                className="w-full h-10 px-3 border border-[#E6EAF2] rounded focus:outline-none focus:ring-1 focus:ring-[#0B498B] text-sm placeholder-[#A0A0A0]"
+                className="w-full h-10 px-3 border border-[#E6EAF2] rounded focus:outline-none focus:ring-1 focus:ring-[#0B498B] text-sm placeholder-[#A0A0A0] date-input"
                 placeholder="dd/mm/yyyy"
+                style={{ 
+                  colorScheme: 'light',
+                  appearance: 'none',
+                  WebkitAppearance: 'none',
+                  MozAppearance: 'none'
+                }}
               />
               <div className="absolute right-3 top-1/2 transform -translate-y-1/2 pointer-events-none">
                 <svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
