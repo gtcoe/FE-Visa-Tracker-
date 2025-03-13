@@ -86,7 +86,7 @@ const ServiceRequest = () => {
   ];
 
   return (
-    <div className="py-6">
+    <div className="py-6 px-[80px]">
       <h1 className="text-[28px] font-bold text-[#1C1C1C] mb-6">Service Request</h1>
       
       <form onSubmit={handleSubmit}>
