@@ -28,8 +28,10 @@ const AddClientForm = ({ onSubmit }: AddClientFormProps) => {
   });
 
   const handleSubmit = () => {
+    console.log("===>handleSubmit");
     // Validation
     if (!formData.name) {
+      console.log("===>name");
       ToastNotifyError("Client name is required");
       return;
     }

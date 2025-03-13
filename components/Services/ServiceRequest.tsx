@@ -1,0 +1,269 @@
+"use client";
+
+import { useState } from 'react';
+import { FiMapPin, FiPhone, FiGlobe } from 'react-icons/fi';
+import CustomDropdown from './CustomDropdown';
+
+const ServiceRequest = () => {
+  const [formData, setFormData] = useState({
+    title: '',
+    paxType: 'Corporate',
+    countryOfResidence: 'India',
+    client: '',
+    stateOfResidence: '',
+    citizenship: 'Indian',
+    services: '',
+    referrer: '',
+    fileNo: ''
+  });
+
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const { name, value } = e.target;
+    setFormData(prev => ({
+      ...prev,
+      [name]: value
+    }));
+  };
+
+  const handleDropdownChange = (name: string, value: string) => {
+    setFormData(prev => ({
+      ...prev,
+      [name]: value
+    }));
+  };
+
+  const handleSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    console.log(formData);
+    // Here you would typically send the data to an API
+  };
+
+  const paxTypeOptions = [
+    { value: 'Corporate', label: 'Corporate' },
+    { value: 'Individual', label: 'Individual' }
+  ];
+
+  const countryOptions = [
+    { value: 'India', label: 'India' },
+    { value: 'USA', label: 'USA' },
+    { value: 'UK', label: 'UK' },
+    { value: 'Canada', label: 'Canada' }
+  ];
+
+  const stateOptions = [
+    { value: '', label: 'Select' },
+    { value: 'Delhi', label: 'Delhi' },
+    { value: 'Maharashtra', label: 'Maharashtra' },
+    { value: 'Karnataka', label: 'Karnataka' }
+  ];
+
+  const citizenshipOptions = [
+    { value: 'Indian', label: 'Indian' },
+    { value: 'American', label: 'American' },
+    { value: 'British', label: 'British' },
+    { value: 'Canadian', label: 'Canadian' }
+  ];
+
+  const serviceOptions = [
+    { value: '', label: 'Select' },
+    { value: 'Visa', label: 'Visa' },
+    { value: 'Passport', label: 'Passport' },
+    { value: 'Travel', label: 'Travel' }
+  ];
+
+  const referrerOptions = [
+    { value: '', label: 'Select' },
+    { value: 'Agent', label: 'Agent' },
+    { value: 'Friend', label: 'Friend' },
+    { value: 'Online', label: 'Online' }
+  ];
+
+  const fileNoOptions = [
+    { value: '', label: 'Select' },
+    { value: 'File1', label: 'File 1' },
+    { value: 'File2', label: 'File 2' },
+    { value: 'Company1', label: 'Company 1' }
+  ];
+
+  return (
+    <div className="py-6">
+      <h1 className="text-[28px] font-bold text-[#1C1C1C] mb-6">Service Request</h1>
+      
+      <form onSubmit={handleSubmit}>
+        {/* First Card - Form Fields */}
+        <div className="bg-white rounded-2xl border border-[#E6EAF2] shadow-sm mb-6 overflow-hidden">
+          <div className="p-6">
+            {/* Title Field */}
+            <div className="mb-6">
+              <label htmlFor="title" className="block text-sm font-medium text-[#1C1C1C] mb-2">
+                Title
+              </label>
+              <input
+                type="text"
+                id="title"
+                name="title"
+                value={formData.title}
+                onChange={handleChange}
+                className="w-full px-3 py-2 border border-[#E6EAF2] rounded-md focus:outline-none focus:ring-1 focus:ring-[#0B498B]"
+              />
+            </div>
+            
+            {/* First Row - 3 Fields */}
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
+              <div>
+                <label htmlFor="paxType" className="block text-sm font-medium text-[#1C1C1C] mb-2">
+                  Pax Type
+                </label>
+                <CustomDropdown
+                  options={paxTypeOptions}
+                  value={formData.paxType}
+                  onChange={(value) => handleDropdownChange('paxType', value)}
+                  name="paxType"
+                />
+              </div>
+              
+              <div>
+                <label htmlFor="countryOfResidence" className="block text-sm font-medium text-[#1C1C1C] mb-2">
+                  Country of Residence
+                </label>
+                <CustomDropdown
+                  options={countryOptions}
+                  value={formData.countryOfResidence}
+                  onChange={(value) => handleDropdownChange('countryOfResidence', value)}
+                  name="countryOfResidence"
+                />
+              </div>
+              
+              <div>
+                <label htmlFor="client" className="block text-sm font-medium text-[#1C1C1C] mb-2">
+                  Client
+                </label>
+                <input
+                  type="text"
+                  id="client"
+                  name="client"
+                  placeholder="-"
+                  value={formData.client}
+                  onChange={handleChange}
+                  className="w-full px-3 py-2 border border-[#E6EAF2] rounded-md focus:outline-none focus:ring-1 focus:ring-[#0B498B]"
+                />
+              </div>
+            </div>
+            
+            {/* Second Row - 2 Fields */}
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
+              <div>
+                <label htmlFor="stateOfResidence" className="block text-sm font-medium text-[#1C1C1C] mb-2">
+                  State of Residence
+                </label>
+                <CustomDropdown
+                  options={stateOptions}
+                  value={formData.stateOfResidence}
+                  onChange={(value) => handleDropdownChange('stateOfResidence', value)}
+                  name="stateOfResidence"
+                />
+              </div>
+              
+              <div>
+                <label htmlFor="citizenship" className="block text-sm font-medium text-[#1C1C1C] mb-2">
+                  Choose your Citizenship
+                </label>
+                <CustomDropdown
+                  options={citizenshipOptions}
+                  value={formData.citizenship}
+                  onChange={(value) => handleDropdownChange('citizenship', value)}
+                  name="citizenship"
+                />
+              </div>
+            </div>
+            
+            {/* Third Row - 3 Fields */}
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+              <div>
+                <label htmlFor="services" className="block text-sm font-medium text-[#1C1C1C] mb-2">
+                  Choose Services
+                </label>
+                <CustomDropdown
+                  options={serviceOptions}
+                  value={formData.services}
+                  onChange={(value) => handleDropdownChange('services', value)}
+                  name="services"
+                />
+              </div>
+              
+              <div>
+                <label htmlFor="referrer" className="block text-sm font-medium text-[#1C1C1C] mb-2">
+                  Referrer
+                </label>
+                <CustomDropdown
+                  options={referrerOptions}
+                  value={formData.referrer}
+                  onChange={(value) => handleDropdownChange('referrer', value)}
+                  name="referrer"
+                />
+              </div>
+              
+              <div>
+                <label htmlFor="fileNo" className="block text-sm font-medium text-[#1C1C1C] mb-2">
+                  File No/ Company Name
+                </label>
+                <CustomDropdown
+                  options={fileNoOptions}
+                  value={formData.fileNo}
+                  onChange={(value) => handleDropdownChange('fileNo', value)}
+                  name="fileNo"
+                />
+              </div>
+            </div>
+          </div>
+        </div>
+        
+        {/* Second Card - Branch Information */}
+        <div className="bg-white rounded-2xl border border-[#E6EAF2] shadow-sm overflow-hidden">
+          <div className="p-6">
+            <h2 className="text-lg font-medium text-[#1C1C1C] mb-4">Visaistic Branch City</h2>
+            
+            <div className="mb-4">
+              <p className="text-base font-medium text-[#1C1C1C]">VisaisticIndia Pvt. Ltd</p>
+            </div>
+            
+            <div className="flex items-start mb-3">
+              <FiMapPin className="text-[#0B498B] mr-2 mt-1 flex-shrink-0" />
+              <div>
+                <p className="text-sm text-[#1C1C1C]">
+                  Head Branch- Delhi :<br />
+                  BR-60B, Shalimar Bagh, Opp Federal Bank, New Delhi -110088
+                </p>
+              </div>
+            </div>
+            
+            <div className="flex items-center mb-3">
+              <FiPhone className="text-[#0B498B] mr-2 flex-shrink-0" />
+              <p className="text-sm text-[#1C1C1C]">+91 8700947353</p>
+            </div>
+            
+            <div className="flex items-center mb-6">
+              <FiGlobe className="text-[#0B498B] mr-2 flex-shrink-0" />
+              <p className="text-sm text-[#1C1C1C]">www. visaistic.com</p>
+            </div>
+            
+            <div className="flex items-center justify-between">
+              <p className="text-sm font-medium text-[#F59E0B]">
+                Note: Please select the nearest branch and mail the documents to ths specific address as mentioned
+              </p>
+              
+              <button
+                type="submit"
+                className="bg-[#0B498B] text-white px-4 py-2 rounded-md hover:bg-[#083968] transition-colors focus:outline-none focus:ring-2 focus:ring-[#0B498B] focus:ring-opacity-50"
+              >
+                Save & Continue
+              </button>
+            </div>
+          </div>
+        </div>
+      </form>
+    </div>
+  );
+};
+
+export default ServiceRequest; 
