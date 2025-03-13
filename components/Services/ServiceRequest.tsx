@@ -92,120 +92,123 @@ const ServiceRequest = () => {
       <form onSubmit={handleSubmit}>
         {/* First Card - Form Fields */}
         <div className="bg-white rounded-2xl border border-[#E6EAF2] shadow-sm mb-6 overflow-hidden">
-          <div className="p-6">
-            <div className="border-b border-[#E6EAF2] pb-2 mb-4">
-              <div className="text-sm font-medium text-[#1C1C1C]">
-                Title
-              </div>
-            </div>
-            
-            {/* First Row - 5 Fields */}
-            <div className="grid grid-cols-5 gap-4 mb-6">
-              <div>
-                <label htmlFor="paxType" className="block text-sm font-medium text-[#1C1C1C] mb-2">
-                  Pax Type
-                </label>
-                <CustomDropdown
-                  options={paxTypeOptions}
-                  value={formData.paxType}
-                  onChange={(value) => handleDropdownChange('paxType', value)}
-                  name="paxType"
-                />
+          <div className="relative">
+            <div className="absolute left-0 right-0 top-0 border-t border-[#E6EAF2]"></div>
+            <div className="p-6">
+              <div className="border-b-[1.5px] border-[#E6EAF2] pb-5 -mx-6 px-6">
+                <div className="text-lg font-medium text-[#1C1C1C]">
+                  Title
+                </div>
               </div>
               
-              <div>
-                <label htmlFor="countryOfResidence" className="block text-sm font-medium text-[#1C1C1C] mb-2">
-                  Country of Residence
-                </label>
-                <CustomDropdown
-                  options={countryOptions}
-                  value={formData.countryOfResidence}
-                  onChange={(value) => handleDropdownChange('countryOfResidence', value)}
-                  name="countryOfResidence"
-                />
+              {/* First Row - 5 Fields */}
+              <div className="grid grid-cols-5 gap-4 mb-6 mt-6">
+                <div>
+                  <label htmlFor="paxType" className="block text-sm font-medium text-[#1C1C1C] mb-2">
+                    Pax Type
+                  </label>
+                  <CustomDropdown
+                    options={paxTypeOptions}
+                    value={formData.paxType}
+                    onChange={(value) => handleDropdownChange('paxType', value)}
+                    name="paxType"
+                  />
+                </div>
+                
+                <div>
+                  <label htmlFor="countryOfResidence" className="block text-sm font-medium text-[#1C1C1C] mb-2">
+                    Country of Residence
+                  </label>
+                  <CustomDropdown
+                    options={countryOptions}
+                    value={formData.countryOfResidence}
+                    onChange={(value) => handleDropdownChange('countryOfResidence', value)}
+                    name="countryOfResidence"
+                  />
+                </div>
+                
+                <div>
+                  <label htmlFor="client" className="block text-sm font-medium text-[#1C1C1C] mb-2">
+                    Client
+                  </label>
+                  <input
+                    type="text"
+                    id="client"
+                    name="client"
+                    placeholder="-"
+                    value={formData.client}
+                    onChange={handleChange}
+                    className="w-full px-3 py-2 border border-[#E6EAF2] rounded-md focus:outline-none focus:ring-1 focus:ring-[#0B498B]"
+                  />
+                </div>
+                
+                <div>
+                  <label htmlFor="stateOfResidence" className="block text-sm font-medium text-[#1C1C1C] mb-2">
+                    State of Residence
+                  </label>
+                  <CustomDropdown
+                    options={stateOptions}
+                    value={formData.stateOfResidence}
+                    onChange={(value) => handleDropdownChange('stateOfResidence', value)}
+                    name="stateOfResidence"
+                  />
+                </div>
+                
+                <div>
+                  <label htmlFor="citizenship" className="block text-sm font-medium text-[#1C1C1C] mb-2">
+                    Choose your Citizenship
+                  </label>
+                  <CustomDropdown
+                    options={citizenshipOptions}
+                    value={formData.citizenship}
+                    onChange={(value) => handleDropdownChange('citizenship', value)}
+                    name="citizenship"
+                  />
+                </div>
               </div>
               
-              <div>
-                <label htmlFor="client" className="block text-sm font-medium text-[#1C1C1C] mb-2">
-                  Client
-                </label>
-                <input
-                  type="text"
-                  id="client"
-                  name="client"
-                  placeholder="-"
-                  value={formData.client}
-                  onChange={handleChange}
-                  className="w-full px-3 py-2 border border-[#E6EAF2] rounded-md focus:outline-none focus:ring-1 focus:ring-[#0B498B]"
-                />
+              {/* Second Row - 5 Fields */}
+              <div className="grid grid-cols-5 gap-4">
+                <div>
+                  <label htmlFor="services" className="block text-sm font-medium text-[#1C1C1C] mb-2">
+                    Choose Services
+                  </label>
+                  <CustomDropdown
+                    options={serviceOptions}
+                    value={formData.services}
+                    onChange={(value) => handleDropdownChange('services', value)}
+                    name="services"
+                  />
+                </div>
+                
+                <div>
+                  <label htmlFor="referrer" className="block text-sm font-medium text-[#1C1C1C] mb-2">
+                    Referrer
+                  </label>
+                  <CustomDropdown
+                    options={referrerOptions}
+                    value={formData.referrer}
+                    onChange={(value) => handleDropdownChange('referrer', value)}
+                    name="referrer"
+                  />
+                </div>
+                
+                <div>
+                  <label htmlFor="fileNo" className="block text-sm font-medium text-[#1C1C1C] mb-2">
+                    File No/ Company Name
+                  </label>
+                  <CustomDropdown
+                    options={fileNoOptions}
+                    value={formData.fileNo}
+                    onChange={(value) => handleDropdownChange('fileNo', value)}
+                    name="fileNo"
+                  />
+                </div>
+                
+                {/* Add two empty columns to maintain 5-column layout */}
+                <div></div>
+                <div></div>
               </div>
-              
-              <div>
-                <label htmlFor="stateOfResidence" className="block text-sm font-medium text-[#1C1C1C] mb-2">
-                  State of Residence
-                </label>
-                <CustomDropdown
-                  options={stateOptions}
-                  value={formData.stateOfResidence}
-                  onChange={(value) => handleDropdownChange('stateOfResidence', value)}
-                  name="stateOfResidence"
-                />
-              </div>
-              
-              <div>
-                <label htmlFor="citizenship" className="block text-sm font-medium text-[#1C1C1C] mb-2">
-                  Choose your Citizenship
-                </label>
-                <CustomDropdown
-                  options={citizenshipOptions}
-                  value={formData.citizenship}
-                  onChange={(value) => handleDropdownChange('citizenship', value)}
-                  name="citizenship"
-                />
-              </div>
-            </div>
-            
-            {/* Second Row - 5 Fields */}
-            <div className="grid grid-cols-5 gap-4">
-              <div>
-                <label htmlFor="services" className="block text-sm font-medium text-[#1C1C1C] mb-2">
-                  Choose Services
-                </label>
-                <CustomDropdown
-                  options={serviceOptions}
-                  value={formData.services}
-                  onChange={(value) => handleDropdownChange('services', value)}
-                  name="services"
-                />
-              </div>
-              
-              <div>
-                <label htmlFor="referrer" className="block text-sm font-medium text-[#1C1C1C] mb-2">
-                  Referrer
-                </label>
-                <CustomDropdown
-                  options={referrerOptions}
-                  value={formData.referrer}
-                  onChange={(value) => handleDropdownChange('referrer', value)}
-                  name="referrer"
-                />
-              </div>
-              
-              <div>
-                <label htmlFor="fileNo" className="block text-sm font-medium text-[#1C1C1C] mb-2">
-                  File No/ Company Name
-                </label>
-                <CustomDropdown
-                  options={fileNoOptions}
-                  value={formData.fileNo}
-                  onChange={(value) => handleDropdownChange('fileNo', value)}
-                  name="fileNo"
-                />
-              </div>
-              
-              {/* Add two empty columns to maintain 5-column layout */}
-              <div></div>
-              <div></div>
             </div>
           </div>
         </div>
