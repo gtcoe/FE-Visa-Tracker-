@@ -22,7 +22,7 @@ const FillServiceForm = () => {
   });
 
   const [travelInfo, setTravelInfo] = useState({
-    travelDate: '25/2/2025',
+    travelDate: '2025-02-25',
     personalAppearance: '',
     fileNo: '',
   });
@@ -148,6 +148,21 @@ const FillServiceForm = () => {
     console.log('Update and continue');
   }, []);
 
+  // Function to format date for display
+  const formatDateForDisplay = useCallback((isoDate: string) => {
+    if (!isoDate) return '';
+    try {
+      const date = new Date(isoDate);
+      return date.toLocaleDateString('en-US', {
+        year: 'numeric',
+        month: 'long',
+        day: 'numeric'
+      });
+    } catch (e) {
+      return isoDate;
+    }
+  }, []);
+
   return (
     <div className="space-y-6">
       {/* Reference Number */}
@@ -204,16 +219,13 @@ const FillServiceForm = () => {
               <label className="block text-sm font-medium text-gray-700 mb-2">
                 Date of Birth
               </label>
-              <select
+              <input
+                type="date"
                 name="dateOfBirth"
                 value={personalInfo.dateOfBirth}
                 onChange={handlePersonalInfoChange}
                 className="w-full px-3 py-2.5 border border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-[#0B498B] text-[#6A6A6A] appearance-none bg-white"
-              >
-                <option value="">Select</option>
-                <option value="2023-01-01">January 1, 2023</option>
-                <option value="2022-01-01">January 1, 2022</option>
-              </select>
+              />
             </div>
           </div>
           
@@ -252,7 +264,7 @@ const FillServiceForm = () => {
                 name="passportNumber"
                 value={passportInfo.passportNumber}
                 onChange={handlePassportInfoChange}
-                placeholder="-"
+                placeholder="Enter passport number"
                 className="w-full px-3 py-2.5 border border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-[#0B498B] text-[#6A6A6A]"
               />
             </div>
@@ -261,27 +273,25 @@ const FillServiceForm = () => {
               <label className="block text-sm font-medium text-gray-700 mb-2">
                 Date of Issue
               </label>
-              <select
+              <input
+                type="date"
                 name="dateOfIssue"
                 value={passportInfo.dateOfIssue}
                 onChange={handlePassportInfoChange}
                 className="w-full px-3 py-2.5 border border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-[#0B498B] text-[#6A6A6A] appearance-none bg-white"
-              >
-                <option value="">-</option>
-              </select>
+              />
             </div>
             
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-2">
-                Date of Expiry Id
+                Date of Expiry
               </label>
               <input
-                type="text"
+                type="date"
                 name="dateOfExpiry"
                 value={passportInfo.dateOfExpiry}
                 onChange={handlePassportInfoChange}
-                placeholder="-"
-                className="w-full px-3 py-2.5 border border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-[#0B498B] text-[#6A6A6A]"
+                className="w-full px-3 py-2.5 border border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-[#0B498B] text-[#6A6A6A] appearance-none bg-white"
               />
             </div>
             
@@ -294,7 +304,7 @@ const FillServiceForm = () => {
                 name="issueAt"
                 value={passportInfo.issueAt}
                 onChange={handlePassportInfoChange}
-                placeholder="-"
+                placeholder="Enter issue location"
                 className="w-full px-3 py-2.5 border border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-[#0B498B] text-[#6A6A6A]"
               />
             </div>
@@ -311,7 +321,11 @@ const FillServiceForm = () => {
                 onChange={handlePassportInfoChange}
                 className="w-full px-3 py-2.5 border border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-[#0B498B] text-[#6A6A6A] appearance-none bg-white"
               >
-                <option value="">-</option>
+                <option value="">Select</option>
+                <option value="0">0</option>
+                <option value="1">1</option>
+                <option value="2">2</option>
+                <option value="3">3+</option>
               </select>
             </div>
             
@@ -324,7 +338,7 @@ const FillServiceForm = () => {
                 name="expiredPassportNumber"
                 value={passportInfo.expiredPassportNumber}
                 onChange={handlePassportInfoChange}
-                placeholder="-"
+                placeholder="Enter expired passport number"
                 className="w-full px-3 py-2.5 border border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-[#0B498B] text-[#6A6A6A]"
               />
             </div>
@@ -344,28 +358,26 @@ const FillServiceForm = () => {
               <label className="block text-sm font-medium text-gray-700 mb-2">
                 Travel Date<span className="text-red-500">*</span>
               </label>
-              <select
+              <input
+                type="date"
                 name="travelDate"
                 value={travelInfo.travelDate}
                 onChange={handleTravelInfoChange}
                 className="w-full px-3 py-2.5 border border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-[#0B498B] text-[#6A6A6A] appearance-none bg-white"
-              >
-                <option value="25/2/2025">25/2/2025</option>
-              </select>
+              />
             </div>
             
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-2">
                 Personal Appearance/Interview Date
               </label>
-              <select
+              <input
+                type="date"
                 name="personalAppearance"
                 value={travelInfo.personalAppearance}
                 onChange={handleTravelInfoChange}
                 className="w-full px-3 py-2.5 border border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-[#0B498B] text-[#6A6A6A] appearance-none bg-white"
-              >
-                <option value="">Select</option>
-              </select>
+              />
             </div>
             
             <div>
@@ -377,7 +389,7 @@ const FillServiceForm = () => {
                 name="fileNo"
                 value={travelInfo.fileNo}
                 onChange={handleTravelInfoChange}
-                placeholder="Enter Name"
+                placeholder="Enter name"
                 className="w-full px-3 py-2.5 border border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-[#0B498B] text-[#6A6A6A]"
               />
             </div>
