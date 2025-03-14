@@ -898,11 +898,11 @@ const FillServiceForm = () => {
       </div>
       
       {/* Bottom Buttons */}
-      <div className="flex justify-between items-center mx-6 my-8">
+      <div className="flex justify-end items-center mx-6 pb-8 pt-4 space-x-4">
         <button
           type="button"
           onClick={handleBack}
-          className="px-6 py-2.5 border border-gray-300 rounded-md text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-[#0B498B] font-medium"
+          className="px-8 py-2.5 border border-gray-300 rounded-md text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-1 focus:ring-[#0B498B] font-medium"
         >
           Back
         </button>
@@ -910,7 +910,7 @@ const FillServiceForm = () => {
         <button
           type="button"
           onClick={handleUpdateAndContinue}
-          className="bg-[#0B498B] text-white px-6 py-2.5 rounded-md hover:bg-[#083968] transition-colors focus:outline-none focus:ring-2 focus:ring-[#0B498B] focus:ring-opacity-50 font-medium"
+          className="bg-[#0B498B] text-white px-8 py-2.5 rounded-md hover:bg-[#083968] transition-colors focus:outline-none focus:ring-1 focus:ring-[#0B498B] font-medium"
           disabled={!isFormValid}
         >
           Update & Continue
