@@ -1,8 +1,133 @@
 "use client";
 
-import React, { useState } from 'react';
+import React, { useState, lazy, Suspense } from 'react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
+
+// Lazy load components for better performance
+const FillServiceForm = lazy(() => import('./FillServiceForm'));
+
+// Component for Service Request Summary tab
+const ServiceRequestSummary = () => {
+  return (
+    <div className="p-6 text-center">
+      <h3 className="text-lg font-medium text-gray-800">Service Request Summary</h3>
+      <p className="mt-2 text-gray-600">Summary content will be implemented here.</p>
+    </div>
+  );
+};
+
+// Define the types for the SearchPaxContent props
+interface SearchPaxContentProps {
+  searchData: {
+    paxName: string;
+    passportNo: string;
+    referenceNo: string;
+  };
+  setSearchData: React.Dispatch<React.SetStateAction<{
+    paxName: string;
+    passportNo: string;
+    referenceNo: string;
+  }>>;
+  handleChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
+  handleSearch: (e: React.FormEvent) => Promise<void>;
+  handleClear: () => void;
+  isSearching: boolean;
+}
+
+// Component for Search Pax tab
+const SearchPaxContent: React.FC<SearchPaxContentProps> = ({
+  searchData,
+  setSearchData,
+  handleChange,
+  handleSearch,
+  handleClear,
+  isSearching
+}) => {
+  return (
+    <>
+      {/* Form Container */}
+      <div className="mx-6 mt-[21px] mb-6 border-[1.5px] border-[#E6EAF2] rounded-2xl">
+        {/* Reference No Header with gray background */}
+        <div className="bg-[#F6F7F9] py-4 px-6 border-b border-gray-200 rounded-t-2xl">
+          <p className="text-base font-medium text-[#1C1C1C]">Reference No:</p>
+        </div>
+        
+        {/* Form */}
+        <div className="p-6">
+          <form onSubmit={handleSearch} className="space-y-8">
+            <div className="grid grid-cols-5 gap-8">
+              <div>
+                <label htmlFor="paxName" className="block text-sm font-medium text-gray-700 mb-2">
+                  PAX Name
+                </label>
+                <input
+                  type="text"
+                  id="paxName"
+                  name="paxName"
+                  value={searchData.paxName}
+                  onChange={handleChange}
+                  placeholder=""
+                  className="w-full px-3 py-2.5 border border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-[#0B498B] text-[#6A6A6A]"
+                />
+              </div>
+              
+              <div>
+                <label htmlFor="passportNo" className="block text-sm font-medium text-gray-700 mb-2">
+                  Passport No<span className="text-red-500 ml-0.5">*</span>
+                </label>
+                <input
+                  type="text"
+                  id="passportNo"
+                  name="passportNo"
+                  value={searchData.passportNo}
+                  onChange={handleChange}
+                  placeholder=""
+                  className="w-full px-3 py-2.5 border border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-[#0B498B] text-[#6A6A6A]"
+                />
+              </div>
+              
+              <div>
+                <label htmlFor="referenceNo" className="block text-sm font-medium text-gray-700 mb-2">
+                  Reference No<span className="text-red-500 ml-0.5">*</span>
+                </label>
+                <div className="flex items-center">
+                  <input
+                    type="text"
+                    id="referenceNo"
+                    name="referenceNo"
+                    value={searchData.referenceNo}
+                    onChange={handleChange}
+                    placeholder=""
+                    className="w-full px-3 py-2.5 border border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-[#0B498B] text-[#6A6A6A]"
+                  />
+                  <button
+                    type="button"
+                    onClick={handleClear}
+                    className="ml-3 text-sm text-[#0B498B] font-semibold hover:underline"
+                  >
+                    Clear
+                  </button>
+                </div>
+              </div>
+            </div>
+          </form>
+        </div>
+      </div>
+      
+      {/* Search Button Container */}
+      <div className="flex justify-end p-6 pt-0">
+        <button
+          onClick={handleSearch}
+          disabled={isSearching}
+          className="bg-[#0B498B] text-white px-8 py-2 rounded-md hover:bg-[#083968] transition-colors focus:outline-none focus:ring-2 focus:ring-[#0B498B] focus:ring-opacity-50 disabled:opacity-70 disabled:cursor-not-allowed font-medium"
+        >
+          {isSearching ? 'Searching...' : 'Search'}
+        </button>
+      </div>
+    </>
+  );
+};
 
 const SearchPax = () => {
   const router = useRouter();
@@ -53,6 +178,33 @@ const SearchPax = () => {
     });
   };
 
+  // Function to render the appropriate content based on the active tab
+  const renderTabContent = () => {
+    switch (activeTab) {
+      case 'search':
+        return (
+          <SearchPaxContent
+            searchData={searchData}
+            setSearchData={setSearchData}
+            handleChange={handleChange}
+            handleSearch={handleSearch}
+            handleClear={handleClear}
+            isSearching={isSearching}
+          />
+        );
+      case 'fill':
+        return (
+          <Suspense fallback={<div className="p-6 text-center">Loading form...</div>}>
+            <FillServiceForm />
+          </Suspense>
+        );
+      case 'summary':
+        return <ServiceRequestSummary />;
+      default:
+        return null;
+    }
+  };
+
   return (
     <div className="py-6 px-[80px]">
       <h1 className="text-[28px] font-bold text-[#1C1C1C] mb-6">Service Request Form</h1>
@@ -62,104 +214,27 @@ const SearchPax = () => {
         {/* Tabs */}
         <div className="flex border-b border-gray-200">
           <div 
-            className={`px-6 py-5 font-normal text-base cursor-pointer ${activeTab === 'search' ? 'text-[#0B498B] border-b-[3px] border-[#0B498B] font-semibold' : 'text-gray-600'}`}
+            className={`px-6 py-5 font-medium text-base cursor-pointer ${activeTab === 'search' ? 'text-[#0B498B] border-b-[3px] border-[#0B498B] font-semibold' : 'text-gray-600'}`}
             onClick={() => setActiveTab('search')}
           >
             Search Pax
           </div>
           <div 
-            className={`px-6 py-5 font-normal text-base cursor-pointer ${activeTab === 'fill' ? 'text-[#0B498B] border-b-[3px] border-[#0B498B] font-semibold' : 'text-gray-600'}`}
+            className={`px-6 py-5 font-medium text-base cursor-pointer ${activeTab === 'fill' ? 'text-[#0B498B] border-b-[3px] border-[#0B498B] font-semibold' : 'text-gray-600'}`}
             onClick={() => setActiveTab('fill')}
           >
             Fill Online Service Request Form
           </div>
           <div 
-            className={`px-6 py-5 font-normal text-base cursor-pointer ${activeTab === 'summary' ? 'text-[#0B498B] border-b-[3px] border-[#0B498B] font-semibold' : 'text-gray-600'}`}
+            className={`px-6 py-5 font-medium text-base cursor-pointer ${activeTab === 'summary' ? 'text-[#0B498B] border-b-[3px] border-[#0B498B] font-semibold' : 'text-gray-600'}`}
             onClick={() => setActiveTab('summary')}
           >
             Service Request Summary
           </div>
         </div>
         
-        {/* Form Container */}
-        <div className="mx-6 mt-[21px] mb-6 border-[1.5px] border-[#E6EAF2] rounded-2xl">
-          {/* Reference No Header with gray background */}
-          <div className="bg-[#F6F7F9] py-4 px-6 border-b border-gray-200 rounded-t-2xl">
-            <p className="text-base font-medium text-[#1C1C1C]">Reference No:</p>
-          </div>
-          
-          {/* Form */}
-          <div className="p-6">
-            <form onSubmit={handleSearch} className="space-y-8">
-              <div className="grid grid-cols-5 gap-8">
-                <div>
-                  <label htmlFor="paxName" className="block text-sm font-medium text-gray-700 mb-2">
-                    PAX Name
-                  </label>
-                  <input
-                    type="text"
-                    id="paxName"
-                    name="paxName"
-                    value={searchData.paxName}
-                    onChange={handleChange}
-                    placeholder=""
-                    className="w-full px-3 py-2.5 border border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-[#0B498B] text-[#6A6A6A]"
-                  />
-                </div>
-                
-                <div>
-                  <label htmlFor="passportNo" className="block text-sm font-medium text-gray-700 mb-2">
-                    Passport No<span className="text-red-500 ml-0.5">*</span>
-                  </label>
-                  <input
-                    type="text"
-                    id="passportNo"
-                    name="passportNo"
-                    value={searchData.passportNo}
-                    onChange={handleChange}
-                    placeholder=""
-                    className="w-full px-3 py-2.5 border border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-[#0B498B] text-[#6A6A6A]"
-                  />
-                </div>
-                
-                <div>
-                  <label htmlFor="referenceNo" className="block text-sm font-medium text-gray-700 mb-2">
-                    Reference No<span className="text-red-500 ml-0.5">*</span>
-                  </label>
-                  <div className="flex items-center">
-                    <input
-                      type="text"
-                      id="referenceNo"
-                      name="referenceNo"
-                      value={searchData.referenceNo}
-                      onChange={handleChange}
-                      placeholder=""
-                      className="w-full px-3 py-2.5 border border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-[#0B498B] text-[#6A6A6A]"
-                    />
-                    <button
-                      type="button"
-                      onClick={handleClear}
-                      className="ml-3 text-sm text-[#0B498B] font-semibold hover:underline"
-                    >
-                      Clear
-                    </button>
-                  </div>
-                </div>
-              </div>
-            </form>
-          </div>
-        </div>
-        
-        {/* Search Button Container */}
-        <div className="flex justify-end p-6 pt-0">
-          <button
-            onClick={handleSearch}
-            disabled={isSearching}
-            className="bg-[#0B498B] text-white px-8 py-2 rounded-md hover:bg-[#083968] transition-colors focus:outline-none focus:ring-2 focus:ring-[#0B498B] focus:ring-opacity-50 disabled:opacity-70 disabled:cursor-not-allowed font-medium"
-          >
-            {isSearching ? 'Searching...' : 'Search'}
-          </button>
-        </div>
+        {/* Render the content based on the active tab */}
+        {renderTabContent()}
       </div>
     </div>
   );
