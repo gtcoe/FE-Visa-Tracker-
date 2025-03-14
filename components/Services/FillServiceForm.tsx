@@ -386,7 +386,7 @@ const FillServiceForm = () => {
       {/* Reference Number */}
       <div className="mx-6 mt-[21px] mb-6  bg-white rounded-2xl border border-[#E6EAF2] shadow-sm overflow-hidden">
         <div className="bg-[#F6F7F9] py-4 px-6 border-b border-gray-200">
-          <p className="text-base font-medium text-[#1C1C1C]">Reference No: MMI2345</p>
+          <p className="text-[15px] font-medium text-[#0B498B]">Reference No: MMI2345</p>
         </div>
         
         <div className="p-6">
@@ -439,9 +439,8 @@ const FillServiceForm = () => {
               onChange={createDateChangeAdapter(handlePersonalInfoChange)}
               label="Date of Birth"
             />
-          </div>
-          
-          <div className="mt-4">
+
+          <div className="mt-4 col-span-1">
             <label className="block text-sm font-medium text-gray-700 mb-2">
               Processing Branch
             </label>
@@ -456,13 +455,14 @@ const FillServiceForm = () => {
               <option value="Bangalore">Bangalore</option>
             </select>
           </div>
+          </div>
         </div>
       </div>
       
       {/* Passport Details */}
       <div className="mx-6 mt-[21px] mb-6  bg-white rounded-2xl border border-[#E6EAF2] shadow-sm overflow-hidden">
         <div className="bg-[#F6F7F9] py-4 px-6 border-b border-gray-200">
-          <p className="text-base font-medium text-[#1C1C1C]">Passport Details</p>
+          <p className="text-[15px] font-medium text-[#0B498B]">Passport Details</p>
         </div>
         
         <div className="p-6">
@@ -510,7 +510,7 @@ const FillServiceForm = () => {
             </div>
           </div>
           
-          <div className="grid grid-cols-2 gap-6 mt-4">
+          <div className="grid grid-cols-4 gap-6 mt-4">
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-2">
                 No of Expired Passport
@@ -545,15 +545,15 @@ const FillServiceForm = () => {
           </div>
         </div>
       </div>
-      
+
       {/* Travel Details */}
       <div className="mx-6 mt-[21px] mb-6 bg-white rounded-2xl border border-[#E6EAF2] shadow-sm overflow-hidden">
         <div className="bg-[#F6F7F9] py-4 px-6 border-b border-gray-200">
-          <p className="text-base font-medium text-[#1C1C1C]">Travel Details</p>
+          <p className="text-[15px] font-medium text-[#0B498B]">Travel Details</p>
         </div>
         
         <div className="p-6">
-          <div className="grid grid-cols-3 gap-6">
+          <div className="grid grid-cols-4 gap-6">
             <DateInput
               name="travelDate"
               value={travelInfo.travelDate}
@@ -569,7 +569,7 @@ const FillServiceForm = () => {
               label="Personal Appearance/Interview Date"
             />
             
-            <div>
+            <div className='col-span-2'>
               <label className="block text-sm font-medium text-gray-700 mb-2">
                 File No/Company Name
               </label>
@@ -634,7 +634,7 @@ const FillServiceForm = () => {
       {/* Visa Requests */}
       <div className="mx-6 mt-[21px] mb-6 bg-white rounded-2xl border border-[#E6EAF2] shadow-sm overflow-hidden">
         <div className="bg-[#F6F7F9] py-4 px-6 border-b border-gray-200">
-          <p className="text-base font-medium text-[#1C1C1C]">Visa Requests</p>
+          <p className="text-[15px] font-medium text-[#0B498B]">Visa Requests</p>
         </div>
         
         <div className="p-6">
@@ -696,7 +696,7 @@ const FillServiceForm = () => {
             </div>
           </div>
           
-          <div className="grid grid-cols-2 gap-6 mt-4">
+          <div className="grid grid-cols-4 gap-6 mt-4">
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-2">
                 Entry Type<span className="text-red-500">*</span>
@@ -741,11 +741,11 @@ const FillServiceForm = () => {
       {/* Address Details */}
       <div className="mx-6 mt-[21px] mb-6 bg-white rounded-2xl border border-[#E6EAF2] shadow-sm overflow-hidden">
         <div className="bg-[#F6F7F9] py-4 px-6 border-b border-gray-200">
-          <p className="text-base font-medium text-[#1C1C1C]">Address Details</p>
+          <p className="text-[15px] font-medium text-[#0B498B]">Address Details</p>
         </div>
         
         <div className="p-6">
-          <div className="grid grid-cols-2 gap-6">
+          <div className="grid grid-cols-4 gap-6">
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-2">
                 Address Line 1
@@ -773,9 +773,7 @@ const FillServiceForm = () => {
                 className="w-full px-3 py-2.5 border border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-[#0B498B] text-[#6A6A6A]"
               />
             </div>
-          </div>
-          
-          <div className="grid grid-cols-2 gap-6 mt-4">
+
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-2">
                 Country
@@ -789,7 +787,7 @@ const FillServiceForm = () => {
                 <option value="">Select</option>
               </select>
             </div>
-            
+
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-2">
                 State
@@ -805,7 +803,7 @@ const FillServiceForm = () => {
             </div>
           </div>
           
-          <div className="grid grid-cols-2 gap-6 mt-4">
+          <div className="grid grid-cols-4 gap-6 mt-4">
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-2">
                 City
@@ -833,9 +831,7 @@ const FillServiceForm = () => {
                 className="w-full px-3 py-2.5 border border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-[#0B498B] text-[#6A6A6A]"
               />
             </div>
-          </div>
-          
-          <div className="grid grid-cols-2 gap-6 mt-4">
+
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-2">
                 Occupation
@@ -863,6 +859,7 @@ const FillServiceForm = () => {
                 className="w-full px-3 py-2.5 border border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-[#0B498B] text-[#6A6A6A]"
               />
             </div>
+            
           </div>
           
           <div className="flex justify-end mt-4">
@@ -880,13 +877,13 @@ const FillServiceForm = () => {
       {/* MI Fields */}
       <div className="mx-6 mt-[21px] mb-6 bg-white rounded-2xl border border-[#E6EAF2] shadow-sm overflow-hidden">
         <div className="bg-[#F6F7F9] py-4 px-6 border-b border-gray-200">
-          <p className="text-base font-medium text-[#1C1C1C]">MI Fields</p>
+          <p className="text-[15px] font-medium text-[#0B498B]">MI Fields</p>
         </div>
         
         <div className="p-6">
           <div>
             <label className="block text-sm font-medium text-gray-700 mb-2">
-              Old Number*
+              Olvt Number
             </label>
             <input
               type="text"
