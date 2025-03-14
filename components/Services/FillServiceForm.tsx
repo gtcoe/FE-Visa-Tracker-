@@ -1,79 +1,152 @@
 "use client";
 
-import React, { useState } from 'react';
+import React, { useState, useMemo, useCallback } from 'react';
 
 const FillServiceForm = () => {
-  const [formData, setFormData] = useState({
+  // Split form state into logical groups
+  const [personalInfo, setPersonalInfo] = useState({
     firstName: '',
     lastName: '',
     emailId: '',
     dateOfBirth: '',
     processingBranch: 'Mumbai',
+  });
+
+  const [passportInfo, setPassportInfo] = useState({
     passportNumber: '',
     dateOfIssue: '',
     dateOfExpiry: '',
     issueAt: '',
     noOfExpiredPassport: '',
     expiredPassportNumber: '',
+  });
+
+  const [travelInfo, setTravelInfo] = useState({
     travelDate: '25/2/2025',
     personalAppearance: '',
     fileNo: '',
+  });
+
+  const [visaInfo, setVisaInfo] = useState({
     visaCountry: 'Netherland',
     visaCategory: 'Business',
     nationality: 'Indian',
     state: 'Delhi',
     entryType: 'Normal',
     remark: '',
+  });
+
+  const [addressInfo, setAddressInfo] = useState({
     addressLine1: '',
     addressLine2: '',
     country: '',
-    state2: '',
+    state: '',
     city: '',
     zip: '',
     occupation: '',
     position: '',
+  });
+
+  const [miFields, setMiFields] = useState({
     oldNumber: 'CCJYHKNEJ253735'
   });
   
   const [submissionType, setSubmissionType] = useState('tentative');
   const [isFixed, setIsFixed] = useState(false);
 
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
+  // Memoized derived values
+  const isFormValid = useMemo(() => {
+    return personalInfo.firstName && 
+           passportInfo.passportNumber && 
+           visaInfo.visaCountry;
+  }, [personalInfo.firstName, passportInfo.passportNumber, visaInfo.visaCountry]);
+
+  // Optimized change handlers with useCallback
+  const handlePersonalInfoChange = useCallback((e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
     const { name, value } = e.target;
-    setFormData(prev => ({
+    setPersonalInfo(prev => ({
       ...prev,
       [name]: value
     }));
-  };
+  }, []);
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handlePassportInfoChange = useCallback((e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
+    const { name, value } = e.target;
+    setPassportInfo(prev => ({
+      ...prev,
+      [name]: value
+    }));
+  }, []);
+
+  const handleTravelInfoChange = useCallback((e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
+    const { name, value } = e.target;
+    setTravelInfo(prev => ({
+      ...prev,
+      [name]: value
+    }));
+  }, []);
+
+  const handleVisaInfoChange = useCallback((e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
+    const { name, value } = e.target;
+    setVisaInfo(prev => ({
+      ...prev,
+      [name]: value
+    }));
+  }, []);
+
+  const handleAddressInfoChange = useCallback((e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
+    const { name, value } = e.target;
+    setAddressInfo(prev => ({
+      ...prev,
+      [name]: value
+    }));
+  }, []);
+
+  const handleMiFieldsChange = useCallback((e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
+    const { name, value } = e.target;
+    setMiFields(prev => ({
+      ...prev,
+      [name]: value
+    }));
+  }, []);
+
+  const handleSubmit = useCallback((e: React.FormEvent) => {
     e.preventDefault();
-    console.log('Form submitted:', formData);
-  };
+    console.log('Form submitted:', {
+      ...personalInfo,
+      ...passportInfo,
+      ...travelInfo,
+      ...visaInfo,
+      ...addressInfo,
+      ...miFields,
+      submissionType,
+      isFixed
+    });
+  }, [personalInfo, passportInfo, travelInfo, visaInfo, addressInfo, miFields, submissionType, isFixed]);
 
-  const handleRadioChange = (value: string) => {
+  const handleRadioChange = useCallback((value: string) => {
     setSubmissionType(value);
-  };
+  }, []);
 
-  const handleCheckboxChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+  const handleCheckboxChange = useCallback((e: React.ChangeEvent<HTMLInputElement>) => {
     setIsFixed(e.target.checked);
-  };
+  }, []);
 
-  const handleAddMore = () => {
+  const handleAddMore = useCallback(() => {
     console.log('Add more visa requests');
-  };
+  }, []);
 
-  const handleUpdateApplicant = () => {
+  const handleUpdateApplicant = useCallback(() => {
     console.log('Update applicant');
-  };
+  }, []);
 
-  const handleBack = () => {
+  const handleBack = useCallback(() => {
     console.log('Back button clicked');
-  };
+  }, []);
 
-  const handleUpdateAndContinue = () => {
+  const handleUpdateAndContinue = useCallback(() => {
     console.log('Update and continue');
-  };
+  }, []);
 
   return (
     <div className="space-y-6">
@@ -92,8 +165,8 @@ const FillServiceForm = () => {
               <input
                 type="text"
                 name="firstName"
-                value={formData.firstName}
-                onChange={handleChange}
+                value={personalInfo.firstName}
+                onChange={handlePersonalInfoChange}
                 placeholder="Enter first name"
                 className="w-full px-3 py-2.5 border border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-[#0B498B] text-[#6A6A6A]"
               />
@@ -106,8 +179,8 @@ const FillServiceForm = () => {
               <input
                 type="text"
                 name="lastName"
-                value={formData.lastName}
-                onChange={handleChange}
+                value={personalInfo.lastName}
+                onChange={handlePersonalInfoChange}
                 placeholder="Enter Name"
                 className="w-full px-3 py-2.5 border border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-[#0B498B] text-[#6A6A6A]"
               />
@@ -120,8 +193,8 @@ const FillServiceForm = () => {
               <input
                 type="email"
                 name="emailId"
-                value={formData.emailId}
-                onChange={handleChange}
+                value={personalInfo.emailId}
+                onChange={handlePersonalInfoChange}
                 placeholder="Enter Email id"
                 className="w-full px-3 py-2.5 border border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-[#0B498B] text-[#6A6A6A]"
               />
@@ -133,8 +206,8 @@ const FillServiceForm = () => {
               </label>
               <select
                 name="dateOfBirth"
-                value={formData.dateOfBirth}
-                onChange={handleChange}
+                value={personalInfo.dateOfBirth}
+                onChange={handlePersonalInfoChange}
                 className="w-full px-3 py-2.5 border border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-[#0B498B] text-[#6A6A6A] appearance-none bg-white"
               >
                 <option value="">Select</option>
@@ -150,8 +223,8 @@ const FillServiceForm = () => {
             </label>
             <select
               name="processingBranch"
-              value={formData.processingBranch}
-              onChange={handleChange}
+              value={personalInfo.processingBranch}
+              onChange={handlePersonalInfoChange}
               className="w-full max-w-xs px-3 py-2.5 border border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-[#0B498B] text-[#6A6A6A] appearance-none bg-white"
             >
               <option value="Mumbai">Mumbai</option>
@@ -177,8 +250,8 @@ const FillServiceForm = () => {
               <input
                 type="text"
                 name="passportNumber"
-                value={formData.passportNumber}
-                onChange={handleChange}
+                value={passportInfo.passportNumber}
+                onChange={handlePassportInfoChange}
                 placeholder="-"
                 className="w-full px-3 py-2.5 border border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-[#0B498B] text-[#6A6A6A]"
               />
@@ -190,8 +263,8 @@ const FillServiceForm = () => {
               </label>
               <select
                 name="dateOfIssue"
-                value={formData.dateOfIssue}
-                onChange={handleChange}
+                value={passportInfo.dateOfIssue}
+                onChange={handlePassportInfoChange}
                 className="w-full px-3 py-2.5 border border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-[#0B498B] text-[#6A6A6A] appearance-none bg-white"
               >
                 <option value="">-</option>
@@ -205,8 +278,8 @@ const FillServiceForm = () => {
               <input
                 type="text"
                 name="dateOfExpiry"
-                value={formData.dateOfExpiry}
-                onChange={handleChange}
+                value={passportInfo.dateOfExpiry}
+                onChange={handlePassportInfoChange}
                 placeholder="-"
                 className="w-full px-3 py-2.5 border border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-[#0B498B] text-[#6A6A6A]"
               />
@@ -219,8 +292,8 @@ const FillServiceForm = () => {
               <input
                 type="text"
                 name="issueAt"
-                value={formData.issueAt}
-                onChange={handleChange}
+                value={passportInfo.issueAt}
+                onChange={handlePassportInfoChange}
                 placeholder="-"
                 className="w-full px-3 py-2.5 border border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-[#0B498B] text-[#6A6A6A]"
               />
@@ -234,8 +307,8 @@ const FillServiceForm = () => {
               </label>
               <select
                 name="noOfExpiredPassport"
-                value={formData.noOfExpiredPassport}
-                onChange={handleChange}
+                value={passportInfo.noOfExpiredPassport}
+                onChange={handlePassportInfoChange}
                 className="w-full px-3 py-2.5 border border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-[#0B498B] text-[#6A6A6A] appearance-none bg-white"
               >
                 <option value="">-</option>
@@ -249,8 +322,8 @@ const FillServiceForm = () => {
               <input
                 type="text"
                 name="expiredPassportNumber"
-                value={formData.expiredPassportNumber}
-                onChange={handleChange}
+                value={passportInfo.expiredPassportNumber}
+                onChange={handlePassportInfoChange}
                 placeholder="-"
                 className="w-full px-3 py-2.5 border border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-[#0B498B] text-[#6A6A6A]"
               />
@@ -273,8 +346,8 @@ const FillServiceForm = () => {
               </label>
               <select
                 name="travelDate"
-                value={formData.travelDate}
-                onChange={handleChange}
+                value={travelInfo.travelDate}
+                onChange={handleTravelInfoChange}
                 className="w-full px-3 py-2.5 border border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-[#0B498B] text-[#6A6A6A] appearance-none bg-white"
               >
                 <option value="25/2/2025">25/2/2025</option>
@@ -287,8 +360,8 @@ const FillServiceForm = () => {
               </label>
               <select
                 name="personalAppearance"
-                value={formData.personalAppearance}
-                onChange={handleChange}
+                value={travelInfo.personalAppearance}
+                onChange={handleTravelInfoChange}
                 className="w-full px-3 py-2.5 border border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-[#0B498B] text-[#6A6A6A] appearance-none bg-white"
               >
                 <option value="">Select</option>
@@ -302,8 +375,8 @@ const FillServiceForm = () => {
               <input
                 type="text"
                 name="fileNo"
-                value={formData.fileNo}
-                onChange={handleChange}
+                value={travelInfo.fileNo}
+                onChange={handleTravelInfoChange}
                 placeholder="Enter Name"
                 className="w-full px-3 py-2.5 border border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-[#0B498B] text-[#6A6A6A]"
               />
@@ -371,8 +444,8 @@ const FillServiceForm = () => {
               </label>
               <select
                 name="visaCountry"
-                value={formData.visaCountry}
-                onChange={handleChange}
+                value={visaInfo.visaCountry}
+                onChange={handleVisaInfoChange}
                 className="w-full px-3 py-2.5 border border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-[#0B498B] text-[#6A6A6A] appearance-none bg-white"
               >
                 <option value="Netherland">Netherland</option>
@@ -385,8 +458,8 @@ const FillServiceForm = () => {
               </label>
               <select
                 name="visaCategory"
-                value={formData.visaCategory}
-                onChange={handleChange}
+                value={visaInfo.visaCategory}
+                onChange={handleVisaInfoChange}
                 className="w-full px-3 py-2.5 border border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-[#0B498B] text-[#6A6A6A] appearance-none bg-white"
               >
                 <option value="Business">Business</option>
@@ -399,8 +472,8 @@ const FillServiceForm = () => {
               </label>
               <select
                 name="nationality"
-                value={formData.nationality}
-                onChange={handleChange}
+                value={visaInfo.nationality}
+                onChange={handleVisaInfoChange}
                 className="w-full px-3 py-2.5 border border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-[#0B498B] text-[#6A6A6A] appearance-none bg-white"
               >
                 <option value="Indian">Indian</option>
@@ -413,8 +486,8 @@ const FillServiceForm = () => {
               </label>
               <select
                 name="state"
-                value={formData.state}
-                onChange={handleChange}
+                value={visaInfo.state}
+                onChange={handleVisaInfoChange}
                 className="w-full px-3 py-2.5 border border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-[#0B498B] text-[#6A6A6A] appearance-none bg-white"
               >
                 <option value="Delhi">Delhi</option>
@@ -429,8 +502,8 @@ const FillServiceForm = () => {
               </label>
               <select
                 name="entryType"
-                value={formData.entryType}
-                onChange={handleChange}
+                value={visaInfo.entryType}
+                onChange={handleVisaInfoChange}
                 className="w-full px-3 py-2.5 border border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-[#0B498B] text-[#6A6A6A] appearance-none bg-white"
               >
                 <option value="Normal">Normal</option>
@@ -444,8 +517,8 @@ const FillServiceForm = () => {
               <input
                 type="text"
                 name="remark"
-                value={formData.remark}
-                onChange={handleChange}
+                value={visaInfo.remark}
+                onChange={handleVisaInfoChange}
                 placeholder=""
                 className="w-full px-3 py-2.5 border border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-[#0B498B] text-[#6A6A6A]"
               />
@@ -479,8 +552,8 @@ const FillServiceForm = () => {
               <input
                 type="text"
                 name="addressLine1"
-                value={formData.addressLine1}
-                onChange={handleChange}
+                value={addressInfo.addressLine1}
+                onChange={handleAddressInfoChange}
                 placeholder="Enter first name"
                 className="w-full px-3 py-2.5 border border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-[#0B498B] text-[#6A6A6A]"
               />
@@ -493,8 +566,8 @@ const FillServiceForm = () => {
               <input
                 type="text"
                 name="addressLine2"
-                value={formData.addressLine2}
-                onChange={handleChange}
+                value={addressInfo.addressLine2}
+                onChange={handleAddressInfoChange}
                 placeholder="Enter Name"
                 className="w-full px-3 py-2.5 border border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-[#0B498B] text-[#6A6A6A]"
               />
@@ -508,8 +581,8 @@ const FillServiceForm = () => {
               </label>
               <select
                 name="country"
-                value={formData.country}
-                onChange={handleChange}
+                value={addressInfo.country}
+                onChange={handleAddressInfoChange}
                 className="w-full px-3 py-2.5 border border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-[#0B498B] text-[#6A6A6A] appearance-none bg-white"
               >
                 <option value="">Select</option>
@@ -521,9 +594,9 @@ const FillServiceForm = () => {
                 State
               </label>
               <select
-                name="state2"
-                value={formData.state2}
-                onChange={handleChange}
+                name="state"
+                value={addressInfo.state}
+                onChange={handleAddressInfoChange}
                 className="w-full px-3 py-2.5 border border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-[#0B498B] text-[#6A6A6A] appearance-none bg-white"
               >
                 <option value="">Select</option>
@@ -538,8 +611,8 @@ const FillServiceForm = () => {
               </label>
               <select
                 name="city"
-                value={formData.city}
-                onChange={handleChange}
+                value={addressInfo.city}
+                onChange={handleAddressInfoChange}
                 className="w-full px-3 py-2.5 border border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-[#0B498B] text-[#6A6A6A] appearance-none bg-white"
               >
                 <option value="">Select</option>
@@ -553,8 +626,8 @@ const FillServiceForm = () => {
               <input
                 type="text"
                 name="zip"
-                value={formData.zip}
-                onChange={handleChange}
+                value={addressInfo.zip}
+                onChange={handleAddressInfoChange}
                 placeholder="Enter Zip"
                 className="w-full px-3 py-2.5 border border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-[#0B498B] text-[#6A6A6A]"
               />
@@ -569,8 +642,8 @@ const FillServiceForm = () => {
               <input
                 type="text"
                 name="occupation"
-                value={formData.occupation}
-                onChange={handleChange}
+                value={addressInfo.occupation}
+                onChange={handleAddressInfoChange}
                 placeholder="Enter Occupation"
                 className="w-full px-3 py-2.5 border border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-[#0B498B] text-[#6A6A6A]"
               />
@@ -583,8 +656,8 @@ const FillServiceForm = () => {
               <input
                 type="text"
                 name="position"
-                value={formData.position}
-                onChange={handleChange}
+                value={addressInfo.position}
+                onChange={handleAddressInfoChange}
                 placeholder="Enter Position"
                 className="w-full px-3 py-2.5 border border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-[#0B498B] text-[#6A6A6A]"
               />
@@ -617,8 +690,8 @@ const FillServiceForm = () => {
             <input
               type="text"
               name="oldNumber"
-              value={formData.oldNumber}
-              onChange={handleChange}
+              value={miFields.oldNumber}
+              onChange={handleMiFieldsChange}
               className="w-full max-w-md px-3 py-2.5 border border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-[#0B498B] text-[#6A6A6A]"
               readOnly
             />
@@ -640,6 +713,7 @@ const FillServiceForm = () => {
           type="button"
           onClick={handleUpdateAndContinue}
           className="bg-[#0B498B] text-white px-6 py-2 rounded-md hover:bg-[#083968] transition-colors focus:outline-none focus:ring-2 focus:ring-[#0B498B] focus:ring-opacity-50 font-medium"
+          disabled={!isFormValid}
         >
           Update & Continue
         </button>
@@ -648,4 +722,4 @@ const FillServiceForm = () => {
   );
 };
 
-export default FillServiceForm; 
+export default React.memo(FillServiceForm); 

@@ -1,5 +1,5 @@
 import React from 'react';
-import SearchPax from '@component/components/Services/SearchPax';
+import SearchPax from '@component/components/Services/CommonScreen';
 
 export default function SearchPaxPage() {
   return (
