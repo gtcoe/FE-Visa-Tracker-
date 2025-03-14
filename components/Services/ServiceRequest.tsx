@@ -3,8 +3,10 @@
 import React, { useState } from 'react';
 import { FiMapPin, FiPhone, FiGlobe } from 'react-icons/fi';
 import CustomDropdown from './CustomDropdown';
+import { useRouter } from 'next/navigation';
 
 const ServiceRequest = () => {
+  const router = useRouter();
   const [formData, setFormData] = useState({
     title: '',
     paxType: 'Corporate',
@@ -16,6 +18,7 @@ const ServiceRequest = () => {
     referrer: '',
     fileNo: ''
   });
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
@@ -32,10 +35,26 @@ const ServiceRequest = () => {
     }));
   };
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    console.log(formData);
-    // Here you would typically send the data to an API
+    setIsSubmitting(true);
+    
+    try {
+      // Make POST API request to save form data
+      // For now, we'll just simulate the API call with a timeout
+      // Replace this with your actual API call
+      console.log('Submitting form data:', formData);
+      
+      // Simulating API request
+      await new Promise(resolve => setTimeout(resolve, 500));
+      
+      // Navigate to the Search Pax screen
+      router.push('/services/search-pax');
+    } catch (error) {
+      console.error('Error submitting form:', error);
+    } finally {
+      setIsSubmitting(false);
+    }
   };
 
   const paxTypeOptions = [
@@ -239,19 +258,20 @@ const ServiceRequest = () => {
             
             <div className="flex items-center mb-6">
               <FiGlobe className="text-[#0B498B] mr-2 flex-shrink-0" />
-              <p className="text-sm text-[#1C1C1C]">www. visaistic.com</p>
+              <p className="text-sm text-[#1C1C1C]">www.visaistic.com</p>
             </div>
             
             <div className="flex items-center justify-between">
               <p className="text-sm font-medium text-[#F59E0B]">
-                Note: Please select the nearest branch and mail the documents to ths specific address as mentioned
+                Note: Please select the nearest branch and mail the documents to the specific address as mentioned
               </p>
               
               <button
                 type="submit"
-                className="bg-[#0B498B] text-white px-4 py-2 rounded-md hover:bg-[#083968] transition-colors focus:outline-none focus:ring-2 focus:ring-[#0B498B] focus:ring-opacity-50"
+                disabled={isSubmitting}
+                className="bg-[#0B498B] text-white px-4 py-2 rounded-md hover:bg-[#083968] transition-colors focus:outline-none focus:ring-2 focus:ring-[#0B498B] focus:ring-opacity-50 disabled:opacity-70 disabled:cursor-not-allowed"
               >
-                Save & Continue
+                {isSubmitting ? 'Saving...' : 'Save & Continue'}
               </button>
             </div>
           </div>
