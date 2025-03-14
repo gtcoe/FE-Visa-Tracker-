@@ -259,7 +259,7 @@ const FillServiceForm = () => {
   });
 
   const [miFields, setMiFields] = useState({
-    oldNumber: 'CCJYHKNEJ253735'
+    oldNumber: ''
   });
   
   const [submissionType, setSubmissionType] = useState('tentative');
@@ -726,7 +726,7 @@ const FillServiceForm = () => {
             </div>
           </div>
           
-          <div className="flex justify-end mt-4">
+          <div className="flex justify-end mt-6">
             <button
               type="button"
               onClick={handleAddMore}
@@ -890,19 +890,19 @@ const FillServiceForm = () => {
               name="oldNumber"
               value={miFields.oldNumber}
               onChange={handleMiFieldsChange}
+              placeholder="Enter Olvt number"
               className="w-full max-w-md px-3 py-2.5 border border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-[#0B498B] text-[#6A6A6A]"
-              readOnly
             />
           </div>
         </div>
       </div>
       
       {/* Bottom Buttons */}
-      <div className="flex justify-between items-center">
+      <div className="flex justify-between items-center mx-6 my-8">
         <button
           type="button"
           onClick={handleBack}
-          className="px-6 py-2 border border-gray-300 rounded-md text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-[#0B498B]"
+          className="px-6 py-2.5 border border-gray-300 rounded-md text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-[#0B498B] font-medium"
         >
           Back
         </button>
@@ -910,7 +910,7 @@ const FillServiceForm = () => {
         <button
           type="button"
           onClick={handleUpdateAndContinue}
-          className="bg-[#0B498B] text-white px-6 py-2 rounded-md hover:bg-[#083968] transition-colors focus:outline-none focus:ring-2 focus:ring-[#0B498B] focus:ring-opacity-50 font-medium"
+          className="bg-[#0B498B] text-white px-6 py-2.5 rounded-md hover:bg-[#083968] transition-colors focus:outline-none focus:ring-2 focus:ring-[#0B498B] focus:ring-opacity-50 font-medium"
           disabled={!isFormValid}
         >
           Update & Continue
