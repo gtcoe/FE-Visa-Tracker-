@@ -1,6 +1,217 @@
 "use client";
 
-import React, { useState, useMemo, useCallback } from 'react';
+import React, { useState, useMemo, useCallback, useRef, useEffect, ChangeEvent } from 'react';
+
+// Define a more flexible type for change events
+type FormChangeEvent = {
+  target: {
+    name: string;
+    value: string;
+  };
+};
+
+// Define interfaces for props and event handlers
+interface DateInputProps {
+  name: string;
+  value: string;
+  onChange: (e: FormChangeEvent) => void;
+  label: string;
+  required?: boolean;
+  placeholder?: string;
+}
+
+// Custom DateInput component that supports both manual entry and date picker
+const DateInput: React.FC<DateInputProps> = ({ 
+  name, 
+  value, 
+  onChange, 
+  label, 
+  required = false,
+  placeholder = "DD/MM/YYYY"
+}) => {
+  const [inputValue, setInputValue] = useState('');
+  const [showPicker, setShowPicker] = useState(false);
+  const pickerRef = useRef<HTMLInputElement>(null);
+  const inputRef = useRef<HTMLInputElement>(null);
+  const containerRef = useRef<HTMLDivElement>(null);
+  const hiddenDateInputRef = useRef<HTMLInputElement>(null);
+  
+  // Convert ISO format to display format (DD/MM/YYYY)
+  useEffect(() => {
+    if (value) {
+      try {
+        // If it's already in ISO format, convert to DD/MM/YYYY for display
+        if (value.includes('-')) {
+          const date = new Date(value);
+          if (!isNaN(date.getTime())) {
+            const day = String(date.getDate()).padStart(2, '0');
+            const month = String(date.getMonth() + 1).padStart(2, '0');
+            const year = date.getFullYear();
+            setInputValue(`${day}/${month}/${year}`);
+          }
+        } else {
+          // If it's already in DD/MM/YYYY format, use it directly
+          setInputValue(value);
+        }
+      } catch (e) {
+        setInputValue(value || '');
+      }
+    } else {
+      setInputValue('');
+    }
+  }, [value]);
+  
+  // Focus and initialize the date picker when it appears
+  useEffect(() => {
+    if (showPicker && pickerRef.current) {
+      // Set default date to today if no value is present
+      if (!value && pickerRef.current) {
+        const today = new Date();
+        const year = today.getFullYear();
+        const month = String(today.getMonth() + 1).padStart(2, '0');
+        const day = String(today.getDate()).padStart(2, '0');
+        pickerRef.current.value = `${year}-${month}-${day}`;
+      }
+      
+      // Focus the picker
+      setTimeout(() => {
+        if (pickerRef.current) {
+          pickerRef.current.focus();
+        }
+      }, 50);
+    }
+  }, [showPicker, value]);
+  
+  // Handle clicking outside to close the date picker
+  useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      if (containerRef.current && !containerRef.current.contains(event.target as Node)) {
+        setShowPicker(false);
+      }
+    };
+    
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => {
+      document.removeEventListener('mousedown', handleClickOutside);
+    };
+  }, []);
+  
+  // Handle manual typing in DD/MM/YYYY format
+  const handleInputChange = (e: ChangeEvent<HTMLInputElement>) => {
+    const rawValue = e.target.value;
+    setInputValue(rawValue);
+    
+    // Auto-add slashes while typing (if not deleting)
+    if (rawValue.length === 2 && inputValue.length < 2 && !rawValue.includes('/')) {
+      setInputValue(rawValue + '/');
+    } else if (rawValue.length === 5 && inputValue.length < 5 && rawValue.indexOf('/', 3) === -1) {
+      setInputValue(rawValue + '/');
+    }
+    
+    // Convert DD/MM/YYYY to YYYY-MM-DD for the actual value
+    if (rawValue.match(/^\d{2}\/\d{2}\/\d{4}$/)) {
+      const [day, month, year] = rawValue.split('/');
+      const isoDate = `${year}-${month}-${day}`;
+      // Create a synthetic event to pass to the parent onChange handler
+      const syntheticEvent: FormChangeEvent = {
+        target: {
+          name,
+          value: isoDate
+        }
+      };
+      onChange(syntheticEvent);
+    }
+  };
+  
+  // Handle date selection from the picker
+  const handleDatePickerChange = (e: ChangeEvent<HTMLInputElement>) => {
+    const isoDate = e.target.value; // YYYY-MM-DD
+    
+    // Create a synthetic event to pass to the parent onChange handler
+    const syntheticEvent: FormChangeEvent = {
+      target: {
+        name,
+        value: isoDate
+      }
+    };
+    
+    onChange(syntheticEvent);
+    
+    // Convert ISO to DD/MM/YYYY for display
+    if (isoDate) {
+      const [year, month, day] = isoDate.split('-');
+      setInputValue(`${day}/${month}/${year}`);
+    }
+  };
+  
+  // Toggle date picker visibility
+  const openCalendar = useCallback(() => {
+    if (hiddenDateInputRef.current) {
+      // Use the native date picker
+      hiddenDateInputRef.current.showPicker?.();
+    }
+  }, []);
+  
+  // Handle keyboard accessibility
+  const handleKeyDown = useCallback((e: React.KeyboardEvent) => {
+    if (e.key === 'Escape') {
+      setShowPicker(false);
+    }
+  }, []);
+  
+  return (
+    <div ref={containerRef} onKeyDown={handleKeyDown}>
+      <label className="block text-sm font-medium text-gray-700 mb-2">
+        {label}{required && <span className="text-red-500 ml-0.5">*</span>}
+      </label>
+      <div className="relative">
+        <input
+          ref={inputRef}
+          type="text"
+          value={inputValue}
+          onChange={handleInputChange}
+          placeholder={placeholder}
+          className="w-full px-3 py-2.5 border border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-[#0B498B] text-[#6A6A6A] pr-10"
+          aria-label={`${label} in format DD/MM/YYYY`}
+        />
+        <button
+          type="button"
+          onClick={openCalendar}
+          className="absolute right-2 top-1/2 transform -translate-y-1/2 text-gray-500 hover:text-gray-700 focus:outline-none"
+          aria-label="Open date picker"
+          title="Open date picker"
+        >
+          <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
+          </svg>
+        </button>
+        
+        {/* Hidden date input for direct calendar access */}
+        <input
+          ref={hiddenDateInputRef}
+          type="date"
+          className="sr-only"
+          defaultValue={value || ''}
+          onChange={handleDatePickerChange}
+          aria-hidden="true"
+        />
+        
+        {showPicker && (
+          <div className="absolute z-10 mt-1 w-full bg-white rounded-md shadow-lg border border-gray-300">
+            <input
+              ref={pickerRef}
+              type="date"
+              defaultValue={value || ''}
+              onChange={handleDatePickerChange}
+              className="w-full px-3 py-2 border-0 focus:outline-none focus:ring-1 focus:ring-[#0B498B]"
+              aria-label={`Date picker for ${label}`}
+            />
+          </div>
+        )}
+      </div>
+    </div>
+  );
+};
 
 const FillServiceForm = () => {
   // Split form state into logical groups
@@ -163,6 +374,13 @@ const FillServiceForm = () => {
     }
   }, []);
 
+  // Adapter function to convert the form handlers to the DateInput component's handler
+  const createDateChangeAdapter = (handler: (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => void) => {
+    return (e: FormChangeEvent) => {
+      handler(e as any); // Safe to cast here since our FormChangeEvent has the necessary properties
+    };
+  };
+
   return (
     <div className="space-y-6">
       {/* Reference Number */}
@@ -215,18 +433,12 @@ const FillServiceForm = () => {
               />
             </div>
             
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">
-                Date of Birth
-              </label>
-              <input
-                type="date"
-                name="dateOfBirth"
-                value={personalInfo.dateOfBirth}
-                onChange={handlePersonalInfoChange}
-                className="w-full px-3 py-2.5 border border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-[#0B498B] text-[#6A6A6A] appearance-none bg-white"
-              />
-            </div>
+            <DateInput
+              name="dateOfBirth"
+              value={personalInfo.dateOfBirth}
+              onChange={createDateChangeAdapter(handlePersonalInfoChange)}
+              label="Date of Birth"
+            />
           </div>
           
           <div className="mt-4">
@@ -269,31 +481,19 @@ const FillServiceForm = () => {
               />
             </div>
             
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">
-                Date of Issue
-              </label>
-              <input
-                type="date"
-                name="dateOfIssue"
-                value={passportInfo.dateOfIssue}
-                onChange={handlePassportInfoChange}
-                className="w-full px-3 py-2.5 border border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-[#0B498B] text-[#6A6A6A] appearance-none bg-white"
-              />
-            </div>
+            <DateInput
+              name="dateOfIssue"
+              value={passportInfo.dateOfIssue}
+              onChange={createDateChangeAdapter(handlePassportInfoChange)}
+              label="Date of Issue"
+            />
             
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">
-                Date of Expiry
-              </label>
-              <input
-                type="date"
-                name="dateOfExpiry"
-                value={passportInfo.dateOfExpiry}
-                onChange={handlePassportInfoChange}
-                className="w-full px-3 py-2.5 border border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-[#0B498B] text-[#6A6A6A] appearance-none bg-white"
-              />
-            </div>
+            <DateInput
+              name="dateOfExpiry"
+              value={passportInfo.dateOfExpiry}
+              onChange={createDateChangeAdapter(handlePassportInfoChange)}
+              label="Date of Expiry"
+            />
             
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-2">
@@ -354,31 +554,20 @@ const FillServiceForm = () => {
         
         <div className="p-6">
           <div className="grid grid-cols-3 gap-6">
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">
-                Travel Date<span className="text-red-500">*</span>
-              </label>
-              <input
-                type="date"
-                name="travelDate"
-                value={travelInfo.travelDate}
-                onChange={handleTravelInfoChange}
-                className="w-full px-3 py-2.5 border border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-[#0B498B] text-[#6A6A6A] appearance-none bg-white"
-              />
-            </div>
+            <DateInput
+              name="travelDate"
+              value={travelInfo.travelDate}
+              onChange={createDateChangeAdapter(handleTravelInfoChange)}
+              label="Travel Date"
+              required={true}
+            />
             
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">
-                Personal Appearance/Interview Date
-              </label>
-              <input
-                type="date"
-                name="personalAppearance"
-                value={travelInfo.personalAppearance}
-                onChange={handleTravelInfoChange}
-                className="w-full px-3 py-2.5 border border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-[#0B498B] text-[#6A6A6A] appearance-none bg-white"
-              />
-            </div>
+            <DateInput
+              name="personalAppearance"
+              value={travelInfo.personalAppearance}
+              onChange={createDateChangeAdapter(handleTravelInfoChange)}
+              label="Personal Appearance/Interview Date"
+            />
             
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-2">
