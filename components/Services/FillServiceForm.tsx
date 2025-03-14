@@ -711,7 +711,7 @@ const FillServiceForm = () => {
               </select>
             </div>
             
-            <div className="col-span-2">
+            <div>
               <label className="block text-sm font-medium text-gray-700 mb-2">
                 Remark
               </label>
@@ -725,7 +725,7 @@ const FillServiceForm = () => {
               />
             </div>
             
-            <div className="flex items-end justify-end">
+            <div className="col-span-2 flex items-end justify-end">
               <button
                 type="button"
                 onClick={handleAddMore}
