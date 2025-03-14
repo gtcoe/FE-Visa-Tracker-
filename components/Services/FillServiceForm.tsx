@@ -151,7 +151,7 @@ const FillServiceForm = () => {
   return (
     <div className="space-y-6">
       {/* Reference Number */}
-      <div className="bg-white rounded-2xl border border-[#E6EAF2] shadow-sm overflow-hidden">
+      <div className="mx-6 mt-[21px] mb-6  bg-white rounded-2xl border border-[#E6EAF2] shadow-sm overflow-hidden">
         <div className="bg-[#F6F7F9] py-4 px-6 border-b border-gray-200">
           <p className="text-base font-medium text-[#1C1C1C]">Reference No: MMI2345</p>
         </div>
@@ -236,7 +236,7 @@ const FillServiceForm = () => {
       </div>
       
       {/* Passport Details */}
-      <div className="bg-white rounded-2xl border border-[#E6EAF2] shadow-sm overflow-hidden">
+      <div className="mx-6 mt-[21px] mb-6  bg-white rounded-2xl border border-[#E6EAF2] shadow-sm overflow-hidden">
         <div className="bg-[#F6F7F9] py-4 px-6 border-b border-gray-200">
           <p className="text-base font-medium text-[#1C1C1C]">Passport Details</p>
         </div>
@@ -333,7 +333,7 @@ const FillServiceForm = () => {
       </div>
       
       {/* Travel Details */}
-      <div className="bg-white rounded-2xl border border-[#E6EAF2] shadow-sm overflow-hidden">
+      <div className="mx-6 mt-[21px] mb-6 bg-white rounded-2xl border border-[#E6EAF2] shadow-sm overflow-hidden">
         <div className="bg-[#F6F7F9] py-4 px-6 border-b border-gray-200">
           <p className="text-base font-medium text-[#1C1C1C]">Travel Details</p>
         </div>
@@ -431,7 +431,7 @@ const FillServiceForm = () => {
       </div>
       
       {/* Visa Requests */}
-      <div className="bg-white rounded-2xl border border-[#E6EAF2] shadow-sm overflow-hidden">
+      <div className="mx-6 mt-[21px] mb-6 bg-white rounded-2xl border border-[#E6EAF2] shadow-sm overflow-hidden">
         <div className="bg-[#F6F7F9] py-4 px-6 border-b border-gray-200">
           <p className="text-base font-medium text-[#1C1C1C]">Visa Requests</p>
         </div>
@@ -538,7 +538,7 @@ const FillServiceForm = () => {
       </div>
       
       {/* Address Details */}
-      <div className="bg-white rounded-2xl border border-[#E6EAF2] shadow-sm overflow-hidden">
+      <div className="mx-6 mt-[21px] mb-6 bg-white rounded-2xl border border-[#E6EAF2] shadow-sm overflow-hidden">
         <div className="bg-[#F6F7F9] py-4 px-6 border-b border-gray-200">
           <p className="text-base font-medium text-[#1C1C1C]">Address Details</p>
         </div>
@@ -677,7 +677,7 @@ const FillServiceForm = () => {
       </div>
       
       {/* MI Fields */}
-      <div className="bg-white rounded-2xl border border-[#E6EAF2] shadow-sm overflow-hidden">
+      <div className="mx-6 mt-[21px] mb-6 bg-white rounded-2xl border border-[#E6EAF2] shadow-sm overflow-hidden">
         <div className="bg-[#F6F7F9] py-4 px-6 border-b border-gray-200">
           <p className="text-base font-medium text-[#1C1C1C]">MI Fields</p>
         </div>
