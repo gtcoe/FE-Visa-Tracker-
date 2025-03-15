@@ -158,6 +158,7 @@ const DateInput = ({ name, value, onChange, label, required = false, placeholder
                     setInputValue(value);
                 }
             } catch (e) {
+                console.log(e);
                 setInputValue(value || '');
             }
         } else {
@@ -267,13 +268,13 @@ const DateInput = ({ name, value, onChange, label, required = false, placeholder
                         children: "*"
                     }, void 0, false, {
                         fileName: "[project]/components/ApplicationTracker/StatusForm.tsx",
-                        lineNumber: 174,
+                        lineNumber: 189,
                         columnNumber: 29
                     }, this)
                 ]
             }, void 0, true, {
                 fileName: "[project]/components/ApplicationTracker/StatusForm.tsx",
-                lineNumber: 173,
+                lineNumber: 188,
                 columnNumber: 7
             }, this),
             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -289,7 +290,7 @@ const DateInput = ({ name, value, onChange, label, required = false, placeholder
                         "aria-label": `${label} in format DD/MM/YYYY`
                     }, void 0, false, {
                         fileName: "[project]/components/ApplicationTracker/StatusForm.tsx",
-                        lineNumber: 177,
+                        lineNumber: 192,
                         columnNumber: 9
                     }, this),
                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("button", {
@@ -313,7 +314,7 @@ const DateInput = ({ name, value, onChange, label, required = false, placeholder
                                     strokeLinejoin: "round"
                                 }, void 0, false, {
                                     fileName: "[project]/components/ApplicationTracker/StatusForm.tsx",
-                                    lineNumber: 194,
+                                    lineNumber: 209,
                                     columnNumber: 13
                                 }, this),
                                 /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("path", {
@@ -324,7 +325,7 @@ const DateInput = ({ name, value, onChange, label, required = false, placeholder
                                     strokeLinejoin: "round"
                                 }, void 0, false, {
                                     fileName: "[project]/components/ApplicationTracker/StatusForm.tsx",
-                                    lineNumber: 195,
+                                    lineNumber: 210,
                                     columnNumber: 13
                                 }, this),
                                 /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("path", {
@@ -335,7 +336,7 @@ const DateInput = ({ name, value, onChange, label, required = false, placeholder
                                     strokeLinejoin: "round"
                                 }, void 0, false, {
                                     fileName: "[project]/components/ApplicationTracker/StatusForm.tsx",
-                                    lineNumber: 196,
+                                    lineNumber: 211,
                                     columnNumber: 13
                                 }, this),
                                 /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("path", {
@@ -346,18 +347,18 @@ const DateInput = ({ name, value, onChange, label, required = false, placeholder
                                     strokeLinejoin: "round"
                                 }, void 0, false, {
                                     fileName: "[project]/components/ApplicationTracker/StatusForm.tsx",
-                                    lineNumber: 197,
+                                    lineNumber: 212,
                                     columnNumber: 13
                                 }, this)
                             ]
                         }, void 0, true, {
                             fileName: "[project]/components/ApplicationTracker/StatusForm.tsx",
-                            lineNumber: 193,
+                            lineNumber: 208,
                             columnNumber: 11
                         }, this)
                     }, void 0, false, {
                         fileName: "[project]/components/ApplicationTracker/StatusForm.tsx",
-                        lineNumber: 186,
+                        lineNumber: 201,
                         columnNumber: 9
                     }, this),
                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("input", {
@@ -369,7 +370,7 @@ const DateInput = ({ name, value, onChange, label, required = false, placeholder
                         "aria-hidden": "true"
                     }, void 0, false, {
                         fileName: "[project]/components/ApplicationTracker/StatusForm.tsx",
-                        lineNumber: 202,
+                        lineNumber: 217,
                         columnNumber: 9
                     }, this),
                     showPicker && /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -383,24 +384,24 @@ const DateInput = ({ name, value, onChange, label, required = false, placeholder
                             "aria-label": `Date picker for ${label}`
                         }, void 0, false, {
                             fileName: "[project]/components/ApplicationTracker/StatusForm.tsx",
-                            lineNumber: 213,
+                            lineNumber: 228,
                             columnNumber: 13
                         }, this)
                     }, void 0, false, {
                         fileName: "[project]/components/ApplicationTracker/StatusForm.tsx",
-                        lineNumber: 212,
+                        lineNumber: 227,
                         columnNumber: 11
                     }, this)
                 ]
             }, void 0, true, {
                 fileName: "[project]/components/ApplicationTracker/StatusForm.tsx",
-                lineNumber: 176,
+                lineNumber: 191,
                 columnNumber: 7
             }, this)
         ]
     }, void 0, true, {
         fileName: "[project]/components/ApplicationTracker/StatusForm.tsx",
-        lineNumber: 172,
+        lineNumber: 187,
         columnNumber: 5
     }, this);
 };
@@ -481,7 +482,7 @@ const StatusForm = ({ onSearch })=>{
                 children: "Check Realtime Status Online"
             }, void 0, false, {
                 fileName: "[project]/components/ApplicationTracker/StatusForm.tsx",
-                lineNumber: 276,
+                lineNumber: 291,
                 columnNumber: 7
             }, this),
             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("form", {
@@ -498,24 +499,24 @@ const StatusForm = ({ onSearch })=>{
                                         children: "Reference No"
                                     }, void 0, false, {
                                         fileName: "[project]/components/ApplicationTracker/StatusForm.tsx",
-                                        lineNumber: 284,
+                                        lineNumber: 299,
                                         columnNumber: 13
                                     }, this),
                                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("input", {
                                         type: "text",
                                         value: formData.referenceNo,
                                         onChange: (e)=>handleChange("referenceNo", e.target.value),
-                                        className: "w-full h-10 px-3 border border-[#E6EAF2] rounded focus:outline-none focus:ring-1 focus:ring-[#0B498B] text-sm placeholder-[#A0A0A0]",
+                                        className: "text-[#1C1C1C] w-full h-10 px-3 border border-[#E6EAF2] rounded focus:outline-none focus:ring-1 focus:ring-[#0B498B] text-sm placeholder-[#A0A0A0]",
                                         placeholder: "Enter ref no."
                                     }, void 0, false, {
                                         fileName: "[project]/components/ApplicationTracker/StatusForm.tsx",
-                                        lineNumber: 287,
+                                        lineNumber: 302,
                                         columnNumber: 13
                                     }, this)
                                 ]
                             }, void 0, true, {
                                 fileName: "[project]/components/ApplicationTracker/StatusForm.tsx",
-                                lineNumber: 283,
+                                lineNumber: 298,
                                 columnNumber: 11
                             }, this),
                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -525,7 +526,7 @@ const StatusForm = ({ onSearch })=>{
                                         children: "Customer Type"
                                     }, void 0, false, {
                                         fileName: "[project]/components/ApplicationTracker/StatusForm.tsx",
-                                        lineNumber: 297,
+                                        lineNumber: 312,
                                         columnNumber: 13
                                     }, this),
                                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$components$2f$common$2f$CustomDropdown$2e$tsx__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["default"], {
@@ -533,16 +534,16 @@ const StatusForm = ({ onSearch })=>{
                                         value: formData.customerType || '',
                                         onChange: (value)=>handleChange("customerType", value),
                                         placeholder: "Select",
-                                        className: "h-10"
+                                        className: "h-10 text-[#1C1C1C]"
                                     }, void 0, false, {
                                         fileName: "[project]/components/ApplicationTracker/StatusForm.tsx",
-                                        lineNumber: 298,
+                                        lineNumber: 313,
                                         columnNumber: 13
                                     }, this)
                                 ]
                             }, void 0, true, {
                                 fileName: "[project]/components/ApplicationTracker/StatusForm.tsx",
-                                lineNumber: 296,
+                                lineNumber: 311,
                                 columnNumber: 11
                             }, this),
                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -552,24 +553,24 @@ const StatusForm = ({ onSearch })=>{
                                         children: "Customer"
                                     }, void 0, false, {
                                         fileName: "[project]/components/ApplicationTracker/StatusForm.tsx",
-                                        lineNumber: 308,
+                                        lineNumber: 323,
                                         columnNumber: 13
                                     }, this),
                                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("input", {
                                         type: "text",
                                         value: formData.customer,
                                         onChange: (e)=>handleChange("customer", e.target.value),
-                                        className: "w-full h-10 px-3 border border-[#E6EAF2] rounded focus:outline-none focus:ring-1 focus:ring-[#0B498B] text-sm placeholder-[#A0A0A0]",
+                                        className: "text-[#1C1C1C] w-full h-10 px-3 border border-[#E6EAF2] rounded focus:outline-none focus:ring-1 focus:ring-[#0B498B] text-sm placeholder-[#A0A0A0]",
                                         placeholder: "Enter customer"
                                     }, void 0, false, {
                                         fileName: "[project]/components/ApplicationTracker/StatusForm.tsx",
-                                        lineNumber: 311,
+                                        lineNumber: 326,
                                         columnNumber: 13
                                     }, this)
                                 ]
                             }, void 0, true, {
                                 fileName: "[project]/components/ApplicationTracker/StatusForm.tsx",
-                                lineNumber: 307,
+                                lineNumber: 322,
                                 columnNumber: 11
                             }, this),
                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -579,24 +580,24 @@ const StatusForm = ({ onSearch })=>{
                                         children: "Traveler's Name"
                                     }, void 0, false, {
                                         fileName: "[project]/components/ApplicationTracker/StatusForm.tsx",
-                                        lineNumber: 321,
+                                        lineNumber: 336,
                                         columnNumber: 13
                                     }, this),
                                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("input", {
                                         type: "text",
                                         value: formData.travelersName,
                                         onChange: (e)=>handleChange("travelersName", e.target.value),
-                                        className: "w-full h-10 px-3 border border-[#E6EAF2] rounded focus:outline-none focus:ring-1 focus:ring-[#0B498B] text-sm placeholder-[#A0A0A0]",
+                                        className: "text-[#1C1C1C] w-full h-10 px-3 border border-[#E6EAF2] rounded focus:outline-none focus:ring-1 focus:ring-[#0B498B] text-sm placeholder-[#A0A0A0]",
                                         placeholder: "Enter name"
                                     }, void 0, false, {
                                         fileName: "[project]/components/ApplicationTracker/StatusForm.tsx",
-                                        lineNumber: 324,
+                                        lineNumber: 339,
                                         columnNumber: 13
                                     }, this)
                                 ]
                             }, void 0, true, {
                                 fileName: "[project]/components/ApplicationTracker/StatusForm.tsx",
-                                lineNumber: 320,
+                                lineNumber: 335,
                                 columnNumber: 11
                             }, this),
                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -606,30 +607,30 @@ const StatusForm = ({ onSearch })=>{
                                         children: "Traveler's Passport No"
                                     }, void 0, false, {
                                         fileName: "[project]/components/ApplicationTracker/StatusForm.tsx",
-                                        lineNumber: 334,
+                                        lineNumber: 349,
                                         columnNumber: 13
                                     }, this),
                                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("input", {
                                         type: "text",
                                         value: formData.travelersPassportNo,
                                         onChange: (e)=>handleChange("travelersPassportNo", e.target.value),
-                                        className: "w-full h-10 px-3 border border-[#E6EAF2] rounded focus:outline-none focus:ring-1 focus:ring-[#0B498B] text-sm placeholder-[#A0A0A0]",
-                                        placeholder: "Enter passport no."
+                                        className: "text-[#1C1C1C] w-full h-10 px-3 border border-[#E6EAF2] rounded focus:outline-none focus:ring-1 focus:ring-[#0B498B] text-sm placeholder-[#A0A0A0]",
+                                        placeholder: "Enter passport number"
                                     }, void 0, false, {
                                         fileName: "[project]/components/ApplicationTracker/StatusForm.tsx",
-                                        lineNumber: 337,
+                                        lineNumber: 352,
                                         columnNumber: 13
                                     }, this)
                                 ]
                             }, void 0, true, {
                                 fileName: "[project]/components/ApplicationTracker/StatusForm.tsx",
-                                lineNumber: 333,
+                                lineNumber: 348,
                                 columnNumber: 11
                             }, this)
                         ]
                     }, void 0, true, {
                         fileName: "[project]/components/ApplicationTracker/StatusForm.tsx",
-                        lineNumber: 282,
+                        lineNumber: 297,
                         columnNumber: 9
                     }, this),
                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -642,7 +643,7 @@ const StatusForm = ({ onSearch })=>{
                                         children: "Visa Branch"
                                     }, void 0, false, {
                                         fileName: "[project]/components/ApplicationTracker/StatusForm.tsx",
-                                        lineNumber: 350,
+                                        lineNumber: 365,
                                         columnNumber: 13
                                     }, this),
                                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$components$2f$common$2f$CustomDropdown$2e$tsx__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["default"], {
@@ -650,16 +651,16 @@ const StatusForm = ({ onSearch })=>{
                                         value: formData.visaBranch || '',
                                         onChange: (value)=>handleChange("visaBranch", value),
                                         placeholder: "Select",
-                                        className: "h-10"
+                                        className: "h-10 text-[#1C1C1C]"
                                     }, void 0, false, {
                                         fileName: "[project]/components/ApplicationTracker/StatusForm.tsx",
-                                        lineNumber: 353,
+                                        lineNumber: 368,
                                         columnNumber: 13
                                     }, this)
                                 ]
                             }, void 0, true, {
                                 fileName: "[project]/components/ApplicationTracker/StatusForm.tsx",
-                                lineNumber: 349,
+                                lineNumber: 364,
                                 columnNumber: 11
                             }, this),
                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -669,7 +670,7 @@ const StatusForm = ({ onSearch })=>{
                                         children: "Entry Generation Branch"
                                     }, void 0, false, {
                                         fileName: "[project]/components/ApplicationTracker/StatusForm.tsx",
-                                        lineNumber: 363,
+                                        lineNumber: 378,
                                         columnNumber: 13
                                     }, this),
                                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$components$2f$common$2f$CustomDropdown$2e$tsx__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["default"], {
@@ -677,16 +678,16 @@ const StatusForm = ({ onSearch })=>{
                                         value: formData.entryGenerationBranch || '',
                                         onChange: (value)=>handleChange("entryGenerationBranch", value),
                                         placeholder: "Select",
-                                        className: "h-10"
+                                        className: "h-10 text-[#1C1C1C]"
                                     }, void 0, false, {
                                         fileName: "[project]/components/ApplicationTracker/StatusForm.tsx",
-                                        lineNumber: 366,
+                                        lineNumber: 381,
                                         columnNumber: 13
                                     }, this)
                                 ]
                             }, void 0, true, {
                                 fileName: "[project]/components/ApplicationTracker/StatusForm.tsx",
-                                lineNumber: 362,
+                                lineNumber: 377,
                                 columnNumber: 11
                             }, this),
                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])(DateInput, {
@@ -697,7 +698,7 @@ const StatusForm = ({ onSearch })=>{
                                 placeholder: "DD/MM/YYYY"
                             }, void 0, false, {
                                 fileName: "[project]/components/ApplicationTracker/StatusForm.tsx",
-                                lineNumber: 375,
+                                lineNumber: 390,
                                 columnNumber: 11
                             }, this),
                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])(DateInput, {
@@ -708,7 +709,7 @@ const StatusForm = ({ onSearch })=>{
                                 placeholder: "DD/MM/YYYY"
                             }, void 0, false, {
                                 fileName: "[project]/components/ApplicationTracker/StatusForm.tsx",
-                                lineNumber: 383,
+                                lineNumber: 398,
                                 columnNumber: 11
                             }, this),
                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -718,7 +719,7 @@ const StatusForm = ({ onSearch })=>{
                                         children: "Queue"
                                     }, void 0, false, {
                                         fileName: "[project]/components/ApplicationTracker/StatusForm.tsx",
-                                        lineNumber: 392,
+                                        lineNumber: 407,
                                         columnNumber: 13
                                     }, this),
                                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$components$2f$common$2f$CustomDropdown$2e$tsx__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["default"], {
@@ -726,22 +727,22 @@ const StatusForm = ({ onSearch })=>{
                                         value: formData.queue || '',
                                         onChange: (value)=>handleChange("queue", value),
                                         placeholder: "Select",
-                                        className: "h-10"
+                                        className: "h-10 text-[#1C1C1C]"
                                     }, void 0, false, {
                                         fileName: "[project]/components/ApplicationTracker/StatusForm.tsx",
-                                        lineNumber: 393,
+                                        lineNumber: 408,
                                         columnNumber: 13
                                     }, this)
                                 ]
                             }, void 0, true, {
                                 fileName: "[project]/components/ApplicationTracker/StatusForm.tsx",
-                                lineNumber: 391,
+                                lineNumber: 406,
                                 columnNumber: 11
                             }, this)
                         ]
                     }, void 0, true, {
                         fileName: "[project]/components/ApplicationTracker/StatusForm.tsx",
-                        lineNumber: 348,
+                        lineNumber: 363,
                         columnNumber: 9
                     }, this),
                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -754,7 +755,7 @@ const StatusForm = ({ onSearch })=>{
                                         children: "Status"
                                     }, void 0, false, {
                                         fileName: "[project]/components/ApplicationTracker/StatusForm.tsx",
-                                        lineNumber: 406,
+                                        lineNumber: 421,
                                         columnNumber: 13
                                     }, this),
                                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$components$2f$common$2f$CustomDropdown$2e$tsx__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["default"], {
@@ -762,16 +763,16 @@ const StatusForm = ({ onSearch })=>{
                                         value: formData.status || '',
                                         onChange: (value)=>handleChange("status", value),
                                         placeholder: "Select",
-                                        className: "h-10"
+                                        className: "h-10 text-[#1C1C1C]"
                                     }, void 0, false, {
                                         fileName: "[project]/components/ApplicationTracker/StatusForm.tsx",
-                                        lineNumber: 407,
+                                        lineNumber: 422,
                                         columnNumber: 13
                                     }, this)
                                 ]
                             }, void 0, true, {
                                 fileName: "[project]/components/ApplicationTracker/StatusForm.tsx",
-                                lineNumber: 405,
+                                lineNumber: 420,
                                 columnNumber: 11
                             }, this),
                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -781,7 +782,7 @@ const StatusForm = ({ onSearch })=>{
                                         children: "Country"
                                     }, void 0, false, {
                                         fileName: "[project]/components/ApplicationTracker/StatusForm.tsx",
-                                        lineNumber: 417,
+                                        lineNumber: 432,
                                         columnNumber: 13
                                     }, this),
                                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$components$2f$common$2f$CustomDropdown$2e$tsx__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["default"], {
@@ -789,16 +790,16 @@ const StatusForm = ({ onSearch })=>{
                                         value: formData.country || '',
                                         onChange: (value)=>handleChange("country", value),
                                         placeholder: "Select Country",
-                                        className: "h-10"
+                                        className: "h-10 text-[#1C1C1C]"
                                     }, void 0, false, {
                                         fileName: "[project]/components/ApplicationTracker/StatusForm.tsx",
-                                        lineNumber: 418,
+                                        lineNumber: 433,
                                         columnNumber: 13
                                     }, this)
                                 ]
                             }, void 0, true, {
                                 fileName: "[project]/components/ApplicationTracker/StatusForm.tsx",
-                                lineNumber: 416,
+                                lineNumber: 431,
                                 columnNumber: 11
                             }, this),
                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -808,31 +809,31 @@ const StatusForm = ({ onSearch })=>{
                                         children: "Billing to Company"
                                     }, void 0, false, {
                                         fileName: "[project]/components/ApplicationTracker/StatusForm.tsx",
-                                        lineNumber: 428,
+                                        lineNumber: 443,
                                         columnNumber: 13
                                     }, this),
                                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("input", {
                                         type: "text",
                                         value: formData.billingToCompany,
                                         onChange: (e)=>handleChange("billingToCompany", e.target.value),
-                                        className: "w-full h-10 px-3 border border-[#E6EAF2] rounded focus:outline-none focus:ring-1 focus:ring-[#0B498B] text-sm placeholder-[#A0A0A0]",
+                                        className: "text-[#1C1C1C] w-full h-10 px-3 border border-[#E6EAF2] rounded focus:outline-none focus:ring-1 focus:ring-[#0B498B] text-sm placeholder-[#A0A0A0]",
                                         placeholder: "Enter company"
                                     }, void 0, false, {
                                         fileName: "[project]/components/ApplicationTracker/StatusForm.tsx",
-                                        lineNumber: 431,
+                                        lineNumber: 446,
                                         columnNumber: 13
                                     }, this)
                                 ]
                             }, void 0, true, {
                                 fileName: "[project]/components/ApplicationTracker/StatusForm.tsx",
-                                lineNumber: 427,
+                                lineNumber: 442,
                                 columnNumber: 11
                             }, this),
                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
                                 className: "col-span-1"
                             }, void 0, false, {
                                 fileName: "[project]/components/ApplicationTracker/StatusForm.tsx",
-                                lineNumber: 440,
+                                lineNumber: 455,
                                 columnNumber: 11
                             }, this),
                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -843,30 +844,30 @@ const StatusForm = ({ onSearch })=>{
                                     children: "Check Status"
                                 }, void 0, false, {
                                     fileName: "[project]/components/ApplicationTracker/StatusForm.tsx",
-                                    lineNumber: 443,
+                                    lineNumber: 458,
                                     columnNumber: 13
                                 }, this)
                             }, void 0, false, {
                                 fileName: "[project]/components/ApplicationTracker/StatusForm.tsx",
-                                lineNumber: 442,
+                                lineNumber: 457,
                                 columnNumber: 11
                             }, this)
                         ]
                     }, void 0, true, {
                         fileName: "[project]/components/ApplicationTracker/StatusForm.tsx",
-                        lineNumber: 404,
+                        lineNumber: 419,
                         columnNumber: 9
                     }, this)
                 ]
             }, void 0, true, {
                 fileName: "[project]/components/ApplicationTracker/StatusForm.tsx",
-                lineNumber: 280,
+                lineNumber: 295,
                 columnNumber: 7
             }, this)
         ]
     }, void 0, true, {
         fileName: "[project]/components/ApplicationTracker/StatusForm.tsx",
-        lineNumber: 275,
+        lineNumber: 290,
         columnNumber: 5
     }, this);
 };
@@ -1536,7 +1537,8 @@ const ApplicationTracker = ()=>{
                 setTotalPages(Math.ceil(filteredApplications.length / 10));
                 setCurrentPage(1);
                 setSearchData(data);
-            } catch (err) {
+            } catch (e) {
+                console.log(e);
                 setError("An error occurred while fetching data. Please try again.");
             } finally{
                 setIsLoading(false);
@@ -1558,12 +1560,12 @@ const ApplicationTracker = ()=>{
                     children: "Application Tracker"
                 }, void 0, false, {
                     fileName: "[project]/components/ApplicationTracker/ApplicationTracker.tsx",
-                    lineNumber: 47,
+                    lineNumber: 55,
                     columnNumber: 9
                 }, this)
             }, void 0, false, {
                 fileName: "[project]/components/ApplicationTracker/ApplicationTracker.tsx",
-                lineNumber: 46,
+                lineNumber: 54,
                 columnNumber: 7
             }, this),
             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -1572,12 +1574,12 @@ const ApplicationTracker = ()=>{
                     onSearch: handleSearch
                 }, void 0, false, {
                     fileName: "[project]/components/ApplicationTracker/ApplicationTracker.tsx",
-                    lineNumber: 53,
+                    lineNumber: 61,
                     columnNumber: 9
                 }, this)
             }, void 0, false, {
                 fileName: "[project]/components/ApplicationTracker/ApplicationTracker.tsx",
-                lineNumber: 52,
+                lineNumber: 60,
                 columnNumber: 7
             }, this),
             searchData && /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -1591,18 +1593,18 @@ const ApplicationTracker = ()=>{
                     onPageChange: handlePageChange
                 }, void 0, false, {
                     fileName: "[project]/components/ApplicationTracker/ApplicationTracker.tsx",
-                    lineNumber: 58,
+                    lineNumber: 66,
                     columnNumber: 11
                 }, this)
             }, void 0, false, {
                 fileName: "[project]/components/ApplicationTracker/ApplicationTracker.tsx",
-                lineNumber: 57,
+                lineNumber: 65,
                 columnNumber: 9
             }, this)
         ]
     }, void 0, true, {
         fileName: "[project]/components/ApplicationTracker/ApplicationTracker.tsx",
-        lineNumber: 45,
+        lineNumber: 53,
         columnNumber: 5
     }, this);
 };

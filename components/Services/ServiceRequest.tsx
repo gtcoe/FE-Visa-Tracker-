@@ -48,8 +48,8 @@ const ServiceRequest = () => {
       // Simulating API request
       await new Promise(resolve => setTimeout(resolve, 500));
       
-      // Navigate to the Search Pax screen
-      router.push('/services/search-pax');
+      // Navigate to the common screen with Search Pax tab active
+      router.push('/services/common-screen');
     } catch (error) {
       console.error('Error submitting form:', error);
     } finally {
