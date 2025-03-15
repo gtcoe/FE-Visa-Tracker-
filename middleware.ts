@@ -1,7 +1,7 @@
 // middleware.ts
 import { NextResponse } from "next/server";
 import type { NextRequest } from "next/server";
-import { DEFAULT_PATHS, ROLE_ROUTES } from "./constants/appConstants";
+import { DEFAULT_PATHS, ROLE_ROUTES, UserRole } from "./constants/appConstants";
 
 export async function middleware(request: NextRequest) {
   // Get the pathname from the URL
@@ -31,13 +31,13 @@ export async function middleware(request: NextRequest) {
 
   // For this example, we'll determine role from the token
   // In production, you'd decode the JWT or session token properly
-  let role;
+  let role: UserRole | undefined;
   if (authToken) {
     role = authToken.includes("admin")
-      ? "admin"
+      ? "admin" as UserRole
       : authToken.includes("manager")
-      ? "manager"
-      : "client";
+      ? "manager" as UserRole
+      : "client" as UserRole;
   }
 
   // Root path should redirect to the default page for the role
@@ -46,7 +46,7 @@ export async function middleware(request: NextRequest) {
   }
 
   // Check if the user has access to the requested path
-  if (role && !ROLE_ROUTES[role].some((route) => path.startsWith(route))) {
+  if (role && !ROLE_ROUTES[role].some((route: string) => path.startsWith(route))) {
     // Redirect to the default path for their role if they don't have access
     return NextResponse.redirect(new URL(DEFAULT_PATHS[role], request.url));
   }
