@@ -238,14 +238,16 @@ const FillServiceForm = () => {
     fileNo: '',
   });
 
-  const [visaInfo, setVisaInfo] = useState({
-    visaCountry: 'Netherland',
-    visaCategory: 'Business',
-    nationality: 'Indian',
-    state: 'Delhi',
-    entryType: 'Normal',
-    remark: '',
-  });
+  const [visaRequests, setVisaRequests] = useState([
+    {
+      visaCountry: 'Netherland',
+      visaCategory: 'Business',
+      nationality: 'Indian',
+      state: 'Delhi',
+      entryType: 'Normal',
+      remark: '',
+    }
+  ]);
 
   const [addressInfo, setAddressInfo] = useState({
     addressLine1: '',
@@ -269,8 +271,8 @@ const FillServiceForm = () => {
   const isFormValid = useMemo(() => {
     return personalInfo.firstName && 
            passportInfo.passportNumber && 
-           visaInfo.visaCountry;
-  }, [personalInfo.firstName, passportInfo.passportNumber, visaInfo.visaCountry]);
+           visaRequests.every(request => request.visaCountry);
+  }, [personalInfo.firstName, passportInfo.passportNumber, visaRequests]);
 
   // Optimized change handlers with useCallback
   const handlePersonalInfoChange = useCallback((e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
@@ -297,12 +299,16 @@ const FillServiceForm = () => {
     }));
   }, []);
 
-  const handleVisaInfoChange = useCallback((e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
+  const handleVisaInfoChange = useCallback((e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>, index: number) => {
     const { name, value } = e.target;
-    setVisaInfo(prev => ({
-      ...prev,
-      [name]: value
-    }));
+    setVisaRequests(prev => {
+      const newRequests = [...prev];
+      newRequests[index] = {
+        ...newRequests[index],
+        [name]: value
+      };
+      return newRequests;
+    });
   }, []);
 
   const handleAddressInfoChange = useCallback((e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
@@ -327,13 +333,13 @@ const FillServiceForm = () => {
       ...personalInfo,
       ...passportInfo,
       ...travelInfo,
-      ...visaInfo,
+      visaRequests,
       ...addressInfo,
       ...miFields,
       submissionType,
       isFixed
     });
-  }, [personalInfo, passportInfo, travelInfo, visaInfo, addressInfo, miFields, submissionType, isFixed]);
+  }, [personalInfo, passportInfo, travelInfo, visaRequests, addressInfo, miFields, submissionType, isFixed]);
 
   const handleRadioChange = useCallback((value: string) => {
     setSubmissionType(value);
@@ -344,7 +350,17 @@ const FillServiceForm = () => {
   }, []);
 
   const handleAddMore = useCallback(() => {
-    console.log('Add more visa requests');
+    setVisaRequests(prev => [
+      ...prev,
+      {
+        visaCountry: 'Netherland',
+        visaCategory: 'Business',
+        nationality: 'Indian',
+        state: 'Delhi',
+        entryType: 'Normal',
+        remark: ''
+      }
+    ]);
   }, []);
 
   const handleUpdateApplicant = useCallback(() => {
@@ -632,111 +648,115 @@ const FillServiceForm = () => {
       </div>
       
       {/* Visa Requests */}
-      <div className="mx-6 mt-[21px] mb-6 bg-white rounded-2xl border border-[#E6EAF2] shadow-sm overflow-hidden">
-        <div className="bg-[#F6F7F9] py-4 px-6 border-b border-gray-200">
-          <p className="text-[15px] font-medium text-[#0B498B]">Visa Requests</p>
-        </div>
-        
-        <div className="p-6">
-          <div className="grid grid-cols-4 gap-6">
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">
-                Visa Country<span className="text-red-500">*</span>
-              </label>
-              <select
-                name="visaCountry"
-                value={visaInfo.visaCountry}
-                onChange={handleVisaInfoChange}
-                className="w-full px-3 py-2.5 border border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-[#0B498B] text-[#6A6A6A] appearance-none bg-white"
-              >
-                <option value="Netherland">Netherland</option>
-              </select>
-            </div>
-            
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">
-                Visa Category<span className="text-red-500">*</span>
-              </label>
-              <select
-                name="visaCategory"
-                value={visaInfo.visaCategory}
-                onChange={handleVisaInfoChange}
-                className="w-full px-3 py-2.5 border border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-[#0B498B] text-[#6A6A6A] appearance-none bg-white"
-              >
-                <option value="Business">Business</option>
-              </select>
-            </div>
-            
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">
-                Nationality<span className="text-red-500">*</span>
-              </label>
-              <select
-                name="nationality"
-                value={visaInfo.nationality}
-                onChange={handleVisaInfoChange}
-                className="w-full px-3 py-2.5 border border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-[#0B498B] text-[#6A6A6A] appearance-none bg-white"
-              >
-                <option value="Indian">Indian</option>
-              </select>
-            </div>
-            
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">
-                State<span className="text-red-500">*</span>
-              </label>
-              <select
-                name="state"
-                value={visaInfo.state}
-                onChange={handleVisaInfoChange}
-                className="w-full px-3 py-2.5 border border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-[#0B498B] text-[#6A6A6A] appearance-none bg-white"
-              >
-                <option value="Delhi">Delhi</option>
-              </select>
-            </div>
+      {visaRequests.map((request, index) => (
+        <div key={`visa-request-${index}`} className="mx-6 mt-[21px] mb-6 bg-white rounded-2xl border border-[#E6EAF2] shadow-sm overflow-hidden">
+          <div className="bg-[#F6F7F9] py-4 px-6 border-b border-gray-200">
+            <p className="text-[15px] font-medium text-[#0B498B]">Visa Request {visaRequests.length > 1 ? index + 1 : ''}</p>
           </div>
           
-          <div className="grid grid-cols-4 gap-6 mt-4">
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">
-                Entry Type<span className="text-red-500">*</span>
-              </label>
-              <select
-                name="entryType"
-                value={visaInfo.entryType}
-                onChange={handleVisaInfoChange}
-                className="w-full px-3 py-2.5 border border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-[#0B498B] text-[#6A6A6A] appearance-none bg-white"
-              >
-                <option value="Normal">Normal</option>
-              </select>
+          <div className="p-6">
+            <div className="grid grid-cols-4 gap-6">
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-2">
+                  Visa Country<span className="text-red-500">*</span>
+                </label>
+                <select
+                  name="visaCountry"
+                  value={request.visaCountry}
+                  onChange={(e) => handleVisaInfoChange(e, index)}
+                  className="w-full px-3 py-2.5 border border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-[#0B498B] text-[#6A6A6A] appearance-none bg-white"
+                >
+                  <option value="Netherland">Netherland</option>
+                </select>
+              </div>
+              
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-2">
+                  Visa Category<span className="text-red-500">*</span>
+                </label>
+                <select
+                  name="visaCategory"
+                  value={request.visaCategory}
+                  onChange={(e) => handleVisaInfoChange(e, index)}
+                  className="w-full px-3 py-2.5 border border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-[#0B498B] text-[#6A6A6A] appearance-none bg-white"
+                >
+                  <option value="Business">Business</option>
+                </select>
+              </div>
+              
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-2">
+                  Nationality<span className="text-red-500">*</span>
+                </label>
+                <select
+                  name="nationality"
+                  value={request.nationality}
+                  onChange={(e) => handleVisaInfoChange(e, index)}
+                  className="w-full px-3 py-2.5 border border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-[#0B498B] text-[#6A6A6A] appearance-none bg-white"
+                >
+                  <option value="Indian">Indian</option>
+                </select>
+              </div>
+              
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-2">
+                  State<span className="text-red-500">*</span>
+                </label>
+                <select
+                  name="state"
+                  value={request.state}
+                  onChange={(e) => handleVisaInfoChange(e, index)}
+                  className="w-full px-3 py-2.5 border border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-[#0B498B] text-[#6A6A6A] appearance-none bg-white"
+                >
+                  <option value="Delhi">Delhi</option>
+                </select>
+              </div>
             </div>
             
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">
-                Remark
-              </label>
-              <input
-                type="text"
-                name="remark"
-                value={visaInfo.remark}
-                onChange={handleVisaInfoChange}
-                placeholder=""
-                className="w-full px-3 py-2.5 border border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-[#0B498B] text-[#6A6A6A]"
-              />
-            </div>
-            
-            <div className="col-span-2 flex items-end justify-end">
-              <button
-                type="button"
-                onClick={handleAddMore}
-                className="bg-[#0B498B] text-white px-6 py-2.5 rounded-md hover:bg-[#083968] transition-colors focus:outline-none focus:ring-1 focus:ring-[#0B498B] font-medium"
-              >
-                Add More
-              </button>
+            <div className="grid grid-cols-4 gap-6 mt-4">
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-2">
+                  Entry Type<span className="text-red-500">*</span>
+                </label>
+                <select
+                  name="entryType"
+                  value={request.entryType}
+                  onChange={(e) => handleVisaInfoChange(e, index)}
+                  className="w-full px-3 py-2.5 border border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-[#0B498B] text-[#6A6A6A] appearance-none bg-white"
+                >
+                  <option value="Normal">Normal</option>
+                </select>
+              </div>
+              
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-2">
+                  Remark
+                </label>
+                <input
+                  type="text"
+                  name="remark"
+                  value={request.remark}
+                  onChange={(e) => handleVisaInfoChange(e, index)}
+                  placeholder=""
+                  className="w-full px-3 py-2.5 border border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-[#0B498B] text-[#6A6A6A]"
+                />
+              </div>
+              
+              <div className="col-span-2 flex items-end justify-end">
+                {index === visaRequests.length - 1 && (
+                  <button
+                    type="button"
+                    onClick={handleAddMore}
+                    className="bg-[#0B498B] text-white px-6 py-2.5 rounded-md hover:bg-[#083968] transition-colors focus:outline-none focus:ring-1 focus:ring-[#0B498B] font-medium"
+                  >
+                    Add More
+                  </button>
+                )}
+              </div>
             </div>
           </div>
         </div>
-      </div>
+      ))}
       
       {/* Address Details */}
       <div className="mx-6 mt-[21px] mb-6 bg-white rounded-2xl border border-[#E6EAF2] shadow-sm overflow-hidden">
