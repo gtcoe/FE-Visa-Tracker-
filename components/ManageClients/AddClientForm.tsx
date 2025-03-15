@@ -95,12 +95,9 @@ const AddClientForm = ({ onSubmit }: AddClientFormProps) => {
           <div className="col-span-1">
             <label className="block text-xs text-[#1C1C1C] mb-2">Type</label>
             <CustomDropdown
-              name="type"
               value={formData.type.toString()}
               onChange={handleDropdownChange('type')}
               options={typeOptions}
-              placeholderColor="#1C1C1C"
-              optionColor="#1C1C1C"
               className="w-full"
               placeholder="Select Type"
             />
@@ -145,42 +142,33 @@ const AddClientForm = ({ onSubmit }: AddClientFormProps) => {
           <div className="col-span-1">
             <label className="block text-xs text-[#1C1C1C] mb-2">Country</label>
             <CustomDropdown
-              name="country"
               value={formData.country || ''}
               onChange={handleDropdownChange('country')}
               options={countryOptions}
               className="w-full"
               placeholder="Select Country"
-              placeholderColor="#6A6A6A"
-              optionColor="#1C1C1C"
             />
           </div>
 
           <div className="col-span-1">
             <label className="block text-xs text-[#1C1C1C] mb-2">State</label>
             <CustomDropdown
-              name="state"
               value={formData.state || ''}
               onChange={handleDropdownChange('state')}
               options={stateOptions}
               className="w-full"
               placeholder="Select State"
-              placeholderColor="#6A6A6A"
-              optionColor="#1C1C1C"
             />
           </div>
 
           <div className="col-span-1">
             <label className="block text-xs text-[#1C1C1C] mb-2">City</label>
             <CustomDropdown
-              name="city"
               value={formData.city || ''}
               onChange={handleDropdownChange('city')}
               options={cityOptions}
               className="w-full"
               placeholder="Select City"
-              placeholderColor="#6A6A6A"
-              optionColor="#1C1C1C"
             />
           </div>
 
