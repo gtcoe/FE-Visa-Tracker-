@@ -3,7 +3,7 @@
 import { useState } from "react";
 import StatusForm from "./StatusForm";
 import StatusDetails from "./StatusDetails";
-import { ApplicationData } from "@component/types/application-tracker";
+import { ApplicationData } from "../../types/application-tracker";
 import { mockApplications } from "@component/data/mock-applications";
 
 interface SearchFormData {
