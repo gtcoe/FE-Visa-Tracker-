@@ -68,9 +68,9 @@ const ServiceRequestSummary: React.FC = () => {
   };
 
   return (
-    <div className="space-y-6 p-6">
+    <div className="p-4">
       {/* Reference & Client Information */}
-      <div className="bg-[#F8F9FB] p-4 rounded-lg">
+      <div className="bg-[#F8F9FB] p-4 rounded-lg mb-5">
         <div className="flex flex-wrap items-center text-sm font-medium space-x-2">
           <span className="text-gray-700">Reference No: MMI2345</span>
           <span className="text-gray-400">•</span>
@@ -78,7 +78,7 @@ const ServiceRequestSummary: React.FC = () => {
           <span className="text-gray-400">•</span>
           <button
             onClick={handleAddMoreServiceRequest}
-            className="text-[#0B498B] hover:underline"
+            className="text-[#0B498B] hover:underline font-medium"
           >
             Add More Service Request
           </button>
@@ -86,53 +86,53 @@ const ServiceRequestSummary: React.FC = () => {
       </div>
 
       {/* Visa Application Details */}
-      <div>
-        <h3 className="font-semibold text-gray-700 mb-4">Visa Application details</h3>
+      <div className="mb-5">
+        <h3 className="font-semibold text-gray-700 mb-3 text-sm">Visa Application details</h3>
         
-        <div className="overflow-x-auto">
+        <div className="overflow-x-auto border border-[#E6EAF2] rounded-md">
           <table className="min-w-full border-collapse">
             <thead>
-              <tr className="bg-[#F6F7F9] text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                <th className="px-6 py-3">Application Name</th>
-                <th className="px-6 py-3">Email ID</th>
-                <th className="px-6 py-3">Visa Country</th>
-                <th className="px-6 py-3">Visa Category</th>
-                <th className="px-6 py-3">Entry Type</th>
-                <th className="px-6 py-3">Remarks</th>
-                <th className="px-6 py-3">Edit</th>
-                <th className="px-6 py-3">View</th>
-                <th className="px-6 py-3">ADD SUB REQUEST</th>
+              <tr className="bg-[#F6F7F9] text-left text-xs font-medium text-gray-500 uppercase tracking-wider border-b border-[#E6EAF2]">
+                <th className="px-4 py-3 text-left">Application Name</th>
+                <th className="px-4 py-3 text-left">Email ID</th>
+                <th className="px-4 py-3 text-left">Visa Country</th>
+                <th className="px-4 py-3 text-left">Visa Category</th>
+                <th className="px-4 py-3 text-left">Entry Type</th>
+                <th className="px-4 py-3 text-left">Remarks</th>
+                <th className="px-4 py-3 text-center">Edit</th>
+                <th className="px-4 py-3 text-center">View</th>
+                <th className="px-4 py-3 text-center">ADD SUB REQUEST</th>
               </tr>
             </thead>
-            <tbody className="bg-white divide-y divide-gray-200">
+            <tbody>
               {visaApplications.map((row) => (
-                <tr key={row.id} className="hover:bg-gray-50">
-                  <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">{row.name}</td>
-                  <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{row.email || '-'}</td>
-                  <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{row.visaCountry}</td>
-                  <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{row.visaCategory}</td>
-                  <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{row.entryType}</td>
-                  <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{row.remarks || '-'}</td>
-                  <td className="px-6 py-4 whitespace-nowrap text-sm">
+                <tr key={row.id} className="hover:bg-gray-50 border-b border-[#E6EAF2] last:border-b-0">
+                  <td className="px-4 py-3 text-sm font-medium text-gray-900">{row.name}</td>
+                  <td className="px-4 py-3 text-sm text-gray-500">{row.email || '-'}</td>
+                  <td className="px-4 py-3 text-sm text-gray-500">{row.visaCountry}</td>
+                  <td className="px-4 py-3 text-sm text-gray-500">{row.visaCategory}</td>
+                  <td className="px-4 py-3 text-sm text-gray-500">{row.entryType}</td>
+                  <td className="px-4 py-3 text-sm text-gray-500">{row.remarks || '-'}</td>
+                  <td className="px-4 py-3 text-sm text-center">
                     <button 
                       onClick={() => handleEditRow(row.id)}
-                      className="text-[#0B498B] hover:underline"
+                      className="text-[#0B498B] hover:underline font-medium"
                     >
                       Edit
                     </button>
                   </td>
-                  <td className="px-6 py-4 whitespace-nowrap text-sm">
+                  <td className="px-4 py-3 text-sm text-center">
                     <button 
                       onClick={() => handleViewRow(row.id)}
-                      className="text-[#0B498B] hover:underline"
+                      className="text-[#0B498B] hover:underline font-medium"
                     >
                       View
                     </button>
                   </td>
-                  <td className="px-6 py-4 whitespace-nowrap text-sm">
+                  <td className="px-4 py-3 text-sm text-center">
                     <button 
                       onClick={() => handleAddSubRequest(row.id)}
-                      className="text-[#0B498B] hover:underline"
+                      className="text-[#0B498B] hover:underline font-medium"
                     >
                       Add sub request
                     </button>
@@ -145,19 +145,19 @@ const ServiceRequestSummary: React.FC = () => {
       </div>
 
       {/* Dispatch Details */}
-      <div>
-        <h3 className="font-semibold text-gray-700 mb-4">Dispatch Details</h3>
+      <div className="mb-5">
+        <h3 className="font-semibold text-gray-700 mb-3 text-sm">Dispatch Details</h3>
         
-        <div className="grid grid-cols-2 gap-6 mb-4">
+        <div className="grid grid-cols-2 gap-4 mb-4">
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-2">
+            <label className="block text-sm font-medium text-gray-700 mb-1">
               Dispatch Medium
             </label>
             <select
               name="medium1"
               value={dispatchDetails.medium1}
               onChange={handleDispatchChange}
-              className="w-full px-3 py-2.5 border border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-[#0B498B] text-gray-700 appearance-none bg-white"
+              className="w-full h-10 px-3 border border-[#E6EAF2] rounded-md focus:outline-none focus:ring-1 focus:ring-[#0B498B] text-gray-700 appearance-none bg-white"
             >
               <option value="">Select</option>
               <option value="email">Email</option>
@@ -167,14 +167,14 @@ const ServiceRequestSummary: React.FC = () => {
           </div>
           
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-2">
+            <label className="block text-sm font-medium text-gray-700 mb-1">
               Dispatch Medium
             </label>
             <select
               name="medium2"
               value={dispatchDetails.medium2}
               onChange={handleDispatchChange}
-              className="w-full px-3 py-2.5 border border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-[#0B498B] text-gray-700 appearance-none bg-white"
+              className="w-full h-10 px-3 border border-[#E6EAF2] rounded-md focus:outline-none focus:ring-1 focus:ring-[#0B498B] text-gray-700 appearance-none bg-white"
             >
               <option value="">Select</option>
               <option value="email">Email</option>
@@ -184,27 +184,27 @@ const ServiceRequestSummary: React.FC = () => {
           </div>
         </div>
         
-        <div className="mb-4">
-          <label className="block text-sm font-medium text-gray-700 mb-2">
+        <div className="mb-6">
+          <label className="block text-sm font-medium text-gray-700 mb-1">
             Remark
           </label>
           <textarea
             name="remark"
             value={dispatchDetails.remark}
             onChange={handleDispatchChange}
-            rows={4}
-            className="w-full px-3 py-2.5 border border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-[#0B498B] text-gray-700"
+            rows={3}
+            className="w-full px-3 py-2 border border-[#E6EAF2] rounded-md focus:outline-none focus:ring-1 focus:ring-[#0B498B] text-gray-700 resize-none"
             placeholder="Enter remarks here..."
           />
         </div>
       </div>
 
       {/* Final Submission Button */}
-      <div className="flex justify-end">
+      <div className="flex justify-end mt-6">
         <button
           type="button"
           onClick={handleFinalSubmission}
-          className="bg-[#0B498B] text-white px-8 py-2.5 rounded-md hover:bg-[#083968] transition-colors focus:outline-none focus:ring-1 focus:ring-[#0B498B] font-medium"
+          className="bg-[#0B498B] text-white px-6 py-2 text-sm rounded-md hover:bg-[#083968] transition-colors focus:outline-none font-medium"
         >
           Final Submission
         </button>
