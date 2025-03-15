@@ -34,7 +34,7 @@ const ServiceRequestSummary: React.FC = () => {
     remark: ''
   });
 
-  const handleDispatchChange = (e: React.ChangeEvent<HTMLSelectElement | HTMLTextAreaElement>) => {
+  const handleDispatchChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>) => {
     const { name, value } = e.target;
     setDispatchDetails(prev => ({
       ...prev,
@@ -158,14 +158,14 @@ const ServiceRequestSummary: React.FC = () => {
             <div className="border border-[#E6EAF2] rounded-md p-6 pt-8">
               <div className="grid grid-cols-4 gap-6 mb-6">
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-2">
+                  <label className="block text-xs font-normal text-gray-700 mb-2">
                     Dispatch Medium
                   </label>
                   <select
                     name="medium1"
                     value={dispatchDetails.medium1}
                     onChange={handleDispatchChange}
-                    className="w-full h-10 px-3 border border-[#E6EAF2] rounded-md focus:outline-none focus:ring-1 focus:ring-[#0B498B] text-gray-700 appearance-none bg-white"
+                    className="text-sm w-full h-10 px-3 border border-[#E6EAF2] rounded-md focus:outline-none focus:ring-1 focus:ring-[#0B498B] text-gray-700 appearance-none bg-white"
                   >
                     <option value="">Select</option>
                     <option value="email">Email</option>
@@ -175,25 +175,22 @@ const ServiceRequestSummary: React.FC = () => {
                 </div>
                 
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-2">
+                  <label className="block text-xs font-normal text-gray-700 mb-2">
                     Dispatch Medium No.
                   </label>
-                  <select
+                  <input
+                    type="text"
                     name="medium2"
                     value={dispatchDetails.medium2}
                     onChange={handleDispatchChange}
-                    className="w-full h-10 px-3 border border-[#E6EAF2] rounded-md focus:outline-none focus:ring-1 focus:ring-[#0B498B] text-gray-700 appearance-none bg-white"
-                  >
-                    <option value="">Select</option>
-                    <option value="email">Email</option>
-                    <option value="courier">Courier</option>
-                    <option value="hand_delivery">Hand Delivery</option>
-                  </select>
+                    placeholder="Enter dispatch medium number"
+                    className="text-sm w-full h-10 px-3 border border-[#E6EAF2] rounded-md focus:outline-none focus:ring-1 focus:ring-[#0B498B] text-gray-700 bg-white"
+                  />
                 </div>
               </div>
               
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">
+                <label className="block text-xs font-normal text-gray-700 mb-2">
                   Remark
                 </label>
                 <textarea
@@ -201,23 +198,24 @@ const ServiceRequestSummary: React.FC = () => {
                   value={dispatchDetails.remark}
                   onChange={handleDispatchChange}
                   rows={1}
-                  className="w-full px-3 py-2 border border-[#E6EAF2] rounded-md focus:outline-none focus:ring-1 focus:ring-[#0B498B] text-gray-700 resize-none"
+                  className=" text-sm w-full px-3 py-2 border border-[#E6EAF2] rounded-md focus:outline-none focus:ring-1 focus:ring-[#0B498B] text-gray-700 resize-none"
                   placeholder="Enter remarks here..."
                 />
               </div>
             </div>
-          </div>
-
-          {/* Final Submission Button */}
+             {/* Final Submission Button */}
           <div className="flex justify-end mt-6">
             <button
               type="button"
               onClick={handleFinalSubmission}
-              className="bg-[#0B498B] text-white px-6 py-2.5 rounded-md hover:bg-[#083968] transition-colors focus:outline-none font-medium"
+              className="bg-[#0B498B] text-white px-6 py-2.5 rounded-md hover:bg-[#083968] transition-colors focus:outline-none font-medium w-[183px]"
             >
               Final Submission
             </button>
           </div>
+          </div>
+
+         
         </div>
       </div>
     </div>
