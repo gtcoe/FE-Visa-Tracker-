@@ -303,7 +303,7 @@ const StatusForm = ({ onSearch }: StatusFormProps) => {
               type="text"
               value={formData.referenceNo}
               onChange={(e) => handleChange("referenceNo", e.target.value)}
-              className="w-full h-10 px-3 border border-[#E6EAF2] rounded focus:outline-none focus:ring-1 focus:ring-[#0B498B] text-sm placeholder-[#A0A0A0]"
+              className="text-[#1C1C1C] w-full h-10 px-3 border border-[#E6EAF2] rounded focus:outline-none focus:ring-1 focus:ring-[#0B498B] text-sm placeholder-[#A0A0A0]"
               placeholder="Enter ref no."
             />
           </div>
@@ -315,7 +315,7 @@ const StatusForm = ({ onSearch }: StatusFormProps) => {
               value={formData.customerType || ''}
               onChange={(value) => handleChange("customerType", value)}
               placeholder="Select"
-              className="h-10"
+              className="h-10 text-[#1C1C1C]"
             />
           </div>
 
@@ -327,7 +327,7 @@ const StatusForm = ({ onSearch }: StatusFormProps) => {
               type="text"
               value={formData.customer}
               onChange={(e) => handleChange("customer", e.target.value)}
-              className="w-full h-10 px-3 border border-[#E6EAF2] rounded focus:outline-none focus:ring-1 focus:ring-[#0B498B] text-sm placeholder-[#A0A0A0]"
+              className="text-[#1C1C1C] w-full h-10 px-3 border border-[#E6EAF2] rounded focus:outline-none focus:ring-1 focus:ring-[#0B498B] text-sm placeholder-[#A0A0A0]"
               placeholder="Enter customer"
             />
           </div>
@@ -340,7 +340,7 @@ const StatusForm = ({ onSearch }: StatusFormProps) => {
               type="text"
               value={formData.travelersName}
               onChange={(e) => handleChange("travelersName", e.target.value)}
-              className="w-full h-10 px-3 border border-[#E6EAF2] rounded focus:outline-none focus:ring-1 focus:ring-[#0B498B] text-sm placeholder-[#A0A0A0]"
+              className="text-[#1C1C1C] w-full h-10 px-3 border border-[#E6EAF2] rounded focus:outline-none focus:ring-1 focus:ring-[#0B498B] text-sm placeholder-[#A0A0A0]"
               placeholder="Enter name"
             />
           </div>
@@ -353,7 +353,7 @@ const StatusForm = ({ onSearch }: StatusFormProps) => {
               type="text"
               value={formData.travelersPassportNo}
               onChange={(e) => handleChange("travelersPassportNo", e.target.value)}
-              className="w-full h-10 px-3 border border-[#E6EAF2] rounded focus:outline-none focus:ring-1 focus:ring-[#0B498B] text-sm placeholder-[#A0A0A0]"
+              className="text-[#1C1C1C] w-full h-10 px-3 border border-[#E6EAF2] rounded focus:outline-none focus:ring-1 focus:ring-[#0B498B] text-sm placeholder-[#A0A0A0]"
               placeholder="Enter passport number"
             />
           </div>
@@ -370,7 +370,7 @@ const StatusForm = ({ onSearch }: StatusFormProps) => {
               value={formData.visaBranch || ''}
               onChange={(value) => handleChange("visaBranch", value)}
               placeholder="Select"
-              className="h-10"
+              className="h-10 text-[#1C1C1C]"
             />
           </div>
 
@@ -383,7 +383,7 @@ const StatusForm = ({ onSearch }: StatusFormProps) => {
               value={formData.entryGenerationBranch || ''}
               onChange={(value) => handleChange("entryGenerationBranch", value)}
               placeholder="Select"
-              className="h-10"
+              className="h-10 text-[#1C1C1C]"
             />
           </div>
 
@@ -410,7 +410,7 @@ const StatusForm = ({ onSearch }: StatusFormProps) => {
               value={formData.queue || ''}
               onChange={(value) => handleChange("queue", value)}
               placeholder="Select"
-              className="h-10"
+              className="h-10 text-[#1C1C1C]"
             />
           </div>
         </div>
@@ -424,7 +424,7 @@ const StatusForm = ({ onSearch }: StatusFormProps) => {
               value={formData.status || ''}
               onChange={(value) => handleChange("status", value)}
               placeholder="Select"
-              className="h-10"
+              className="h-10 text-[#1C1C1C]"
             />
           </div>
 
@@ -435,7 +435,7 @@ const StatusForm = ({ onSearch }: StatusFormProps) => {
               value={formData.country || ''}
               onChange={(value) => handleChange("country", value)}
               placeholder="Select Country"
-              className="h-10"
+              className="h-10 text-[#1C1C1C]"
             />
           </div>
 
@@ -447,7 +447,7 @@ const StatusForm = ({ onSearch }: StatusFormProps) => {
               type="text"
               value={formData.billingToCompany}
               onChange={(e) => handleChange("billingToCompany", e.target.value)}
-              className="w-full h-10 px-3 border border-[#E6EAF2] rounded focus:outline-none focus:ring-1 focus:ring-[#0B498B] text-sm placeholder-[#A0A0A0]"
+              className="text-[#1C1C1C] w-full h-10 px-3 border border-[#E6EAF2] rounded focus:outline-none focus:ring-1 focus:ring-[#0B498B] text-sm placeholder-[#A0A0A0]"
               placeholder="Enter company"
             />
           </div>
