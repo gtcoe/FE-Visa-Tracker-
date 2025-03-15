@@ -34,7 +34,8 @@ const ApplicationTracker = () => {
         setTotalPages(Math.ceil(filteredApplications.length / 10));
         setCurrentPage(1);
         setSearchData(data);
-      } catch (_) {
+      } catch (e) {
+        console.log(e);
         setError("An error occurred while fetching data. Please try again.");
       } finally {
         setIsLoading(false);

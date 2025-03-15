@@ -76,7 +76,8 @@ const DateInput: React.FC<DateInputProps> = ({
           // If it's already in DD/MM/YYYY format, use it directly
           setInputValue(value);
         }
-      } catch (_) {
+      } catch (e) {
+        console.log(e);
         setInputValue(value || '');
       }
     } else {

@@ -5,7 +5,7 @@ import UsersTable from './UsersTable';
 import AddUserModal from './AddUserModal';
 import StatusChangeModal from './StatusChangeModal';
 import { USER_STATUS, USER_TYPE } from '../../constants/userConstants';
-import { ToastNotifySuccess, ToastNotifyError } from '../common/Toast';
+import { ToastNotifySuccess } from '../common/Toast';
 
 export interface User {
   name: string;

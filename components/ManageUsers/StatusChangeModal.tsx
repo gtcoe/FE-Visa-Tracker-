@@ -1,6 +1,6 @@
 import React from 'react';
 import { User } from './ManageUsers';
-import { USER_STATUS, USER_TYPE,  USER_STATUS_REVERSE, USER_DISPLAY_STATUS_ACTIVE, USER_DISPLAY_STATUS_INACTIVE} from '../../constants/userConstants';
+import { USER_STATUS,  USER_STATUS_REVERSE, USER_DISPLAY_STATUS_ACTIVE, USER_DISPLAY_STATUS_INACTIVE} from '../../constants/userConstants';
 
 interface StatusChangeModalProps {
   user: User;
