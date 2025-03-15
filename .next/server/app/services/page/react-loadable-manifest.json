@@ -1,0 +1,10 @@
+{
+  "[project]/components/Services/CommonScreen.tsx [app-client] (ecmascript, next/dynamic entry)": {
+    "id": "[project]/components/Services/CommonScreen.tsx [app-client] (ecmascript, next/dynamic entry)",
+    "files": [
+      "static/chunks/components_Services_5fec46f6._.js",
+      "static/chunks/_7c07500a._.js",
+      "static/chunks/components_Services_CommonScreen_tsx_4dfb28df._.js"
+    ]
+  }
+}

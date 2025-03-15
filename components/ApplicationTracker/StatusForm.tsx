@@ -2,8 +2,22 @@
 import { useState, useRef, useEffect, useCallback, ChangeEvent } from "react";
 import CustomDropdown from "../common/CustomDropdown";
 
+interface FormData {
+  applicationId?: string;
+  travelersName?: string;
+  travelersPassportNo?: string;
+  visaBranch?: string;
+  entryGenerationBranch?: string;
+  customerType?: string;
+  applicationDate?: string;
+  queue?: string;
+  status?: string;
+  country?: string;
+  [key: string]: string | undefined;
+}
+
 interface StatusFormProps {
-  onSearch: (data: any) => void;
+  onSearch: (data: FormData) => void;
 }
 
 interface DropdownOption {
@@ -62,7 +76,7 @@ const DateInput: React.FC<DateInputProps> = ({
           // If it's already in DD/MM/YYYY format, use it directly
           setInputValue(value);
         }
-      } catch (e) {
+      } catch (_) {
         setInputValue(value || '');
       }
     } else {
@@ -319,7 +333,7 @@ const StatusForm = ({ onSearch }: StatusFormProps) => {
 
           <div>
             <label className="block text-xs text-[#696969] mb-1">
-              Traveler's Name
+              Traveler&apos;s Name
             </label>
             <input
               type="text"
@@ -332,14 +346,14 @@ const StatusForm = ({ onSearch }: StatusFormProps) => {
 
           <div>
             <label className="block text-xs text-[#696969] mb-1">
-              Traveler's Passport No
+              Traveler&apos;s Passport No
             </label>
             <input
               type="text"
               value={formData.travelersPassportNo}
               onChange={(e) => handleChange("travelersPassportNo", e.target.value)}
               className="w-full h-10 px-3 border border-[#E6EAF2] rounded focus:outline-none focus:ring-1 focus:ring-[#0B498B] text-sm placeholder-[#A0A0A0]"
-              placeholder="Enter passport no."
+              placeholder="Enter passport number"
             />
           </div>
         </div>

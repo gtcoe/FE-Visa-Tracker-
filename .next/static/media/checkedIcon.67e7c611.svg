@@ -1,0 +1,11 @@
+<svg
+      className="hidden peer-checked:block w-3 h-3 text-white"
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth="3"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+    >
+      <path d="M5 12l5 5L20 7" />
+    </svg>

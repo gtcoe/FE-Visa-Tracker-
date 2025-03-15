@@ -6,15 +6,22 @@ import StatusDetails from "./StatusDetails";
 import { ApplicationData } from "@component/types/application-tracker";
 import { mockApplications } from "@component/data/mock-applications";
 
+interface SearchFormData {
+  applicationId?: string;
+  travelersName?: string;
+  travelersPassportNo?: string;
+  [key: string]: string | undefined;
+}
+
 const ApplicationTracker = () => {
-  const [searchData, setSearchData] = useState<any>(null);
+  const [searchData, setSearchData] = useState<SearchFormData | null>(null);
   const [applications, setApplications] = useState<ApplicationData[]>([]);
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const [error, setError] = useState<string | null>(null);
   const [currentPage, setCurrentPage] = useState<number>(1);
   const [totalPages, setTotalPages] = useState<number>(1);
 
-  const handleSearch = (data: any) => {
+  const handleSearch = (data: SearchFormData) => {
     setIsLoading(true);
     setError(null);
 
@@ -27,7 +34,7 @@ const ApplicationTracker = () => {
         setTotalPages(Math.ceil(filteredApplications.length / 10));
         setCurrentPage(1);
         setSearchData(data);
-      } catch (err) {
+      } catch (_) {
         setError("An error occurred while fetching data. Please try again.");
       } finally {
         setIsLoading(false);

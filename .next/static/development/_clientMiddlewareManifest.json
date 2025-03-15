@@ -1,0 +1,6 @@
+[
+  {
+    "regexp": "^\\/visaistic(?:\\/(_next\\/data\\/[^/]{1,}))?(?:\\/((?!api|_next|images|.well-known|favicon.ico|robots.txt|sitemap.xml).*))(\\\\.json)?[\\/#\\?]?$",
+    "originalSource": "/((?!api|_next|images|.well-known|favicon.ico|robots.txt|sitemap.xml).*)"
+  }
+]
