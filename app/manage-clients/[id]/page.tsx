@@ -52,7 +52,7 @@ const ClientDetailsPage = () => {
   useEffect(() => {
     // In a real application, you would fetch the client data from an API
     // For this example, we're using the sample data
-    const clientId = params.id as string;
+    const clientId = params?.id as string;
     const foundClient = sampleClients.find(c => c.id === clientId);
     
     // Simulate API call delay
@@ -60,7 +60,7 @@ const ClientDetailsPage = () => {
       setClient(foundClient || null);
       setLoading(false);
     }, 500);
-  }, [params.id]);
+  }, [params?.id]);
 
   if (loading) {
     return (
