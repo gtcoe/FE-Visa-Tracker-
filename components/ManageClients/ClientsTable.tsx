@@ -1,5 +1,6 @@
 import React from 'react';
 import { Client } from './ManageClients';
+import Link from 'next/link';
 
 interface ClientsTableProps {
   clients: Client[];
@@ -32,8 +33,10 @@ const ClientsTable = ({ clients }: ClientsTableProps) => {
                   <td className="text-center py-4 text-xs font-medium px-6 border-r border-[#E6EAF2] text-[#1C1C1C]">
                     {getClientType(client.type)}
                   </td>
-                  <td className="text-center py-4 text-xs font-medium px-6 border-r border-[#E6EAF2] text-[#1C1C1C]">
-                    {client.name}
+                  <td className="text-center py-4 text-xs font-medium px-6 border-r border-[#E6EAF2]">
+                    <Link href={`/manage-clients/${client.id}`} className="text-[#0B498B] hover:underline">
+                      {client.name}
+                    </Link>
                   </td>
                   <td className="text-center py-4 text-xs font-medium px-6 border-r border-[#E6EAF2] text-[#1C1C1C]">
                     {client.address}
