@@ -4,6 +4,7 @@ import React, { useState, useEffect, useCallback, lazy, Suspense } from 'react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { debounce } from 'lodash'; // Add lodash for debouncing
+import { searchPax } from '@component/api/application'; // Import the searchPax API
 
 // Lazy load all tab components for code splitting
 const FillServiceForm = lazy(() => import('./FillServiceForm'));
@@ -30,6 +31,19 @@ const SearchPax = () => {
   const [isSearching, setIsSearching] = useState(false);
   const [activeTab, setActiveTab] = useState('search');
   const [tabsToPreload, setTabsToPreload] = useState<string[]>([]);
+  const [searchResults, setSearchResults] = useState<any[]>([]);
+  const [searchError, setSearchError] = useState<string | null>(null);
+
+  // Initialize reference number from localStorage or URL query parameter
+  useEffect(() => {
+    const referenceNumber = localStorage.getItem('serviceReferenceNumber');
+    if (referenceNumber) {
+      setSearchData(prev => ({
+        ...prev,
+        referenceNo: referenceNumber
+      }));
+    }
+  }, []);
 
   // Preload tabs that are likely to be used next
   useEffect(() => {
@@ -56,32 +70,51 @@ const SearchPax = () => {
     }));
   }, []);
 
-  // Debounced search function to reduce unnecessary API calls
-  const debouncedSearch = useCallback(
-    debounce(async (data: {
-      paxName: string;
-      passportNo: string;
-      referenceNo: string;
-    }) => {
-      try {
-        // Actual API call would go here
-        console.log('Searching with data:', data);
-        await new Promise(resolve => setTimeout(resolve, 500));
-        console.log('Search completed');
-      } catch (error) {
-        console.error('Error searching for pax:', error);
-      } finally {
-        setIsSearching(false);
-      }
-    }, 300), 
-    []
-  );
-
+  // Actual search function that calls the API
   const handleSearch = useCallback(async (e?: React.FormEvent) => {
     if (e) e.preventDefault();
     setIsSearching(true);
-    debouncedSearch(searchData);
-  }, [searchData, debouncedSearch]);
+    setSearchError(null);
+    
+    try {
+      // Validate required fields
+      if (!searchData.passportNo && !searchData.referenceNo) {
+        throw new Error('Either Passport Number or Reference Number is required');
+      }
+      
+      // Prepare search parameters for the API
+      const searchParams = {
+        passport_number: searchData.passportNo || undefined,
+        name: searchData.paxName || undefined,
+        reference_number: searchData.referenceNo || undefined
+      };
+      
+      console.log('Searching with params:', searchParams);
+      
+      // Call the searchPax API
+      const results = await searchPax(searchParams);
+      
+      console.log('Search results:', results);
+      setSearchResults(results);
+      
+      // If results found, you can handle navigation or display results
+      if (results.length > 0) {
+        // Store found pax data in localStorage for use in next steps
+        localStorage.setItem('foundPaxData', JSON.stringify(results[0]));
+        
+        // Option: Automatically go to fill form step with the found pax data
+        // setActiveTab('fill');
+      } else {
+        console.log('No results found');
+        // Could display a message to the user
+      }
+    } catch (error) {
+      console.error('Error searching for pax:', error);
+      setSearchError(error instanceof Error ? error.message : 'An error occurred while searching');
+    } finally {
+      setIsSearching(false);
+    }
+  }, [searchData]);
 
   const handleClear = useCallback(() => {
     setSearchData({
@@ -89,6 +122,8 @@ const SearchPax = () => {
       passportNo: '',
       referenceNo: ''
     });
+    setSearchResults([]);
+    setSearchError(null);
   }, []);
 
   // Handle tab change with preloading
@@ -137,6 +172,13 @@ const SearchPax = () => {
   return (
     <div className="py-6 px-[80px]">
       <h1 className="text-[28px] font-bold text-[#1C1C1C] mb-6">Service Request Form</h1>
+      
+      {/* Display search error if any */}
+      {searchError && (
+        <div className="mb-4 bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded" role="alert">
+          <span className="block sm:inline">{searchError}</span>
+        </div>
+      )}
       
       {/* Main Container with Tabs and Form */}
       <div className="bg-white rounded-2xl border border-[#E6EAF2] shadow-sm overflow-hidden">
