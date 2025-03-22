@@ -209,16 +209,19 @@ const ServiceRequest = () => {
       
       console.log('Service request submitted successfully:', response);
       
-      // Store the request ID or code in localStorage if needed for later reference
+      // Store the application ID and reference number in localStorage
       if (response.id) {
-        localStorage.setItem('lastServiceRequestId', String(response.id));
+        localStorage.setItem('serviceApplicationId', String(response.id));
       }
       if (response.requestCode) {
-        localStorage.setItem('lastServiceRequestCode', response.requestCode);
+        localStorage.setItem('serviceReferenceNumber', response.requestCode);
+        
+        // Show success message with reference number before navigating (optional)
+        // alert(`Service request submitted successfully! Your reference number is: ${response.requestCode}`);
       }
       
-      // Navigate to the Common Screen
-      router.push('/services/common');
+      // Navigate to the Common Screen with reference number as a query parameter
+      router.push(`/services/common?reference=${response.requestCode || ''}`);
     } catch (error) {
       console.error('Error submitting service request:', error);
       setError(error instanceof Error ? error.message : 'An unknown error occurred');

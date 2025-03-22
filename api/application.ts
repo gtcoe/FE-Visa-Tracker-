@@ -26,9 +26,9 @@ export interface ServiceRequestPayload {
  */
 export interface ServiceRequestResponse {
   id: number;
-  requestCode?: string;
-  status: string;
-  createdAt: string;
+  requestCode: string;
+  status?: string;
+  createdAt?: string;
   [key: string]: any;
 }
 
@@ -167,11 +167,13 @@ export const submitServiceRequest = async (requestData: ServiceRequestPayload): 
       throw new Error('Failed to submit service request');
     }
     
+    // Map the API response to our ServiceRequestResponse interface
+    // The API returns { application_id: number, reference_number: string }
     return {
-      id: response.id || 0,
-      requestCode: response.reference_no || response.request_code || '',
-      status: response.status || 'pending',
-      createdAt: response.created_at || new Date().toISOString(),
+      id: response.application_id || 0,
+      requestCode: response.reference_number || '',
+      status: 'pending',
+      createdAt: new Date().toISOString(),
       ...response
     };
   } catch (error) {

@@ -35,7 +35,7 @@ const SearchPaxContent: React.FC<SearchPaxContentProps> = ({
       <div className="mx-6 mt-[21px] mb-6 border-[1.5px] border-[#E6EAF2] rounded-2xl">
         {/* Reference No Header with gray background */}
         <div className="bg-[#F6F7F9] py-4 px-6 border-b border-gray-200 rounded-t-2xl">
-          <p className="text-base font-medium text-[#1C1C1C]">Reference No:</p>
+          <p className="text-base font-medium text-[#1C1C1C]">{`Reference No:  ${localStorage.getItem('serviceReferenceNumber')}`}</p>
         </div>
         
         {/* Form */}
