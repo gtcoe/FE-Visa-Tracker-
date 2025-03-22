@@ -1,44 +1,64 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect } from "react";
 import StatusForm from "./StatusForm";
 import StatusDetails from "./StatusDetails";
-import { ApplicationData } from "@component/types/application-tracker";
-import { mockApplications } from "@component/data/mock-applications";
+import { useApplicationContext } from "@component/context/ApplicationContext";
+import { searchApplications } from "@component/api/application";
+import { ToastNotifyError } from "@component/components/common/Toast";
 
 const ApplicationTracker = () => {
-  const [searchData, setSearchData] = useState<any>(null);
-  const [applications, setApplications] = useState<ApplicationData[]>([]);
-  const [isLoading, setIsLoading] = useState<boolean>(false);
-  const [error, setError] = useState<string | null>(null);
-  const [currentPage, setCurrentPage] = useState<number>(1);
-  const [totalPages, setTotalPages] = useState<number>(1);
+  const {
+    applications,
+    setApplications,
+    searchParams,
+    setSearchParams,
+    isLoading,
+    setIsLoading,
+    error,
+    setError,
+    currentPage,
+    setCurrentPage,
+    totalPages,
+    setTotalPages
+  } = useApplicationContext();
 
-  const handleSearch = (data: any) => {
+  // Handle search form submission
+  const handleSearch = async (formData: any) => {
     setIsLoading(true);
     setError(null);
-
-    // Simulate API call with a timeout
-    setTimeout(() => {
-      try {
-        // For demo purposes, we're using mock data
-        const filteredApplications = mockApplications;
-        setApplications(filteredApplications);
-        setTotalPages(Math.ceil(filteredApplications.length / 10));
-        setCurrentPage(1);
-        setSearchData(data);
-      } catch (err) {
-        setError("An error occurred while fetching data. Please try again.");
-      } finally {
-        setIsLoading(false);
-      }
-    }, 1000);
+    setSearchParams(formData);
+    
+    try {
+      // Call the API service to search applications
+      const results = await searchApplications({
+        reference_number: formData.refNo || '',
+        branch: formData.branch || '',
+        agent: formData.agent || '',
+        bill_to: formData.billTo || '',
+        referrer: formData.referer || '',
+        applicant: formData.applicant || '',
+        country: formData.country || '',
+        visa_type: formData.visaType || '',
+        status: formData.status || '',
+        from_date: formData.dateFrom || '',
+        to_date: formData.dateTo || ''
+      });
+      
+      setApplications(results);
+      setTotalPages(Math.ceil(results.length / 10)); // Assuming 10 items per page
+      setCurrentPage(1);
+    } catch (err) {
+      ToastNotifyError("Failed to search applications. Please try again.");
+    } finally {
+      setIsLoading(false);
+    }
   };
 
+  // Handle pagination
   const handlePageChange = (page: number) => {
     setCurrentPage(page);
-    // In a real app, you would fetch the specific page from the backend
-    // For now, we'll just update the current page state
+    // In a real implementation, you might want to fetch a specific page from the API
   };
 
   return (
@@ -53,7 +73,7 @@ const ApplicationTracker = () => {
         <StatusForm onSearch={handleSearch} />
       </div>
 
-      {searchData && (
+      {searchParams && (
         <div className="bg-white rounded-2xl border border-[#E6EAF2] shadow-sm overflow-hidden">
           <StatusDetails
             applications={applications}

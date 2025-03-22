@@ -14,6 +14,7 @@ import {
 } from "@component/constants/appConstants";
 import { ClientProvider } from "@component/context/ClientContext";
 import { UserProvider } from "@component/context/UserContext";
+import { ApplicationProvider } from "@component/context/ApplicationContext";
 import { ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 
@@ -78,13 +79,15 @@ export default function RootLayout({
       <body>
         <UserProvider>
           <ClientProvider>
-            <div className="min-h-screen flex flex-col">
-              {userRole && navItems.length > 0 && (
-                <Navbar items={navItems} userRole={userRole} />
-              )}
-              <main className="flex-grow">{children}</main>
-            </div>
-            <ToastContainer />
+            <ApplicationProvider>
+              <div className="min-h-screen flex flex-col">
+                {userRole && navItems.length > 0 && (
+                  <Navbar items={navItems} userRole={userRole} />
+                )}
+                <main className="flex-grow">{children}</main>
+              </div>
+              <ToastContainer />
+            </ApplicationProvider>
           </ClientProvider>
         </UserProvider>
       </body>
