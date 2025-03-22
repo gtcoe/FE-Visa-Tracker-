@@ -6,6 +6,33 @@ import { ApplicationData } from '@component/types/application-tracker';
 const { API_ENDPOINTS } = config;
 
 /**
+ * Service Request payload interface
+ */
+export interface ServiceRequestPayload {
+  title?: string;
+  pax_type: number;
+  country_of_residence: number;
+  citizenship: number;
+  service_type: number;
+  client_id?: number | null;
+  client_user_id?: number | null;
+  state_of_residence?: number | null;
+  referrer?: number | null;
+  file_number?: string;
+}
+
+/**
+ * Service Request response interface
+ */
+export interface ServiceRequestResponse {
+  id: number;
+  requestCode?: string;
+  status: string;
+  createdAt: string;
+  [key: string]: any;
+}
+
+/**
  * Search for applications based on search criteria
  * @param searchParams Search parameters
  * @returns Promise with search results
@@ -121,6 +148,34 @@ export const searchPax = async (searchParams: any): Promise<any[]> => {
     return response.data?.pax_info || [];
   } catch (error) {
     console.error('Error searching applicants:', error);
+    throw error;
+  }
+};
+
+/**
+ * Submit a service request
+ * Uses the existing application step1 endpoint
+ * @param requestData Service request data
+ * @returns Promise with the service request response
+ */
+export const submitServiceRequest = async (requestData: ServiceRequestPayload): Promise<ServiceRequestResponse> => {
+  try {
+    // Service requests use the application step1 endpoint
+    const response = await addApplicationStep1(requestData);
+    
+    if (!response) {
+      throw new Error('Failed to submit service request');
+    }
+    
+    return {
+      id: response.id || 0,
+      requestCode: response.reference_no || response.request_code || '',
+      status: response.status || 'pending',
+      createdAt: response.created_at || new Date().toISOString(),
+      ...response
+    };
+  } catch (error) {
+    console.error('Error submitting service request:', error);
     throw error;
   }
 }; 

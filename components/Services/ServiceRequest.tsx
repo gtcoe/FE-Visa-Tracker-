@@ -19,8 +19,11 @@ import {
   STATE, STATE_LABELS,
   COUNTRY_STATES
 } from '@component/constants/dropdown/geographical';
+import { getAllClients } from '@component/api/client';
+import { Client as APIClient } from '@component/components/ManageClients/ManageClients';
+import { submitServiceRequest, ServiceRequestPayload, ServiceRequestResponse } from '@component/api/application';
 
-// Client interface
+// Local client interface for dropdown
 interface Client {
   id: number;
   name: string;
@@ -57,6 +60,7 @@ const ServiceRequest = () => {
   const [filteredStates, setFilteredStates] = useState<STATE[]>([]);
   const [clients, setClients] = useState<Client[]>([]);
   const [isLoadingClients, setIsLoadingClients] = useState(false);
+  const [error, setError] = useState<string | null>(null);
 
   // Fetch clients when component mounts
   useEffect(() => {
@@ -66,15 +70,46 @@ const ServiceRequest = () => {
   // Fetch clients from API
   const fetchClients = async () => {
     setIsLoadingClients(true);
+    setError(null);
+    
     try {
-      // Replace with your actual API endpoint
-      // const response = await fetch('/api/clients');
-      // const data = await response.json();
-      // setClients(data);
+      // Use the existing API to fetch clients
+      const clientsData = await getAllClients();
       
-      // Mock client data for now
-      // In a real app, this would come from your API
-      setTimeout(() => {
+      if (clientsData && Array.isArray(clientsData)) {
+        setClients(clientsData.map(client => ({
+          id: client.clientId || 0,
+          name: client.name || ''
+        })));
+      } else {
+        console.error('Failed to fetch clients: Invalid response format');
+        setError('Failed to fetch clients. Please try again.');
+        
+        // Fallback to mock data in development environment
+        if (process.env.NODE_ENV === 'development') {
+          console.log('Using mock client data for development');
+          const mockClients = [
+            { id: 1, name: 'ABC Corporation' },
+            { id: 2, name: 'XYZ Enterprises' },
+            { id: 3, name: 'Global Travel Ltd' },
+            { id: 4, name: 'Visaistic Partners' },
+            { id: 5, name: 'India Tourism Group' },
+            { id: 6, name: 'Corporate Solutions Inc' },
+            { id: 7, name: 'Travel Planners LLC' },
+            { id: 8, name: 'Document Services Corp' },
+            { id: 9, name: 'Visa Experts Ltd' },
+            { id: 10, name: 'International Partners' }
+          ];
+          setClients(mockClients);
+        }
+      }
+    } catch (error) {
+      console.error('Error fetching clients:', error);
+      setError(error instanceof Error ? error.message : 'Failed to fetch clients');
+      
+      // Fallback to mock data in development environment
+      if (process.env.NODE_ENV === 'development') {
+        console.log('Using mock client data for development');
         const mockClients = [
           { id: 1, name: 'ABC Corporation' },
           { id: 2, name: 'XYZ Enterprises' },
@@ -88,10 +123,8 @@ const ServiceRequest = () => {
           { id: 10, name: 'International Partners' }
         ];
         setClients(mockClients);
-        setIsLoadingClients(false);
-      }, 500);
-    } catch (error) {
-      console.error('Error fetching clients:', error);
+      }
+    } finally {
       setIsLoadingClients(false);
     }
   };
@@ -138,20 +171,58 @@ const ServiceRequest = () => {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setIsSubmitting(true);
+    setError(null);
     
     try {
-      // Make POST API request to save form data
-      // For now, we'll just simulate the API call with a timeout
-      // Replace this with your actual API call
-      console.log('Submitting form data:', formData);
+      // Validate required fields
+      const requiredFields: (keyof FormData)[] = [
+        'paxType', 'countryOfResidence', 'citizenship', 'services'
+      ];
       
-      // Simulating API request
-      await new Promise(resolve => setTimeout(resolve, 500));
+      const missingFields = requiredFields.filter(field => !formData[field]);
+      
+      if (missingFields.length > 0) {
+        const errorMsg = `Please fill in all required fields: ${missingFields.join(', ')}`;
+        console.error('Missing required fields:', missingFields);
+        setError(errorMsg);
+        return;
+      }
+
+      // Prepare the payload according to the API requirements
+      const payload: ServiceRequestPayload = {
+        title: formData.title,
+        pax_type: Number(formData.paxType),
+        country_of_residence: Number(formData.countryOfResidence),
+        citizenship: Number(formData.citizenship),
+        service_type: Number(formData.services),
+        // Optional fields
+        client_id: formData.client ? Number(formData.client) : null,
+        client_user_id: formData.client_user_id,
+        state_of_residence: formData.stateOfResidence ? Number(formData.stateOfResidence) : null,
+        referrer: formData.referrer ? Number(formData.referrer) : null,
+        file_number: formData.fileNo || undefined,
+      };
+
+      console.log('Submitting service request:', payload);
+      
+      // Call the API service to submit the request
+      const response = await submitServiceRequest(payload);
+      
+      console.log('Service request submitted successfully:', response);
+      
+      // Store the request ID or code in localStorage if needed for later reference
+      if (response.id) {
+        localStorage.setItem('lastServiceRequestId', String(response.id));
+      }
+      if (response.requestCode) {
+        localStorage.setItem('lastServiceRequestCode', response.requestCode);
+      }
       
       // Navigate to the Common Screen
       router.push('/services/common');
     } catch (error) {
-      console.error('Error submitting form:', error);
+      console.error('Error submitting service request:', error);
+      setError(error instanceof Error ? error.message : 'An unknown error occurred');
     } finally {
       setIsSubmitting(false);
     }
@@ -198,6 +269,12 @@ const ServiceRequest = () => {
   return (
     <div className="py-6 px-[80px]">
       <h1 className="text-[28px] font-bold text-[#1C1C1C] mb-6">Service Request</h1>
+      
+      {error && (
+        <div className="bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded mb-4 relative" role="alert">
+          <span className="block sm:inline">{error}</span>
+        </div>
+      )}
       
       <form onSubmit={handleSubmit}>
         {/* First Card - Form Fields */}
