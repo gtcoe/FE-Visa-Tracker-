@@ -11,7 +11,6 @@ import {
   CITIZENSHIP, CITIZENSHIP_LABELS,
   SERVICE, SERVICE_LABELS,
   SERVICE_CATEGORY, SERVICE_CATEGORY_LABELS, SERVICE_CATEGORIES,
-  REFERRER, REFERRER_LABELS,
   createEnumOptions
 } from '@component/constants/dropdown/dropdownConstants';
 import {
@@ -38,7 +37,7 @@ interface FormData {
   stateOfResidence: STATE | '';
   citizenship: CITIZENSHIP;
   services: SERVICE | '';
-  referrer: REFERRER | '';
+  referrer: string;
   fileNo: string;
 }
 
@@ -199,7 +198,7 @@ const ServiceRequest = () => {
         client_id: formData.client ? Number(formData.client) : null,
         client_user_id: formData.client_user_id,
         state_of_residence: formData.stateOfResidence ? Number(formData.stateOfResidence) : null,
-        referrer: formData.referrer ? Number(formData.referrer) : null,
+        referrer: formData.referrer || null,
         file_number: formData.fileNo || undefined,
       };
 
@@ -261,10 +260,6 @@ const ServiceRequest = () => {
       category: SERVICE_CATEGORIES[option.value as SERVICE],
       categoryLabel: SERVICE_CATEGORY_LABELS[SERVICE_CATEGORIES[option.value as SERVICE]]
     }));
-  const referrerOptions = [
-    { value: '', label: 'Select' },
-    ...createEnumOptions(REFERRER, REFERRER_LABELS)
-  ];
 
   return (
     <div className="py-6 px-[80px]">
@@ -378,11 +373,14 @@ const ServiceRequest = () => {
                   <label htmlFor="referrer" className="block text-sm font-medium text-[#1C1C1C] mb-2">
                     Referrer
                   </label>
-                  <CustomDropdown
-                    options={referrerOptions}
-                    value={formData.referrer}
-                    onChange={(value) => handleDropdownChange('referrer', value)}
+                  <input
+                    type="text"
+                    id="referrer"
                     name="referrer"
+                    placeholder=""
+                    value={formData.referrer}
+                    onChange={handleChange}
+                    className="w-full px-3 py-2 border border-[#E6EAF2] rounded-md focus:outline-none focus:ring-1 focus:ring-[#0B498B] placeholder-gray-400 text-gray-900"
                   />
                 </div>
                 

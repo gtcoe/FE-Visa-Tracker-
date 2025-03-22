@@ -17,7 +17,7 @@ export interface ServiceRequestPayload {
   client_id?: number | null;
   client_user_id?: number | null;
   state_of_residence?: number | null;
-  referrer?: number | null;
+  referrer?: string | null;
   file_number?: string;
 }
 
