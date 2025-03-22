@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { Client } from './ManageClients';
 import CustomDropdown, { DropdownOption } from '../common/CustomDropdown';
-import { ToastNotifySuccess, ToastNotifyError } from '../common/Toast';
+import { ToastNotifyError } from '../common/Toast';
 
 interface AddClientFormProps {
   onSubmit: (client: Client) => void;
@@ -45,7 +45,6 @@ const AddClientForm = ({ onSubmit }: AddClientFormProps) => {
     }
 
     onSubmit(formData);
-    ToastNotifySuccess("Client added successfully");
   };
 
   const handleDropdownChange = (name: string) => (value: string) => {

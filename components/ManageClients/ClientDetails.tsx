@@ -3,9 +3,10 @@
 import React from 'react';
 import { useRouter } from 'next/navigation';
 import { Client } from './ManageClients';
+import { ClientContextClient } from '@component/context/ClientContext';
 
 interface ClientDetailsProps {
-  client: Client;
+  client: Client | ClientContextClient;
 }
 
 const ClientDetails: React.FC<ClientDetailsProps> = ({ client }) => {
@@ -152,8 +153,7 @@ const ClientDetails: React.FC<ClientDetailsProps> = ({ client }) => {
                   -
                 </td>
               </tr>
-              {client.spokeName && (
-                <tr>
+              <tr>
                   <td className="px-4 py-4 text-sm font-medium text-[#1C1C1C]">
                     Referer
                   </td>
@@ -173,7 +173,6 @@ const ClientDetails: React.FC<ClientDetailsProps> = ({ client }) => {
                     -
                   </td>
                 </tr>
-              )}
             </tbody>
           </table>
         </div>

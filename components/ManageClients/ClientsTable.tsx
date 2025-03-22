@@ -1,14 +1,26 @@
 import React from 'react';
 import { Client } from './ManageClients';
 import Link from 'next/link';
+import { useClientContext, ClientContextClient } from '@component/context/ClientContext';
+import { useRouter } from 'next/navigation';
 
 interface ClientsTableProps {
-  clients: Client[];
+  clients: Client[] | ClientContextClient[];
 }
 
 const ClientsTable = ({ clients }: ClientsTableProps) => {
+  const { setSelectedClient } = useClientContext();
+  const router = useRouter();
+  
   const getClientType = (type: number) => {
     return type === 1 ? 'Corporate' : 'Agent';
+  };
+
+  const handleClientClick = (client: Client | ClientContextClient) => {
+    // Set the selected client in context
+    setSelectedClient(client as ClientContextClient);
+    // Navigate to the client details page
+    router.push(`/manage-clients/${client.clientId}`);
   };
 
   return (
@@ -29,14 +41,17 @@ const ClientsTable = ({ clients }: ClientsTableProps) => {
             </thead>
             <tbody>
               {clients.map((client, index) => (
-                <tr key={client.id || index} className="border-b border-[#E6EAF2] last:border-b-0">
+                <tr key={client.clientId || index} className="border-b border-[#E6EAF2] last:border-b-0">
                   <td className="text-center py-4 text-xs font-medium px-6 border-r border-[#E6EAF2] text-[#1C1C1C]">
                     {getClientType(client.type)}
                   </td>
                   <td className="text-center py-4 text-xs font-medium px-6 border-r border-[#E6EAF2]">
-                    <Link href={`/manage-clients/${client.id}`} className="text-[#0B498B] hover:underline">
+                    <button 
+                      onClick={() => handleClientClick(client)}
+                      className="text-[#0B498B] hover:underline cursor-pointer"
+                    >
                       {client.name}
-                    </Link>
+                    </button>
                   </td>
                   <td className="text-center py-4 text-xs font-medium px-6 border-r border-[#E6EAF2] text-[#1C1C1C]">
                     {client.address}

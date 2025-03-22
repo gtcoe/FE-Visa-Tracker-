@@ -3,64 +3,40 @@
 import React, { useEffect, useState } from 'react';
 import { useParams } from 'next/navigation';
 import ClientDetails from '@component/components/ManageClients/ClientDetails';
-import { Client } from '@component/components/ManageClients/ManageClients';
-
-// Sample client data for demonstration
-const sampleClients: Client[] = [
-  {
-    id: '1',
-    type: 1, // Corporate
-    name: 'ABC Corporation',
-    address: 'PlotNo 58, Regent Gateway, Doddanakundi Village',
-    branches: 'Kiadb Industrial Area, Itpl Roa',
-    ownerName: 'Sahil',
-    ownerPhone: '+91 9898989898',
-    ownerEmail: 'sahil.dua@gmail.com',
-    country: 'India',
-    state: 'Karnataka',
-    city: 'Bangalore',
-    zipCode: '560048',
-    gstNo: '56252686926',
-    billingCycle: 'Monthly',
-    spokeName: 'Kartik',
-    spokePhone: '+91 9898989898',
-    spokeEmail: 'kartik.chopra@gmail.com'
-  },
-  {
-    id: '2',
-    type: 2, // Agent
-    name: 'XYZ Corporate',
-    address: 'xyz/b block Dwarka',
-    branches: 'Delhi',
-    ownerName: 'Shiv Kumar',
-    ownerPhone: '+91 9898989898',
-    ownerEmail: 'shivkumar@gmail.com',
-    country: 'India',
-    state: 'Delhi',
-    city: 'New Delhi',
-    zipCode: '110075',
-    gstNo: '29GGGGG1314R9Z6',
-    billingCycle: 'Quarterly'
-  }
-];
+import { useClientContext, ClientContextClient } from '@component/context/ClientContext';
 
 const ClientDetailsPage = () => {
   const params = useParams();
-  const [client, setClient] = useState<Client | null>(null);
   const [loading, setLoading] = useState(true);
+  const { clients, selectedClient, setSelectedClient } = useClientContext();
+  const [client, setClient] = useState<ClientContextClient | null>(null);
 
   useEffect(() => {
-    // In a real application, you would fetch the client data from an API
-    // For this example, we're using the sample data
-    const clientId = params.id as string;
-    const foundClient = sampleClients.find(c => c.id === clientId);
-    
-    // Simulate API call delay
-    setTimeout(() => {
-      setClient(foundClient || null);
+    if (!params || !params.id) {
       setLoading(false);
-    }, 500);
-  }, [params.id]);
+      return;
+    }
+
+    // If we already have a selected client in context, use that
+    if (selectedClient) {
+      setClient(selectedClient);
+      setLoading(false);
+      return;
+    }
+
+    // Otherwise, find the client from the clients list in context using the URL parameter
+    const clientId = params.id.toString();
+    if (clients.length > 0) {
+      const foundClient = clients.find(c => c.clientId?.toString() === clientId);
+      if (foundClient) {
+        // Set the found client in local state and also in context
+        setClient(foundClient);
+        setSelectedClient(foundClient);
+      }
+    }
+    
+    setLoading(false);
+  }, [params, clients, selectedClient, setSelectedClient]);
 
   if (loading) {
     return (

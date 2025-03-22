@@ -1,11 +1,15 @@
 "use client";
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import ClientsTable from './ClientsTable';
 import AddClientForm from './AddClientForm';
+import { getAllClients, createClient } from '@component/api/client';
+import { ToastNotifySuccess, ToastNotifyError } from '../common/Toast';
+import { useClientContext, ClientContextClient } from '@component/context/ClientContext';
 
 export interface Client {
-  id?: string;
+  clientId?: number;
+  userId?: number;
   type: number; // 1 for Corporate, 2 for Agent
   name: string;
   address: string;
@@ -26,37 +30,68 @@ export interface Client {
 
 const ManageClients = () => {
   const [activeTab, setActiveTab] = useState<'list' | 'add'>('list');
-  const [clients, setClients] = useState<Client[]>([
-    {
-      id: '1',
-      type: 1, // Corporate
-      name: 'ABC Corporate',
-      address: '123/b block Dwarka',
-      branches: 'Delhi',
-      ownerName: 'Dev Kumar',
-      ownerPhone: '+91 9898989898',
-      ownerEmail: 'devkumar@gmail.com'
-    },
-    {
-      id: '2',
-      type: 2, // Agent
-      name: 'XYX Corporate',
-      address: 'xyz/b block Dwarka',
-      branches: 'Delhi',
-      ownerName: 'Shiv Kumar',
-      ownerPhone: '+91 9898989898',
-      ownerEmail: 'shivkumar@gmail.com'
-    }
-  ]);
+  const [loading, setLoading] = useState<boolean>(false);
+  const [error, setError] = useState<string | null>(null);
+  
+  // Use client context
+  const { clients, setClients } = useClientContext();
 
-  const handleAddClient = (newClient: Client) => {
-    // In a real app, you would call an API to save the client
-    const clientWithId = {
-      ...newClient,
-      id: (clients.length + 1).toString()
-    };
-    setClients([...clients, clientWithId]);
-    setActiveTab('list');
+  // Fetch clients on component mount
+  useEffect(() => {
+    fetchClients();
+  }, []);
+
+  const fetchClients = async () => {
+    setLoading(true);
+    setError(null);
+    try {
+      const fetchedClients = await getAllClients();
+      // Update the context with the fetched clients
+      setClients(fetchedClients as ClientContextClient[]);
+    } catch (err) {
+      console.error('Failed to fetch clients:', err);
+      setError('Failed to load clients. Please try again later.');
+      // Set default clients for development if API fails
+      setClients([
+        {
+          clientId: 1,
+          type: 1, // Corporate
+          name: 'ABC Corporate',
+          address: '123/b block Dwarka',
+          branches: 'Delhi',
+          ownerName: 'Dev Kumar',
+          ownerPhone: '+91 9898989898',
+          ownerEmail: 'devkumar@gmail.com'
+        },
+        {
+          clientId: 2,
+          type: 2, // Agent
+          name: 'XYX Corporate',
+          address: 'xyz/b block Dwarka',
+          branches: 'Delhi',
+          ownerName: 'Shiv Kumar',
+          ownerPhone: '+91 9898989898',
+          ownerEmail: 'shivkumar@gmail.com'
+        }
+      ]);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const handleAddClient = async (newClient: Client) => {
+    try {
+      // Call API to create client
+      await createClient(newClient);
+      // Refetch clients to get the updated list
+      await fetchClients();
+      // Switch back to list view
+      setActiveTab('list');
+      ToastNotifySuccess("Client added successfully");
+    } catch (err) {
+      console.error('Failed to add client:', err);
+      ToastNotifyError("Failed to add client. Please try again.");
+    }
   };
 
   return (
@@ -85,7 +120,15 @@ const ManageClients = () => {
 
         <div className={`${activeTab === 'list' ? "px-6 py-[21.5px]" : "p-6"}`}>
           {activeTab === 'list' ? (
-            <ClientsTable clients={clients} />
+            <>
+              {loading ? (
+                <div className="text-center py-4">Loading clients...</div>
+              ) : error ? (
+                <div className="text-center py-4 text-red-500">{error}</div>
+              ) : (
+                <ClientsTable clients={clients} />
+              )}
+            </>
           ) : (
             <AddClientForm onSubmit={handleAddClient} />
           )}
