@@ -5,7 +5,13 @@ export enum COUNTRY {
     USA = 2,
     UK = 3,
     CANADA = 4,
-    AUSTRALIA = 5
+    AUSTRALIA = 5,
+    GERMANY = 6,
+    FRANCE = 7,
+    JAPAN = 8,
+    CHINA = 9,
+    SINGAPORE = 10,
+    UAE = 11
   }
   
   export const COUNTRY_LABELS: Record<COUNTRY, string> = {
@@ -13,9 +19,55 @@ export enum COUNTRY {
     [COUNTRY.USA]: 'USA',
     [COUNTRY.UK]: 'UK',
     [COUNTRY.CANADA]: 'Canada',
-    [COUNTRY.AUSTRALIA]: 'Australia'
+    [COUNTRY.AUSTRALIA]: 'Australia',
+    [COUNTRY.GERMANY]: 'Germany',
+    [COUNTRY.FRANCE]: 'France',
+    [COUNTRY.JAPAN]: 'Japan',
+    [COUNTRY.CHINA]: 'China',
+    [COUNTRY.SINGAPORE]: 'Singapore',
+    [COUNTRY.UAE]: 'UAE'
   };
 
+// Added constants for visa-related data
+export enum VISA_COUNTRY {
+  NETHERLAND = 1
+}
+
+export const VISA_COUNTRY_LABELS: Record<VISA_COUNTRY, string> = {
+  [VISA_COUNTRY.NETHERLAND]: 'Netherland'
+};
+
+export enum VISA_CATEGORY {
+  BUSINESS = 1
+}
+
+export const VISA_CATEGORY_LABELS: Record<VISA_CATEGORY, string> = {
+  [VISA_CATEGORY.BUSINESS]: 'Business'
+};
+
+export enum NATIONALITY {
+  INDIAN = 1
+}
+
+export const NATIONALITY_LABELS: Record<NATIONALITY, string> = {
+  [NATIONALITY.INDIAN]: 'Indian'
+};
+
+export enum ENTRY_TYPE {
+  NORMAL = 1
+}
+
+export const ENTRY_TYPE_LABELS: Record<ENTRY_TYPE, string> = {
+  [ENTRY_TYPE.NORMAL]: 'Normal'
+};
+
+export enum PROCESSING_BRANCH {
+  VISAISTIC_DELHI = 1
+}
+
+export const PROCESSING_BRANCH_LABELS: Record<PROCESSING_BRANCH, string> = {
+  [PROCESSING_BRANCH.VISAISTIC_DELHI]: 'Visaistic - Delhi'
+};
 
 export enum STATE {
     // Indian States
@@ -206,7 +258,14 @@ export enum STATE {
       STATE.NEW_SOUTH_WALES,
       STATE.VICTORIA,
       STATE.QUEENSLAND
-    ]
+    ],
+    // Add default states for the newly added countries
+    [COUNTRY.GERMANY]: [],
+    [COUNTRY.FRANCE]: [],
+    [COUNTRY.JAPAN]: [],
+    [COUNTRY.CHINA]: [],
+    [COUNTRY.SINGAPORE]: [],
+    [COUNTRY.UAE]: []
   };
 
 

@@ -1,6 +1,17 @@
 "use client";
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
+import { 
+  ApplicationRequestData, 
+  getApplicationInfo, 
+  getFullName, 
+  formatDateForDisplay 
+} from '@component/types/applicationTypes';
+import { 
+  VISA_COUNTRY, VISA_COUNTRY_LABELS, 
+  VISA_CATEGORY, VISA_CATEGORY_LABELS,
+  ENTRY_TYPE, ENTRY_TYPE_LABELS
+} from '@component/constants/dropdown/geographical';
 
 interface VisaApplicationRow {
   id: string;
@@ -14,18 +25,48 @@ interface VisaApplicationRow {
 
 // Component for Service Request Summary tab
 const ServiceRequestSummary: React.FC = () => {
-  // Sample data for the visa applications table
-  const [visaApplications, setVisaApplications] = useState<VisaApplicationRow[]>([
-    {
-      id: '1',
-      name: 'Sahil Chopra',
-      email: '',
-      visaCountry: 'Netherlands',
-      visaCategory: 'Business',
-      entryType: 'Normal',
-      remarks: '',
-    }
-  ]);
+  // State for visa applications
+  const [visaApplications, setVisaApplications] = useState<VisaApplicationRow[]>([]);
+  // State for loading application data
+  const [isLoading, setIsLoading] = useState<boolean>(true);
+  const [clientName, setClientName] = useState<string>('');
+
+  // Effect to load application data from localStorage on mount
+  useEffect(() => {
+    const loadApplicationData = () => {
+      setIsLoading(true);
+      
+      try {
+        // Get application data from localStorage
+        const applicationData = getApplicationInfo();
+        
+        if (applicationData) {
+          // Transform the application data to match our VisaApplicationRow structure
+          const transformedData: VisaApplicationRow[] = applicationData.visa_requests.map((request, index) => {
+            return {
+              id: `${applicationData.application_id}`,
+              name: getFullName(applicationData.personal_info),
+              email: applicationData.personal_info.email_id || '',
+              // Convert numeric values to labels using the enums
+              visaCountry: VISA_COUNTRY_LABELS[request.visa_country as VISA_COUNTRY] || 'Unknown',
+              visaCategory: VISA_CATEGORY_LABELS[request.visa_category as VISA_CATEGORY] || 'Unknown',
+              entryType: ENTRY_TYPE_LABELS[request.entry_type as ENTRY_TYPE] || 'Unknown',
+              remarks: request.remark || ''
+            };
+          });
+          setClientName(applicationData.client_name || '');
+          
+          setVisaApplications(transformedData);
+        }
+      } catch (error) {
+        console.error('Error loading application data:', error);
+      } finally {
+        setIsLoading(false);
+      }
+    };
+    
+    loadApplicationData();
+  }, []);
 
   // State for dispatch details
   const [dispatchDetails, setDispatchDetails] = useState({
@@ -75,9 +116,9 @@ const ServiceRequestSummary: React.FC = () => {
         <div className="rounded-lg border border-[#E6EAF2] m-4">
           <div className="border-b border-[#E6EAF2] px-6 py-4 bg-[#F9FAFB]">
             <div className="flex flex-wrap items-center text-[14px] leading-[20px] font-medium space-x-2">
-              <span className="font-medium text-[#0B498B]">Reference No: MMI2345</span>
+              <span className="font-medium text-[#0B498B]">{`Reference No: ${localStorage.getItem('serviceReferenceNumber')}`}</span>
               <span className="font-medium text-[#0B498B]">•</span>
-              <span className="font-medium text-[#0B498B]">Client name: Concentrix - Gurgaon</span>
+              <span className="font-medium text-[#0B498B]">Client name: {clientName}</span>
               <span className="font-medium text-[#0B498B]">•</span>
               <button
                 onClick={handleAddMoreServiceRequest}
@@ -93,57 +134,63 @@ const ServiceRequestSummary: React.FC = () => {
             <h3 className="text-[14px] leading-[20px] font-medium text-[#1C1C1C] my-4 mx-6">Visa Application details</h3>
             
             <div className="overflow-x-auto">
-              <table className="min-w-full border-collapse">
-                <thead>
-                  <tr className="bg-[#F9FAFB] text-left text-xs font-medium text-gray-500 uppercase tracking-wider border-b border-t border-[#E6EAF2]">
-                    <th className="px-4 py-3 text-center">Application Name</th>
-                    <th className="px-4 py-3 text-center">Email ID</th>
-                    <th className="px-4 py-3 text-center">Visa Country</th>
-                    <th className="px-4 py-3 text-center">Visa Category</th>
-                    <th className="px-4 py-3 text-center">Entry Type</th>
-                    <th className="px-4 py-3 text-center">Remarks</th>
-                    <th className="px-4 py-3 text-center">Edit</th>
-                    <th className="px-4 py-3 text-center">View</th>
-                    <th className="px-4 py-3 text-center">ADD SUB REQUEST</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {visaApplications.map((row) => (
-                    <tr key={row.id} className="hover:bg-gray-50 border-b border-[#E6EAF2] last:border-b-0">
-                      <td className="px-4 py-4 text-sm font-medium text-gray-900 text-center">{row.name}</td>
-                      <td className="px-4 py-4 text-sm text-gray-500 text-center">{row.email || '-'}</td>
-                      <td className="px-4 py-4 text-sm text-gray-500 text-center">{row.visaCountry}</td>
-                      <td className="px-4 py-4 text-sm text-gray-500 text-center">{row.visaCategory}</td>
-                      <td className="px-4 py-4 text-sm text-gray-500 text-center">{row.entryType}</td>
-                      <td className="px-4 py-4 text-sm text-gray-500 text-center">{row.remarks || '-'}</td>
-                      <td className="px-4 py-4 text-sm text-center">
-                        <button 
-                          onClick={() => handleEditRow(row.id)}
-                          className="text-[#0B498B] hover:underline font-medium"
-                        >
-                          Edit
-                        </button>
-                      </td>
-                      <td className="px-4 py-4 text-sm text-center">
-                        <button 
-                          onClick={() => handleViewRow(row.id)}
-                          className="text-[#0B498B] hover:underline font-medium"
-                        >
-                          View
-                        </button>
-                      </td>
-                      <td className="px-4 py-4 text-sm text-center">
-                        <button 
-                          onClick={() => handleAddSubRequest(row.id)}
-                          className="text-[#0B498B] hover:underline font-medium"
-                        >
-                          Add sub request
-                        </button>
-                      </td>
+              {isLoading ? (
+                <div className="flex justify-center items-center py-8">
+                  <p>Loading application data...</p>
+                </div>
+              ) : (
+                <table className="min-w-full border-collapse">
+                  <thead>
+                    <tr className="bg-[#F9FAFB] text-left text-xs font-medium text-gray-500 uppercase tracking-wider border-b border-t border-[#E6EAF2]">
+                      <th className="px-4 py-3 text-center">Application Name</th>
+                      <th className="px-4 py-3 text-center">Email ID</th>
+                      <th className="px-4 py-3 text-center">Visa Country</th>
+                      <th className="px-4 py-3 text-center">Visa Category</th>
+                      <th className="px-4 py-3 text-center">Entry Type</th>
+                      <th className="px-4 py-3 text-center">Remarks</th>
+                      <th className="px-4 py-3 text-center">Edit</th>
+                      <th className="px-4 py-3 text-center">View</th>
+                      <th className="px-4 py-3 text-center">ADD SUB REQUEST</th>
                     </tr>
-                  ))}
-                </tbody>
-              </table>
+                  </thead>
+                  <tbody>
+                    {visaApplications.map((row) => (
+                      <tr key={row.id} className="hover:bg-gray-50 border-b border-[#E6EAF2] last:border-b-0">
+                        <td className="px-4 py-4 text-sm font-medium text-gray-900 text-center">{row.name}</td>
+                        <td className="px-4 py-4 text-sm text-gray-500 text-center">{row.email || '-'}</td>
+                        <td className="px-4 py-4 text-sm text-gray-500 text-center">{row.visaCountry}</td>
+                        <td className="px-4 py-4 text-sm text-gray-500 text-center">{row.visaCategory}</td>
+                        <td className="px-4 py-4 text-sm text-gray-500 text-center">{row.entryType}</td>
+                        <td className="px-4 py-4 text-sm text-gray-500 text-center">{row.remarks || '-'}</td>
+                        <td className="px-4 py-4 text-sm text-center">
+                          <button 
+                            onClick={() => handleEditRow(row.id)}
+                            className="text-[#0B498B] hover:underline font-medium"
+                          >
+                            Edit
+                          </button>
+                        </td>
+                        <td className="px-4 py-4 text-sm text-center">
+                          <button 
+                            onClick={() => handleViewRow(row.id)}
+                            className="text-[#0B498B] hover:underline font-medium"
+                          >
+                            View
+                          </button>
+                        </td>
+                        <td className="px-4 py-4 text-sm text-center">
+                          <button 
+                            onClick={() => handleAddSubRequest(row.id)}
+                            className="text-[#0B498B] hover:underline font-medium"
+                          >
+                            Add sub request
+                          </button>
+                        </td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              )}
             </div>
           </div>
         </div>

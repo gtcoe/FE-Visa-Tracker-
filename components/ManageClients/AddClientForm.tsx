@@ -1,14 +1,31 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect, useMemo } from 'react';
 import { Client } from './ManageClients';
-import CustomDropdown, { DropdownOption } from '../common/CustomDropdown';
+import CustomDropdown from '../common/CustomDropdown';
 import { ToastNotifyError } from '../common/Toast';
+import { 
+  COUNTRY, COUNTRY_LABELS, 
+  STATE, STATE_LABELS,
+  COUNTRY_STATES 
+} from '@component/constants/dropdown/geographical';
+
+// Define the Option type locally to match CustomDropdown's interface
+interface Option {
+  value: string | number;
+  label: string;
+}
 
 interface AddClientFormProps {
   onSubmit: (client: Client) => void;
 }
 
+// Ensure Client interface has the right property types
+interface EnhancedClient extends Client {
+  country: COUNTRY;
+  state: STATE;
+}
+
 const AddClientForm = ({ onSubmit }: AddClientFormProps) => {
-  const [formData, setFormData] = useState<Client>({
+  const [formData, setFormData] = useState<EnhancedClient>({
     type: 2, // Agent as default
     name: '',
     address: '',
@@ -16,8 +33,8 @@ const AddClientForm = ({ onSubmit }: AddClientFormProps) => {
     ownerName: '',
     ownerPhone: '',
     ownerEmail: '',
-    country: 0,
-    state: 0,
+    country: COUNTRY.INDIA, // Default to India
+    state: STATE.DELHI, // Default to Delhi
     city: '',
     zipCode: '',
     gstNo: '',
@@ -26,6 +43,23 @@ const AddClientForm = ({ onSubmit }: AddClientFormProps) => {
     spokePhone: '',
     spokeEmail: ''
   });
+
+  // State to hold available states based on selected country
+  const [availableStates, setAvailableStates] = useState<STATE[]>([]);
+
+  // Update available states when country changes
+  useEffect(() => {
+    const statesForCountry = COUNTRY_STATES[formData.country] || [];
+    setAvailableStates(statesForCountry);
+    
+    // If current state is not available in new country, reset it
+    if (statesForCountry.length > 0 && !statesForCountry.includes(formData.state)) {
+      setFormData(prev => ({
+        ...prev,
+        state: statesForCountry[0]
+      }));
+    }
+  }, [formData.country]);
 
   const handleSubmit = () => {
     // Validation
@@ -42,13 +76,14 @@ const AddClientForm = ({ onSubmit }: AddClientFormProps) => {
       return;
     }
 
+    // Submit form data
     onSubmit(formData);
   };
 
-  const handleDropdownChange = (name: string) => (value: string) => {
+  const handleDropdownChange = (name: string) => (value: string | number) => {
     setFormData(prev => ({
       ...prev,
-      [name]: name === 'type' ? Number(value) : value
+      [name]: Number(value)
     }));
   };
 
@@ -60,25 +95,35 @@ const AddClientForm = ({ onSubmit }: AddClientFormProps) => {
     }));
   };
 
-  const typeOptions: DropdownOption[] = [
+  const typeOptions: Option[] = [
     { value: '1', label: 'Corporate' },
     { value: '2', label: 'Agent' }
   ];
 
-  const countryOptions: DropdownOption[] = [
-    { value: '', label: 'Select Country' },
-    { value: 'India', label: 'India' },
-    { value: 'USA', label: 'USA' },
-    { value: 'UK', label: 'UK' }
-  ];
+  // Generate country options from the COUNTRY_LABELS mapping
+  const countryOptions: Option[] = useMemo(() => {
+    return [
+      { value: '', label: 'Select Country' },
+      ...Object.entries(COUNTRY_LABELS).map(([value, label]) => ({
+        value,
+        label
+      }))
+    ];
+  }, []);
 
-  const stateOptions: DropdownOption[] = [
-    { value: '', label: 'Select State' },
-    { value: 'Delhi', label: 'Delhi' },
-    { value: 'Maharashtra', label: 'Maharashtra' }
-  ];
+  // Generate state options based on available states
+  const stateOptions: Option[] = useMemo(() => {
+    return [
+      { value: '', label: 'Select State' },
+      ...availableStates.map(stateValue => ({
+        value: stateValue.toString(),
+        label: STATE_LABELS[stateValue]
+      }))
+    ];
+  }, [availableStates]);
 
-  const cityOptions: DropdownOption[] = [
+  // City options (we'll keep these hardcoded since they're not in geographical.ts)
+  const cityOptions: Option[] = [
     { value: '', label: 'Select City' },
     { value: 'New Delhi', label: 'New Delhi' },
     { value: 'Mumbai', label: 'Mumbai' }
@@ -96,8 +141,6 @@ const AddClientForm = ({ onSubmit }: AddClientFormProps) => {
               value={formData.type.toString()}
               onChange={handleDropdownChange('type')}
               options={typeOptions}
-              placeholderColor="#1C1C1C"
-              optionColor="#1C1C1C"
               className="w-full"
               placeholder="Select Type"
             />
@@ -143,13 +186,11 @@ const AddClientForm = ({ onSubmit }: AddClientFormProps) => {
             <label className="block text-xs text-[#1C1C1C] mb-2">Country</label>
             <CustomDropdown
               name="country"
-              value={formData.country || ''}
+              value={formData.country.toString()}
               onChange={handleDropdownChange('country')}
               options={countryOptions}
               className="w-full"
               placeholder="Select Country"
-              placeholderColor="#6A6A6A"
-              optionColor="#1C1C1C"
             />
           </div>
 
@@ -157,13 +198,11 @@ const AddClientForm = ({ onSubmit }: AddClientFormProps) => {
             <label className="block text-xs text-[#1C1C1C] mb-2">State</label>
             <CustomDropdown
               name="state"
-              value={formData.state || ''}
+              value={formData.state.toString()}
               onChange={handleDropdownChange('state')}
               options={stateOptions}
               className="w-full"
               placeholder="Select State"
-              placeholderColor="#6A6A6A"
-              optionColor="#1C1C1C"
             />
           </div>
 
@@ -172,12 +211,10 @@ const AddClientForm = ({ onSubmit }: AddClientFormProps) => {
             <CustomDropdown
               name="city"
               value={formData.city || ''}
-              onChange={handleDropdownChange('city')}
+              onChange={(value) => setFormData(prev => ({ ...prev, city: value.toString() }))}
               options={cityOptions}
               className="w-full"
               placeholder="Select City"
-              placeholderColor="#6A6A6A"
-              optionColor="#1C1C1C"
             />
           </div>
 
@@ -212,7 +249,7 @@ const AddClientForm = ({ onSubmit }: AddClientFormProps) => {
               name="billingCycle"
               value={formData.billingCycle}
               onChange={handleChange}
-              placeholder="Enter email address"
+              placeholder="Enter billing cycle"
               className="w-full px-3 py-2 border border-[#E6EAF2] rounded-[8px] focus:outline-none focus:ring-2 focus:ring-[#0B498B]/20 focus:border-none text-[#1C1C1C] text-sm"
             />
           </div>

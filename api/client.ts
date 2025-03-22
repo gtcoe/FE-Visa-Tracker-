@@ -33,7 +33,7 @@ const mapBackendClientToFrontend = (backendClient: any): Client => {
 const mapFrontendClientToBackend = (client: Client) => {
   return {
     type: client.type,
-    name: client.name,
+    full_name: client.name,
     address: client.address,
     branches: client.branches,
     owner_name: client.ownerName,

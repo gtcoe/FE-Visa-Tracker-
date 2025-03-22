@@ -24,7 +24,7 @@ import { submitServiceRequest, ServiceRequestPayload, ServiceRequestResponse } f
 
 // Local client interface for dropdown
 interface Client {
-  id: number;
+  client_user_id: number;
   name: string;
 }
 
@@ -77,52 +77,17 @@ const ServiceRequest = () => {
       
       if (clientsData && Array.isArray(clientsData)) {
         setClients(clientsData.map(client => ({
-          id: client.clientId || 0,
+          client_user_id: client.userId || 0,
           name: client.name || ''
         })));
       } else {
         console.error('Failed to fetch clients: Invalid response format');
         setError('Failed to fetch clients. Please try again.');
         
-        // Fallback to mock data in development environment
-        if (process.env.NODE_ENV === 'development') {
-          console.log('Using mock client data for development');
-          const mockClients = [
-            { id: 1, name: 'ABC Corporation' },
-            { id: 2, name: 'XYZ Enterprises' },
-            { id: 3, name: 'Global Travel Ltd' },
-            { id: 4, name: 'Visaistic Partners' },
-            { id: 5, name: 'India Tourism Group' },
-            { id: 6, name: 'Corporate Solutions Inc' },
-            { id: 7, name: 'Travel Planners LLC' },
-            { id: 8, name: 'Document Services Corp' },
-            { id: 9, name: 'Visa Experts Ltd' },
-            { id: 10, name: 'International Partners' }
-          ];
-          setClients(mockClients);
-        }
       }
     } catch (error) {
       console.error('Error fetching clients:', error);
       setError(error instanceof Error ? error.message : 'Failed to fetch clients');
-      
-      // Fallback to mock data in development environment
-      if (process.env.NODE_ENV === 'development') {
-        console.log('Using mock client data for development');
-        const mockClients = [
-          { id: 1, name: 'ABC Corporation' },
-          { id: 2, name: 'XYZ Enterprises' },
-          { id: 3, name: 'Global Travel Ltd' },
-          { id: 4, name: 'Visaistic Partners' },
-          { id: 5, name: 'India Tourism Group' },
-          { id: 6, name: 'Corporate Solutions Inc' },
-          { id: 7, name: 'Travel Planners LLC' },
-          { id: 8, name: 'Document Services Corp' },
-          { id: 9, name: 'Visa Experts Ltd' },
-          { id: 10, name: 'International Partners' }
-        ];
-        setClients(mockClients);
-      }
     } finally {
       setIsLoadingClients(false);
     }
@@ -153,11 +118,11 @@ const ServiceRequest = () => {
   const handleDropdownChange = (name: string, value: string | number) => {
     if (name === 'client') {
       // When client is selected, find the client object to get the user_id
-      const selectedClient = clients.find(client => client.id === Number(value));
+      const selectedClient = clients.find(client => client.client_user_id === Number(value));
       setFormData(prev => ({
         ...prev,
         [name]: value === '' ? '' : Number(value),
-        client_user_id: selectedClient ? selectedClient.id : null
+        client_user_id: selectedClient ? selectedClient.client_user_id : null
       }));
     } else {
       setFormData(prev => ({
@@ -208,13 +173,15 @@ const ServiceRequest = () => {
       const response = await submitServiceRequest(payload);
       
       console.log('Service request submitted successfully:', response);
-      
+      console.log('==========>Response:', response);
       // Store the application ID and reference number in localStorage
       if (response.id) {
-        localStorage.setItem('serviceApplicationId', String(response.id));
+             console.log('==========>Response.id', response.id);
+        localStorage.setItem('applicationId', String(response.id));
       }
       if (response.requestCode) {
         localStorage.setItem('serviceReferenceNumber', response.requestCode);
+        localStorage.setItem('referenceNumber', response.requestCode);
         
         // Show success message with reference number before navigating (optional)
         // alert(`Service request submitted successfully! Your reference number is: ${response.requestCode}`);
@@ -247,7 +214,7 @@ const ServiceRequest = () => {
   const clientOptions = [
     { value: '', label: 'Select a client' },
     ...clients.map(client => ({
-      value: client.id,
+      value: client.client_user_id,
       label: client.name
     }))
   ];

@@ -162,7 +162,7 @@ const SearchPax = () => {
           />
         )}
         
-        {activeTab === 'fill' && <FillServiceForm />}
+        {activeTab === 'fill' && <FillServiceForm handleTabChange={handleTabChange}/>}
         
         {activeTab === 'summary' && <ServiceRequestSummary />}
       </Suspense>
@@ -200,8 +200,6 @@ const SearchPax = () => {
           </div>
           <div 
             className={`px-6 py-5 font-medium text-base cursor-pointer ${activeTab === 'summary' ? 'text-[#0B498B] border-b-[3px] border-[#0B498B] font-semibold' : 'text-gray-600'}`}
-            onClick={() => handleTabChange('summary')}
-            onMouseEnter={() => handleTabHover('summary')}
           >
             Service Request Summary
           </div>

@@ -1,6 +1,17 @@
 "use client";
 
 import React, { useState, useMemo, useCallback, useRef, useEffect, ChangeEvent } from 'react';
+import { useRouter } from 'next/navigation';
+import { addApplicationStep3, Step3RequestPayload } from '@component/api/application';
+import { 
+  COUNTRY, COUNTRY_LABELS, 
+  STATE, STATE_LABELS, 
+  VISA_COUNTRY, VISA_COUNTRY_LABELS, 
+  VISA_CATEGORY, VISA_CATEGORY_LABELS,
+  NATIONALITY, NATIONALITY_LABELS,
+  ENTRY_TYPE, ENTRY_TYPE_LABELS,
+  PROCESSING_BRANCH, PROCESSING_BRANCH_LABELS
+} from '@component/constants/dropdown/geographical';
 
 // Define a more flexible type for change events
 type FormChangeEvent = {
@@ -18,6 +29,7 @@ interface DateInputProps {
   label: string;
   required?: boolean;
   placeholder?: string;
+  handleTabChange?: (tabName: string) => void;
 }
 
 // Custom DateInput component that supports both manual entry and date picker
@@ -25,6 +37,7 @@ const DateInput: React.FC<DateInputProps> = ({
   name, 
   value, 
   onChange, 
+  handleTabChange,
   label, 
   required = false,
   placeholder = "DD/MM/YYYY"
@@ -213,14 +226,32 @@ const DateInput: React.FC<DateInputProps> = ({
   );
 };
 
-const FillServiceForm = () => {
+const FillServiceForm = ({ handleTabChange }: { handleTabChange: (tabName: string) => void }) => {
+  const router = useRouter();
+  const [applicationId, setApplicationId] = useState<number | null>(null);
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+  
+  // Try to get application ID from localStorage or URL
+  useEffect(() => {
+    // Check localStorage for application ID
+    const storedAppId = localStorage.getItem('applicationId');
+    console.log('==========>storedAppId', storedAppId);
+    if (storedAppId) {
+      console.log('==========>storedAppId2', storedAppId);
+      setApplicationId(parseInt(storedAppId, 10));
+    }
+    
+    // You could also check URL params if available
+  }, []);
+  
   // Split form state into logical groups
   const [personalInfo, setPersonalInfo] = useState({
     firstName: '',
     lastName: '',
     emailId: '',
     dateOfBirth: '',
-    processingBranch: 'Visaistic - Delhi',
+    processingBranch: PROCESSING_BRANCH_LABELS[PROCESSING_BRANCH.VISAISTIC_DELHI],
   });
 
   const [passportInfo, setPassportInfo] = useState({
@@ -240,11 +271,11 @@ const FillServiceForm = () => {
 
   const [visaRequests, setVisaRequests] = useState([
     {
-      visaCountry: 'Netherland',
-      visaCategory: 'Business',
-      nationality: 'Indian',
-      state: 'Delhi',
-      entryType: 'Normal',
+      visaCountry: VISA_COUNTRY_LABELS[VISA_COUNTRY.NETHERLAND],
+      visaCategory: VISA_CATEGORY_LABELS[VISA_CATEGORY.BUSINESS],
+      nationality: NATIONALITY_LABELS[NATIONALITY.INDIAN],
+      state: STATE_LABELS[STATE.DELHI],
+      entryType: ENTRY_TYPE_LABELS[ENTRY_TYPE.NORMAL],
       remark: '',
     }
   ]);
@@ -327,53 +358,185 @@ const FillServiceForm = () => {
     }));
   }, []);
 
-  const handleSubmit = useCallback((e: React.FormEvent) => {
-    e.preventDefault();
-    console.log('Form submitted:', {
-      ...personalInfo,
-      ...passportInfo,
-      ...travelInfo,
-      visaRequests,
-      ...addressInfo,
-      ...miFields,
-      submissionType,
-      isFixed
-    });
-  }, [personalInfo, passportInfo, travelInfo, visaRequests, addressInfo, miFields, submissionType, isFixed]);
-
+  // Define mappings for dropdowns to numeric values required by API
+  const countryMap = useMemo(() => 
+    Object.entries(COUNTRY_LABELS).reduce((acc, [numValue, label]) => {
+      acc[label] = parseInt(numValue, 10);
+      return acc;
+    }, {} as Record<string, number>)
+  , []);
+  
+  const stateMap = useMemo(() => 
+    Object.entries(STATE_LABELS).reduce((acc, [numValue, label]) => {
+      acc[label] = parseInt(numValue, 10);
+      return acc;
+    }, {} as Record<string, number>)
+  , []);
+  
+  const processingBranchMap = useMemo(() => ({
+    [PROCESSING_BRANCH_LABELS[PROCESSING_BRANCH.VISAISTIC_DELHI]]: PROCESSING_BRANCH.VISAISTIC_DELHI
+  }), []);
+  
+  const visaCountryMap = useMemo(() => ({
+    [VISA_COUNTRY_LABELS[VISA_COUNTRY.NETHERLAND]]: VISA_COUNTRY.NETHERLAND
+  }), []);
+  
+  const visaCategoryMap = useMemo(() => ({
+    [VISA_CATEGORY_LABELS[VISA_CATEGORY.BUSINESS]]: VISA_CATEGORY.BUSINESS
+  }), []);
+  
+  const nationalityMap = useMemo(() => ({
+    [NATIONALITY_LABELS[NATIONALITY.INDIAN]]: NATIONALITY.INDIAN
+  }), []);
+  
+  const entryTypeMap = useMemo(() => ({
+    [ENTRY_TYPE_LABELS[ENTRY_TYPE.NORMAL]]: ENTRY_TYPE.NORMAL
+  }), []);
+  
   const handleRadioChange = useCallback((value: string) => {
     setSubmissionType(value);
   }, []);
-
+  
   const handleCheckboxChange = useCallback((e: React.ChangeEvent<HTMLInputElement>) => {
     setIsFixed(e.target.checked);
   }, []);
-
+  
   const handleAddMore = useCallback(() => {
     setVisaRequests(prev => [
       ...prev,
       {
-        visaCountry: 'Netherland',
-        visaCategory: 'Business',
-        nationality: 'Indian',
-        state: 'Delhi',
-        entryType: 'Normal',
+        visaCountry: VISA_COUNTRY_LABELS[VISA_COUNTRY.NETHERLAND],
+        visaCategory: VISA_CATEGORY_LABELS[VISA_CATEGORY.BUSINESS],
+        nationality: NATIONALITY_LABELS[NATIONALITY.INDIAN],
+        state: STATE_LABELS[STATE.DELHI],
+        entryType: ENTRY_TYPE_LABELS[ENTRY_TYPE.NORMAL],
         remark: ''
       }
     ]);
   }, []);
-
-  const handleUpdateApplicant = useCallback(() => {
-    console.log('Update applicant');
-  }, []);
-
+  
+  // Modified handleSubmit with API integration
+  const handleSubmit = useCallback(async (e: React.FormEvent) => {
+    e.preventDefault();
+    
+    // Force applicationId to be a number - default to 0 if null (API will handle this)
+    const appId = applicationId || 0;
+    
+    setIsSubmitting(true);
+    setError(null);
+    
+    try {
+      // Prepare payload according to API requirements
+      const payload: Step3RequestPayload = {
+        personal_info: {
+          first_name: personalInfo.firstName,
+          last_name: personalInfo.lastName,
+          email_id: personalInfo.emailId,
+          date_of_birth: personalInfo.dateOfBirth,
+          processing_branch: processingBranchMap[personalInfo.processingBranch] || 1
+        },
+        passport_info: {
+          passport_number: passportInfo.passportNumber,
+          date_of_issue: passportInfo.dateOfIssue,
+          date_of_expiry: passportInfo.dateOfExpiry,
+          issue_at: passportInfo.issueAt,
+          no_of_expired_passport: parseInt(passportInfo.noOfExpiredPassport, 10) || 0,
+          expired_passport_number: passportInfo.expiredPassportNumber
+        },
+        travel_info: {
+          travel_date: travelInfo.travelDate,
+          interview_date: travelInfo.personalAppearance || travelInfo.travelDate, // Fallback to travel date if no interview date
+          file_no: travelInfo.fileNo,
+          is_travel_date_tentative: submissionType === 'tentative' ? 1 : 0,
+          priority_submission: isFixed ? 1 : 0
+        },
+        visa_requests: visaRequests.map(request => ({
+          visa_country: visaCountryMap[request.visaCountry] || 1,
+          visa_category: visaCategoryMap[request.visaCategory] || 1,
+          nationality: nationalityMap[request.nationality] || 1,
+          state: stateMap[request.state] || 6, // Default to Delhi
+          entry_type: entryTypeMap[request.entryType] || 1,
+          remark: request.remark
+        })),
+        address_info: {
+          address_line1: addressInfo.addressLine1,
+          address_line2: addressInfo.addressLine2,
+          country: countryMap[addressInfo.country] || 1, // Default to India
+          state: stateMap[addressInfo.state] || 6, // Default to Delhi
+          city: parseInt(addressInfo.city, 10) || 1, // Default to first city
+          zip: addressInfo.zip,
+          occupation: addressInfo.occupation,
+          position: addressInfo.position
+        },
+        mi_fields: {
+          olvt_number: miFields.oldNumber
+        },
+        application_id: appId
+      };
+      
+      // Submit to API
+      const response = await addApplicationStep3(payload);
+      
+      if (response.status) {
+        // Success handling - proceed to next step
+        console.log('Step 3 data submitted successfully:', response.data);
+        
+        // Store the response data in localStorage for use in summary page
+        if (response.data && response.data.application_requests) {
+          localStorage.setItem('applicationInfo', JSON.stringify(response.data.application_requests));
+        }
+        
+        // Navigate to next step or show success message
+        handleTabChange('summary');
+      } else {
+        setError(response.message || 'Failed to submit application. Please try again.');
+      }
+    } catch (error: any) {
+      setError(error.message || 'An error occurred while submitting the form. Please try again.');
+      console.error('Error submitting step 3 data:', error);
+    } finally {
+      setIsSubmitting(false);
+    }
+  }, [
+    applicationId,
+    personalInfo,
+    passportInfo,
+    travelInfo,
+    visaRequests,
+    addressInfo,
+    miFields,
+    submissionType,
+    isFixed,
+    router,
+    countryMap,
+    stateMap,
+    processingBranchMap,
+    visaCountryMap,
+    visaCategoryMap,
+    nationalityMap,
+    entryTypeMap,
+    handleTabChange
+  ]);
+  
+  const handleUpdateApplicant = useCallback(async () => {
+    try {
+      await handleSubmit({ preventDefault: () => {} } as React.FormEvent);
+    } catch (error) {
+      console.error('Error in handleUpdateApplicant:', error);
+    }
+  }, [handleSubmit]);
+  
   const handleBack = useCallback(() => {
-    console.log('Back button clicked');
-  }, []);
-
-  const handleUpdateAndContinue = useCallback(() => {
-    console.log('Update and continue');
-  }, []);
+    router.back();
+  }, [router]);
+  
+  const handleUpdateAndContinue = useCallback(async () => {
+    try {
+      await handleSubmit({ preventDefault: () => {} } as React.FormEvent);
+    } catch (error) {
+      console.error('Error in handleUpdateAndContinue:', error);
+    }
+  }, [handleSubmit]);
 
   // Function to format date for display
   const formatDateForDisplay = useCallback((isoDate: string) => {
@@ -398,66 +561,51 @@ const FillServiceForm = () => {
   };
 
   // Define processing branch options (with only Visaistic - Delhi)
-  const processingBranchOptions = [
-    { value: 'Visaistic - Delhi', label: 'Visaistic - Delhi' }
-  ];
+  const processingBranchOptions = useMemo(() => [
+    { value: PROCESSING_BRANCH_LABELS[PROCESSING_BRANCH.VISAISTIC_DELHI], 
+      label: PROCESSING_BRANCH_LABELS[PROCESSING_BRANCH.VISAISTIC_DELHI] }
+  ], []);
 
-  // Define country options
-  const countryOptions = [
+  // Define country options from constants
+  const countryOptions = useMemo(() => [
     { value: '', label: 'Select' },
-    { value: 'India', label: 'India' },
-    { value: 'USA', label: 'USA' },
-    { value: 'UK', label: 'UK' },
-    { value: 'Canada', label: 'Canada' },
-    { value: 'Australia', label: 'Australia' },
-    { value: 'Germany', label: 'Germany' },
-    { value: 'France', label: 'France' },
-    { value: 'Japan', label: 'Japan' },
-    { value: 'China', label: 'China' },
-    { value: 'Singapore', label: 'Singapore' },
-    { value: 'UAE', label: 'UAE' }
-  ];
+    ...Object.entries(COUNTRY_LABELS).map(([value, label]) => ({
+      value: label,
+      label: label
+    }))
+  ], []);
   
-  // Define Indian state options
-  const indianStateOptions = [
+  // Define Indian state options from constants
+  const indianStateOptions = useMemo(() => [
     { value: '', label: 'Select' },
-    { value: 'Andhra Pradesh', label: 'Andhra Pradesh' },
-    { value: 'Arunachal Pradesh', label: 'Arunachal Pradesh' },
-    { value: 'Assam', label: 'Assam' },
-    { value: 'Bihar', label: 'Bihar' },
-    { value: 'Chhattisgarh', label: 'Chhattisgarh' },
-    { value: 'Delhi', label: 'Delhi' },
-    { value: 'Goa', label: 'Goa' },
-    { value: 'Gujarat', label: 'Gujarat' },
-    { value: 'Haryana', label: 'Haryana' },
-    { value: 'Himachal Pradesh', label: 'Himachal Pradesh' },
-    { value: 'Jharkhand', label: 'Jharkhand' },
-    { value: 'Karnataka', label: 'Karnataka' },
-    { value: 'Kerala', label: 'Kerala' },
-    { value: 'Madhya Pradesh', label: 'Madhya Pradesh' },
-    { value: 'Maharashtra', label: 'Maharashtra' },
-    { value: 'Manipur', label: 'Manipur' },
-    { value: 'Meghalaya', label: 'Meghalaya' },
-    { value: 'Mizoram', label: 'Mizoram' },
-    { value: 'Nagaland', label: 'Nagaland' },
-    { value: 'Odisha', label: 'Odisha' },
-    { value: 'Punjab', label: 'Punjab' },
-    { value: 'Rajasthan', label: 'Rajasthan' },
-    { value: 'Sikkim', label: 'Sikkim' },
-    { value: 'Tamil Nadu', label: 'Tamil Nadu' },
-    { value: 'Telangana', label: 'Telangana' },
-    { value: 'Tripura', label: 'Tripura' },
-    { value: 'Uttar Pradesh', label: 'Uttar Pradesh' },
-    { value: 'Uttarakhand', label: 'Uttarakhand' },
-    { value: 'West Bengal', label: 'West Bengal' }
-  ];
+    ...Object.entries(STATE_LABELS).map(([value, label]) => ({
+      value: label,
+      label: label
+    }))
+  ], []);
 
   return (
     <div className="space-y-6">
+      {/* Display error message if any */}
+      {error && (
+        <div className="mx-6 mt-[21px] mb-6 bg-red-50 border border-red-200 rounded-md p-4">
+          <div className="flex">
+            <div className="flex-shrink-0">
+              <svg className="h-5 w-5 text-red-400" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
+                <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z" clipRule="evenodd" />
+              </svg>
+            </div>
+            <div className="ml-3">
+              <p className="text-sm text-red-700">{error}</p>
+            </div>
+          </div>
+        </div>
+      )}
+      
       {/* Reference Number */}
       <div className="mx-6 mt-[21px] mb-6  bg-white rounded-2xl border border-[#E6EAF2] shadow-sm overflow-hidden">
         <div className="bg-[#F6F7F9] py-4 px-6 border-b border-gray-200">
-          <p className="text-[15px] font-medium text-[#0B498B]">Reference No: MMI2345</p>
+          <p className="text-[15px] font-medium text-[#0B498B]">{`Reference No: ${localStorage.getItem('referenceNumber')}`}</p>
         </div>
         
         <div className="p-6">
@@ -509,6 +657,7 @@ const FillServiceForm = () => {
               value={personalInfo.dateOfBirth}
               onChange={createDateChangeAdapter(handlePersonalInfoChange)}
               label="Date of Birth"
+              handleTabChange={handleTabChange}
             />
 
           <div className="mt-4 col-span-1">
@@ -559,6 +708,7 @@ const FillServiceForm = () => {
               value={passportInfo.dateOfIssue}
               onChange={createDateChangeAdapter(handlePassportInfoChange)}
               label="Date of Issue"
+              handleTabChange={handleTabChange}
             />
             
             <DateInput
@@ -566,6 +716,7 @@ const FillServiceForm = () => {
               value={passportInfo.dateOfExpiry}
               onChange={createDateChangeAdapter(handlePassportInfoChange)}
               label="Date of Expiry"
+              handleTabChange={handleTabChange}
             />
             
             <div>
@@ -633,6 +784,7 @@ const FillServiceForm = () => {
               onChange={createDateChangeAdapter(handleTravelInfoChange)}
               label="Travel Date"
               required={true}
+              handleTabChange={handleTabChange}
             />
             
             <DateInput
@@ -640,6 +792,7 @@ const FillServiceForm = () => {
               value={travelInfo.personalAppearance}
               onChange={createDateChangeAdapter(handleTravelInfoChange)}
               label="Personal Appearance/Interview Date"
+              handleTabChange={handleTabChange}
             />
             
             <div className='col-span-2'>
@@ -723,7 +876,11 @@ const FillServiceForm = () => {
                   onChange={(e) => handleVisaInfoChange(e, index)}
                   className="w-full px-3 py-2.5 border border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-[#0B498B] text-[#6A6A6A] appearance-none bg-white"
                 >
-                  <option value="Netherland">Netherland</option>
+                  {Object.entries(VISA_COUNTRY_LABELS).map(([value, label]) => (
+                    <option key={value} value={value}>
+                      {label}
+                    </option>
+                  ))}
                 </select>
               </div>
               
@@ -737,7 +894,11 @@ const FillServiceForm = () => {
                   onChange={(e) => handleVisaInfoChange(e, index)}
                   className="w-full px-3 py-2.5 border border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-[#0B498B] text-[#6A6A6A] appearance-none bg-white"
                 >
-                  <option value="Business">Business</option>
+                  {Object.entries(VISA_CATEGORY_LABELS).map(([value, label]) => (
+                    <option key={value} value={value}>
+                      {label}
+                    </option>
+                  ))}
                 </select>
               </div>
               
@@ -751,7 +912,11 @@ const FillServiceForm = () => {
                   onChange={(e) => handleVisaInfoChange(e, index)}
                   className="w-full px-3 py-2.5 border border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-[#0B498B] text-[#6A6A6A] appearance-none bg-white"
                 >
-                  <option value="Indian">Indian</option>
+                  {Object.entries(NATIONALITY_LABELS).map(([value, label]) => (
+                    <option key={value} value={value}>
+                      {label}
+                    </option>
+                  ))}
                 </select>
               </div>
               
@@ -765,7 +930,11 @@ const FillServiceForm = () => {
                   onChange={(e) => handleVisaInfoChange(e, index)}
                   className="w-full px-3 py-2.5 border border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-[#0B498B] text-[#6A6A6A] appearance-none bg-white"
                 >
-                  <option value="Delhi">Delhi</option>
+                  {Object.entries(STATE_LABELS).map(([value, label]) => (
+                    <option key={value} value={value}>
+                      {label}
+                    </option>
+                  ))}
                 </select>
               </div>
             </div>
@@ -781,7 +950,11 @@ const FillServiceForm = () => {
                   onChange={(e) => handleVisaInfoChange(e, index)}
                   className="w-full px-3 py-2.5 border border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-[#0B498B] text-[#6A6A6A] appearance-none bg-white"
                 >
-                  <option value="Normal">Normal</option>
+                  {Object.entries(ENTRY_TYPE_LABELS).map(([value, label]) => (
+                    <option key={value} value={value}>
+                      {label}
+                    </option>
+                  ))}
                 </select>
               </div>
               
@@ -988,6 +1161,7 @@ const FillServiceForm = () => {
           type="button"
           onClick={handleBack}
           className="px-8 py-2.5 border border-gray-300 rounded-md text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-1 focus:ring-[#0B498B] font-medium"
+          disabled={isSubmitting}
         >
           Back
         </button>
@@ -996,9 +1170,9 @@ const FillServiceForm = () => {
           type="button"
           onClick={handleUpdateAndContinue}
           className="bg-[#0B498B] text-white px-8 py-2.5 rounded-md hover:bg-[#083968] transition-colors focus:outline-none focus:ring-1 focus:ring-[#0B498B] font-medium"
-          disabled={!isFormValid}
+          disabled={!isFormValid || isSubmitting}
         >
-          Update & Continue
+          {isSubmitting ? 'Submitting...' : 'Update & Continue'}
         </button>
       </div>
     </div>
