@@ -1,7 +1,6 @@
 "use client";
 
-import React, { Suspense, useEffect } from 'react';
-import { useRouter } from 'next/navigation';
+import React, { Suspense } from 'react';
 import dynamic from 'next/dynamic';
 
 // Loading fallback component
@@ -15,24 +14,17 @@ const PageLoading = () => (
   </div>
 );
 
-// Dynamically import the SearchPax component with SSR disabled for faster client-side rendering
-const SearchPax = dynamic(() => import('@component/components/Services/CommonScreen'), {
+// Dynamically import the ServiceRequest component with SSR disabled for faster client-side rendering
+const ServiceRequestComponent = dynamic(() => import('@component/components/Services/ServiceRequest'), {
   loading: () => <PageLoading />,
   ssr: false, // Disable server-side rendering for this component to improve initial load time
 });
 
-export default function ServicesPage() {
-  const router = useRouter();
-
-  // Redirect to service-request page when the services tab is clicked
-  useEffect(() => {
-    router.push('/services/service-request');
-  }, [router]);
-
+export default function ServiceRequestPage() {
   return (
     <div className="min-h-screen bg-[#E6EAF2]">
       <Suspense fallback={<PageLoading />}>
-        <PageLoading />
+        <ServiceRequestComponent />
       </Suspense>
     </div>
   );
