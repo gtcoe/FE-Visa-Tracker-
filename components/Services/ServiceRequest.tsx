@@ -4,6 +4,7 @@ import React, { useState, useEffect } from 'react';
 import { FiMapPin, FiPhone, FiGlobe } from 'react-icons/fi';
 import CustomDropdown from './CustomDropdown';
 import GroupedDropdown from './GroupedDropdown';
+import SearchableDropdown from './SearchableDropdown';
 import { useRouter } from 'next/navigation';
 import { 
   CUSTOMER_TYPE, CUSTOMER_TYPE_LABELS,
@@ -19,11 +20,18 @@ import {
   COUNTRY_STATES
 } from '@component/constants/dropdown/geographical';
 
+// Client interface
+interface Client {
+  id: number;
+  name: string;
+}
+
 interface FormData {
   title: string;
   paxType: CUSTOMER_TYPE;
   countryOfResidence: COUNTRY;
-  client: string;
+  client: number | '';
+  client_user_id: number | null;
   stateOfResidence: STATE | '';
   citizenship: CITIZENSHIP;
   services: SERVICE | '';
@@ -38,6 +46,7 @@ const ServiceRequest = () => {
     paxType: CUSTOMER_TYPE.CORPORATE,
     countryOfResidence: COUNTRY.INDIA,
     client: '',
+    client_user_id: null,
     stateOfResidence: '',
     citizenship: CITIZENSHIP.INDIAN,
     services: '',
@@ -46,6 +55,46 @@ const ServiceRequest = () => {
   });
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [filteredStates, setFilteredStates] = useState<STATE[]>([]);
+  const [clients, setClients] = useState<Client[]>([]);
+  const [isLoadingClients, setIsLoadingClients] = useState(false);
+
+  // Fetch clients when component mounts
+  useEffect(() => {
+    fetchClients();
+  }, []);
+
+  // Fetch clients from API
+  const fetchClients = async () => {
+    setIsLoadingClients(true);
+    try {
+      // Replace with your actual API endpoint
+      // const response = await fetch('/api/clients');
+      // const data = await response.json();
+      // setClients(data);
+      
+      // Mock client data for now
+      // In a real app, this would come from your API
+      setTimeout(() => {
+        const mockClients = [
+          { id: 1, name: 'ABC Corporation' },
+          { id: 2, name: 'XYZ Enterprises' },
+          { id: 3, name: 'Global Travel Ltd' },
+          { id: 4, name: 'Visaistic Partners' },
+          { id: 5, name: 'India Tourism Group' },
+          { id: 6, name: 'Corporate Solutions Inc' },
+          { id: 7, name: 'Travel Planners LLC' },
+          { id: 8, name: 'Document Services Corp' },
+          { id: 9, name: 'Visa Experts Ltd' },
+          { id: 10, name: 'International Partners' }
+        ];
+        setClients(mockClients);
+        setIsLoadingClients(false);
+      }, 500);
+    } catch (error) {
+      console.error('Error fetching clients:', error);
+      setIsLoadingClients(false);
+    }
+  };
 
   // Filter states based on selected country
   useEffect(() => {
@@ -70,10 +119,20 @@ const ServiceRequest = () => {
   };
 
   const handleDropdownChange = (name: string, value: string | number) => {
-    setFormData(prev => ({
-      ...prev,
-      [name]: value
-    }));
+    if (name === 'client') {
+      // When client is selected, find the client object to get the user_id
+      const selectedClient = clients.find(client => client.id === Number(value));
+      setFormData(prev => ({
+        ...prev,
+        [name]: value === '' ? '' : Number(value),
+        client_user_id: selectedClient ? selectedClient.id : null
+      }));
+    } else {
+      setFormData(prev => ({
+        ...prev,
+        [name]: value
+      }));
+    }
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -108,6 +167,15 @@ const ServiceRequest = () => {
     ...filteredStates.map(stateId => ({
       value: stateId,
       label: STATE_LABELS[stateId]
+    }))
+  ];
+  
+  // Create client options
+  const clientOptions = [
+    { value: '', label: 'Select a client' },
+    ...clients.map(client => ({
+      value: client.id,
+      label: client.name
     }))
   ];
   
@@ -173,15 +241,20 @@ const ServiceRequest = () => {
                   <label htmlFor="client" className="block text-sm font-medium text-[#1C1C1C] mb-2">
                     Client
                   </label>
-                  <input
-                    type="text"
-                    id="client"
-                    name="client"
-                    placeholder="-"
-                    value={formData.client}
-                    onChange={handleChange}
-                    className="w-full px-3 py-2 border border-[#E6EAF2] rounded-md focus:outline-none focus:ring-1 focus:ring-[#0B498B]"
-                  />
+                  {isLoadingClients ? (
+                    <div className="w-full px-3 py-2 border border-[#E6EAF2] rounded-md bg-gray-50 text-gray-400">
+                      Loading clients...
+                    </div>
+                  ) : (
+                    <SearchableDropdown
+                      options={clientOptions}
+                      value={formData.client}
+                      onChange={(value) => handleDropdownChange('client', value)}
+                      name="client"
+                      placeholder="Select or search client"
+                      searchPlaceholder="Search clients..."
+                    />
+                  )}
                 </div>
                 
                 <div>
@@ -247,7 +320,7 @@ const ServiceRequest = () => {
                     placeholder=""
                     value={formData.fileNo}
                     onChange={handleChange}
-                    className="w-full px-3 py-2 border border-[#E6EAF2] rounded-md focus:outline-none focus:ring-1 focus:ring-[#0B498B]"
+                    className="w-full px-3 py-2 border border-[#E6EAF2] rounded-md focus:outline-none focus:ring-1 focus:ring-[#0B498B] placeholder-gray-400 text-gray-900"
                   />
                 </div>
                 

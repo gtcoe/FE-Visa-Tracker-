@@ -5,74 +5,46 @@ import React, { useState, useRef, useEffect } from 'react';
 interface Option {
   value: string | number;
   label: string;
-  category?: string | number;
-  categoryLabel?: string;
 }
 
-interface GroupedOption {
-  category: string | number;
-  categoryLabel: string;
-  options: Option[];
-}
-
-interface GroupedDropdownProps {
+interface SearchableDropdownProps {
   options: Option[];
   value: string | number;
   onChange: (value: string | number) => void;
   placeholder?: string;
   className?: string;
   name: string;
-  grouped?: boolean;
+  searchPlaceholder?: string;
 }
 
-const GroupedDropdown: React.FC<GroupedDropdownProps> = ({
+const SearchableDropdown: React.FC<SearchableDropdownProps> = ({
   options,
   value,
   onChange,
   placeholder = 'Select',
   className = '',
   name,
-  grouped = true
+  searchPlaceholder = 'Search...'
 }) => {
   const [isOpen, setIsOpen] = useState(false);
+  const [searchTerm, setSearchTerm] = useState('');
   const [position, setPosition] = useState({ top: 0, left: 0, width: 0 });
   const dropdownRef = useRef<HTMLDivElement>(null);
+  const searchInputRef = useRef<HTMLInputElement>(null);
   const dropdownListRef = useRef<HTMLDivElement>(null);
 
   const handleOptionClick = (optionValue: string | number) => {
     onChange(optionValue);
     setIsOpen(false);
+    setSearchTerm('');
   };
 
   const selectedOption = options.find(option => option.value === value);
 
-  // Group options by category if needed
-  const groupedOptions: GroupedOption[] = grouped
-    ? Object.entries(
-        options.reduce<Record<string | number, { categoryLabel: string; options: Option[] }>>((acc, option) => {
-          if (option.category !== undefined && option.categoryLabel) {
-            const category = String(option.category);
-            if (!acc[category]) {
-              acc[category] = {
-                categoryLabel: option.categoryLabel,
-                options: []
-              };
-            }
-            acc[category].options.push(option);
-          }
-          return acc;
-        }, {})
-      ).map(([category, { categoryLabel, options }]) => ({
-        category,
-        categoryLabel,
-        options
-      }))
-    : [];
-
-  // If no categories are defined, or grouped is false, use all options
-  const allOptions = grouped
-    ? options.filter(option => option.category === undefined || option.categoryLabel === undefined)
-    : options;
+  // Filter options based on search term
+  const filteredOptions = options.filter(option => 
+    option.label.toLowerCase().includes(searchTerm.toLowerCase())
+  );
 
   // Calculate dropdown position when toggling
   const calculatePosition = () => {
@@ -106,6 +78,7 @@ const GroupedDropdown: React.FC<GroupedDropdownProps> = ({
     setIsOpen(!isOpen);
   };
 
+  // Handle click outside to close dropdown
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
       if (
@@ -143,6 +116,13 @@ const GroupedDropdown: React.FC<GroupedDropdownProps> = ({
     };
   }, [isOpen]);
 
+  // Focus search input when dropdown opens
+  useEffect(() => {
+    if (isOpen && searchInputRef.current) {
+      searchInputRef.current.focus();
+    }
+  }, [isOpen]);
+
   return (
     <div className={`relative ${className}`} ref={dropdownRef}>
       <div
@@ -173,40 +153,35 @@ const GroupedDropdown: React.FC<GroupedDropdownProps> = ({
             width: `${position.width}px`,
           }}
         >
-          {/* Ungrouped options first */}
-          {allOptions.map((option) => (
-            <div
-              key={String(option.value)}
-              className={`px-3 py-2 cursor-pointer hover:bg-[#F9FAFB] ${
-                value === option.value ? 'bg-[#F9FAFB] text-[#0B498B]' : 'text-gray-900'
-              }`}
-              onClick={() => handleOptionClick(option.value)}
-            >
-              {option.label}
-            </div>
-          ))}
+          {/* Search input */}
+          <div className="sticky top-0 bg-white p-2 border-b border-[#E6EAF2]">
+            <input
+              ref={searchInputRef}
+              type="text"
+              value={searchTerm}
+              onChange={(e) => setSearchTerm(e.target.value)}
+              placeholder={searchPlaceholder}
+              className="w-full px-3 py-2 border border-[#E6EAF2] rounded-md focus:outline-none focus:ring-1 focus:ring-[#0B498B] placeholder-gray-400 text-gray-900"
+              onClick={(e) => e.stopPropagation()}
+            />
+          </div>
 
-          {/* Grouped options with category headers */}
-          {grouped && groupedOptions.map((group) => (
-            <div key={String(group.category)}>
-              {/* Category header */}
-              <div className="px-3 py-1 bg-gray-100 text-gray-600 text-xs font-semibold uppercase tracking-wider">
-                {group.categoryLabel}
+          {/* Options */}
+          {filteredOptions.length > 0 ? (
+            filteredOptions.map((option) => (
+              <div
+                key={String(option.value)}
+                className={`px-3 py-2 cursor-pointer hover:bg-[#F9FAFB] ${
+                  value === option.value ? 'bg-[#F9FAFB] text-[#0B498B]' : 'text-gray-900'
+                }`}
+                onClick={() => handleOptionClick(option.value)}
+              >
+                {option.label}
               </div>
-              {/* Category options */}
-              {group.options.map((option) => (
-                <div
-                  key={String(option.value)}
-                  className={`px-3 py-2 pl-5 cursor-pointer hover:bg-[#F9FAFB] ${
-                    value === option.value ? 'bg-[#F9FAFB] text-[#0B498B]' : 'text-gray-900'
-                  }`}
-                  onClick={() => handleOptionClick(option.value)}
-                >
-                  {option.label}
-                </div>
-              ))}
-            </div>
-          ))}
+            ))
+          ) : (
+            <div className="px-3 py-2 text-gray-500">No results found</div>
+          )}
         </div>
       )}
       
@@ -216,4 +191,4 @@ const GroupedDropdown: React.FC<GroupedDropdownProps> = ({
   );
 };
 
-export default GroupedDropdown; 
+export default SearchableDropdown; 
