@@ -13,6 +13,7 @@ import {
   UserRole,
 } from "@component/constants/appConstants";
 import { ClientProvider } from "@component/context/ClientContext";
+import { UserProvider } from "@component/context/UserContext";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -73,14 +74,16 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body>
-        <ClientProvider>
-          <div className="min-h-screen flex flex-col">
-            {userRole && navItems.length > 0 && (
-              <Navbar items={navItems} userRole={userRole} />
-            )}
-            <main className="flex-grow">{children}</main>
-          </div>
-        </ClientProvider>
+        <UserProvider>
+          <ClientProvider>
+            <div className="min-h-screen flex flex-col">
+              {userRole && navItems.length > 0 && (
+                <Navbar items={navItems} userRole={userRole} />
+              )}
+              <main className="flex-grow">{children}</main>
+            </div>
+          </ClientProvider>
+        </UserProvider>
       </body>
     </html>
   );

@@ -1,11 +1,13 @@
 "use client";
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import UsersTable from './UsersTable';
 import AddUserModal from './AddUserModal';
 import StatusChangeModal from './StatusChangeModal';
 import { USER_STATUS, USER_TYPE } from '../../constants/userConstants';
 import { ToastNotifySuccess, ToastNotifyError } from '../common/Toast';
+import { useUserContext, UserContextUser } from '@component/context/UserContext';
+import { getAllUsers, createUser, updateUserStatus } from '@component/api/user';
 
 export interface User {
   name: string;
@@ -17,65 +19,110 @@ export interface User {
 }
 
 const ManageUsers = () => {
-  const [users, setUsers] = useState<User[]>([
-    {
-      name: 'Kartik Chopra',
-      email: 'kartik@gmail.com',
-      type: USER_TYPE.MANAGER,
-      created_at: '12 Jan, 2025',
-      last_logged_in_at: '12 Jan, 2025',
-      status: USER_STATUS.ACTIVE
-    },
-    {
-        name: 'Kartik Chopra',
-        email: 'kartik@gmail.com',
-        type: USER_TYPE.ADMIN,
-        created_at: '12 Jan, 2025',
-        last_logged_in_at: '12 Jan, 2025',
-        status: USER_STATUS.ACTIVE
-      },
-      {
-        name: 'Kartik Chopra',
-        email: 'kartik@gmail.com',
-        type: USER_TYPE.MANAGER,
-        created_at: '12 Jan, 2025',
-        last_logged_in_at: '12 Jan, 2025',
-        status: USER_STATUS.INACTIVE
-      },
-      {
-        name: 'Kartik Chopra',
-        email: 'kartik@gmail.com',
-        type: USER_TYPE.ADMIN,
-        created_at: '12 Jan, 2025',
-        last_logged_in_at: '12 Jan, 2025',
-        status: USER_STATUS.INACTIVE
-      },
-
-    // Add more initial users as needed
-  ]);
-
   const [isAddUserModalOpen, setIsAddUserModalOpen] = useState(false);
   const [isStatusModalOpen, setIsStatusModalOpen] = useState(false);
-  const [selectedUser, setSelectedUser] = useState<User | null>(null);
+  const [loading, setLoading] = useState<boolean>(false);
+  const [error, setError] = useState<string | null>(null);
+  
+  // Use user context
+  const { users, setUsers, selectedUser, setSelectedUser } = useUserContext();
 
-  const handleAddUser = (newUser: User) => {
-    // todo call api to save details
-    setIsAddUserModalOpen(false);
-    ToastNotifySuccess("User added successfully");
+  // Fetch users on component mount
+  useEffect(() => {
+    fetchUsers();
+  }, []);
+
+  const fetchUsers = async () => {
+    setLoading(true);
+    setError(null);
+    try {
+      const fetchedUsers = await getAllUsers();
+      setUsers(fetchedUsers);
+    } catch (err) {
+      console.error('Failed to fetch users:', err);
+      setError('Failed to load users. Please try again later.');
+      
+      // Set default users for development if API fails
+      setUsers([
+        {
+          id: 1,
+          name: 'Kartik Chopra',
+          email: 'kartik@gmail.com',
+          type: USER_TYPE.MANAGER,
+          created_at: new Date().toISOString(),
+          last_logged_in_at: new Date().toISOString(),
+          status: USER_STATUS.ACTIVE
+        },
+        {
+          id: 2,
+          name: 'Kartik Chopra',
+          email: 'kartik@gmail.com',
+          type: USER_TYPE.ADMIN,
+          created_at: new Date().toISOString(),
+          last_logged_in_at: new Date().toISOString(),
+          status: USER_STATUS.ACTIVE
+        },
+        {
+          id: 3,
+          name: 'Kartik Chopra',
+          email: 'kartik@gmail.com',
+          type: USER_TYPE.MANAGER,
+          created_at: new Date().toISOString(),
+          last_logged_in_at: new Date().toISOString(),
+          status: USER_STATUS.INACTIVE
+        },
+        {
+          id: 4,
+          name: 'Kartik Chopra',
+          email: 'kartik@gmail.com',
+          type: USER_TYPE.ADMIN,
+          created_at: new Date().toISOString(),
+          last_logged_in_at: new Date().toISOString(),
+          status: USER_STATUS.INACTIVE
+        }
+      ]);
+    } finally {
+      setLoading(false);
+    }
   };
 
-  const handleStatusChange = (user: User) => {
+  const handleAddUser = async (newUser: User) => {
+    try {
+      // Call API to create user
+      await createUser(newUser);
+      // Refetch users to get the updated list
+      await fetchUsers();
+      // Close the modal
+      setIsAddUserModalOpen(false);
+      ToastNotifySuccess("User added successfully");
+    } catch (err) {
+      console.error('Failed to add user:', err);
+      ToastNotifyError("Failed to add user. Please try again.");
+    }
+  };
+
+  const handleStatusChange = (user: UserContextUser) => {
     setSelectedUser(user);
     setIsStatusModalOpen(true);
   };
 
-
-  const confirmStatusChange = () => {
+  const confirmStatusChange = async () => {
     if (selectedUser) {
-      // todo call api to update status
-      setIsStatusModalOpen(false);
-      setSelectedUser(null);
-      ToastNotifySuccess("Status updated successfully");
+      try {
+      
+        await updateUserStatus(selectedUser.id!, selectedUser.status);
+        setIsStatusModalOpen(false);
+
+        // Refetch users to get the updated list
+        await fetchUsers();
+        
+        setSelectedUser(null);
+        ToastNotifySuccess("Status updated successfully");
+      } catch (err) {
+        console.error('Failed to update status:', err);
+        ToastNotifyError("Failed to update status. Please try again.");
+        setIsStatusModalOpen(false);
+      }
     }
   };
 
@@ -91,11 +138,16 @@ const ManageUsers = () => {
         </button>
       </div>
 
-      <UsersTable 
-            users={users} 
-            onStatusChange={handleStatusChange}
+      {loading ? (
+        <div className="text-center py-4">Loading users...</div>
+      ) : error ? (
+        <div className="text-center py-4 text-red-500">{error}</div>
+      ) : (
+        <UsersTable 
+          users={users} 
+          onStatusChange={handleStatusChange}
         />
-      
+      )}
 
       {isAddUserModalOpen && (
         <AddUserModal

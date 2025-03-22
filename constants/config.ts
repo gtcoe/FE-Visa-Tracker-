@@ -20,6 +20,7 @@ const API_ENDPOINTS = {
   GET_ALL_USERS: '/user',
   CREATE_USER: '/user/create',
   UPDATE_USER: '/user/update',
+  UPDATE_STATUS_USER: '/user/status',
   
   // Applications
   GET_ALL_APPLICATIONS: '/application',

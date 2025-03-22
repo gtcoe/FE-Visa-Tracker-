@@ -4,10 +4,11 @@ import { USER_STATUS, USER_TYPE, USER_TYPE_REVERSE_MANAGE_USERS, USER_STATUS_REV
 import { ToastNotifySuccess, ToastNotifyError } from '../common/Toast';
 import { EMAIL_REGEX } from '../../constants/regex';
 import CustomDropdown, { DropdownOption } from '../common/CustomDropdown';
+import { UserContextUser } from '@component/context/UserContext';
 
 interface AddUserModalProps {
   onClose: () => void;
-  onSubmit: (user: User) => void;
+  onSubmit: (user: User | UserContextUser) => void;
 }
 
 const AddUserModal = ({ onClose, onSubmit }: AddUserModalProps) => {
