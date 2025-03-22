@@ -220,7 +220,7 @@ const FillServiceForm = () => {
     lastName: '',
     emailId: '',
     dateOfBirth: '',
-    processingBranch: 'Mumbai',
+    processingBranch: 'Visaistic - Delhi',
   });
 
   const [passportInfo, setPassportInfo] = useState({
@@ -397,6 +397,61 @@ const FillServiceForm = () => {
     };
   };
 
+  // Define processing branch options (with only Visaistic - Delhi)
+  const processingBranchOptions = [
+    { value: 'Visaistic - Delhi', label: 'Visaistic - Delhi' }
+  ];
+
+  // Define country options
+  const countryOptions = [
+    { value: '', label: 'Select' },
+    { value: 'India', label: 'India' },
+    { value: 'USA', label: 'USA' },
+    { value: 'UK', label: 'UK' },
+    { value: 'Canada', label: 'Canada' },
+    { value: 'Australia', label: 'Australia' },
+    { value: 'Germany', label: 'Germany' },
+    { value: 'France', label: 'France' },
+    { value: 'Japan', label: 'Japan' },
+    { value: 'China', label: 'China' },
+    { value: 'Singapore', label: 'Singapore' },
+    { value: 'UAE', label: 'UAE' }
+  ];
+  
+  // Define Indian state options
+  const indianStateOptions = [
+    { value: '', label: 'Select' },
+    { value: 'Andhra Pradesh', label: 'Andhra Pradesh' },
+    { value: 'Arunachal Pradesh', label: 'Arunachal Pradesh' },
+    { value: 'Assam', label: 'Assam' },
+    { value: 'Bihar', label: 'Bihar' },
+    { value: 'Chhattisgarh', label: 'Chhattisgarh' },
+    { value: 'Delhi', label: 'Delhi' },
+    { value: 'Goa', label: 'Goa' },
+    { value: 'Gujarat', label: 'Gujarat' },
+    { value: 'Haryana', label: 'Haryana' },
+    { value: 'Himachal Pradesh', label: 'Himachal Pradesh' },
+    { value: 'Jharkhand', label: 'Jharkhand' },
+    { value: 'Karnataka', label: 'Karnataka' },
+    { value: 'Kerala', label: 'Kerala' },
+    { value: 'Madhya Pradesh', label: 'Madhya Pradesh' },
+    { value: 'Maharashtra', label: 'Maharashtra' },
+    { value: 'Manipur', label: 'Manipur' },
+    { value: 'Meghalaya', label: 'Meghalaya' },
+    { value: 'Mizoram', label: 'Mizoram' },
+    { value: 'Nagaland', label: 'Nagaland' },
+    { value: 'Odisha', label: 'Odisha' },
+    { value: 'Punjab', label: 'Punjab' },
+    { value: 'Rajasthan', label: 'Rajasthan' },
+    { value: 'Sikkim', label: 'Sikkim' },
+    { value: 'Tamil Nadu', label: 'Tamil Nadu' },
+    { value: 'Telangana', label: 'Telangana' },
+    { value: 'Tripura', label: 'Tripura' },
+    { value: 'Uttar Pradesh', label: 'Uttar Pradesh' },
+    { value: 'Uttarakhand', label: 'Uttarakhand' },
+    { value: 'West Bengal', label: 'West Bengal' }
+  ];
+
   return (
     <div className="space-y-6">
       {/* Reference Number */}
@@ -466,9 +521,11 @@ const FillServiceForm = () => {
               onChange={handlePersonalInfoChange}
               className="w-full max-w-xs px-3 py-2.5 border border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-[#0B498B] text-[#6A6A6A] appearance-none bg-white"
             >
-              <option value="Mumbai">Mumbai</option>
-              <option value="Delhi">Delhi</option>
-              <option value="Bangalore">Bangalore</option>
+              {processingBranchOptions.map((option) => (
+                <option key={option.value} value={option.value}>
+                  {option.label}
+                </option>
+              ))}
             </select>
           </div>
           </div>
@@ -804,7 +861,11 @@ const FillServiceForm = () => {
                 onChange={handleAddressInfoChange}
                 className="w-full px-3 py-2.5 border border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-[#0B498B] text-[#6A6A6A] appearance-none bg-white"
               >
-                <option value="">Select</option>
+                {countryOptions.map((option) => (
+                  <option key={option.value} value={option.value}>
+                    {option.label}
+                  </option>
+                ))}
               </select>
             </div>
 
@@ -818,7 +879,11 @@ const FillServiceForm = () => {
                 onChange={handleAddressInfoChange}
                 className="w-full px-3 py-2.5 border border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-[#0B498B] text-[#6A6A6A] appearance-none bg-white"
               >
-                <option value="">Select</option>
+                {indianStateOptions.map((option) => (
+                  <option key={option.value} value={option.value}>
+                    {option.label}
+                  </option>
+                ))}
               </select>
             </div>
           </div>
