@@ -3,14 +3,14 @@
 import React, { useState, useRef, useEffect } from 'react';
 
 interface Option {
-  value: string;
+  value: string | number;
   label: string;
 }
 
 interface CustomDropdownProps {
   options: Option[];
-  value: string;
-  onChange: (value: string) => void;
+  value: string | number;
+  onChange: (value: string | number) => void;
   placeholder?: string;
   className?: string;
   name: string;
@@ -27,7 +27,7 @@ const CustomDropdown: React.FC<CustomDropdownProps> = ({
   const [isOpen, setIsOpen] = useState(false);
   const dropdownRef = useRef<HTMLDivElement>(null);
 
-  const handleOptionClick = (optionValue: string) => {
+  const handleOptionClick = (optionValue: string | number) => {
     onChange(optionValue);
     setIsOpen(false);
   };
@@ -78,7 +78,7 @@ const CustomDropdown: React.FC<CustomDropdownProps> = ({
         >
           {options.map((option) => (
             <div
-              key={option.value}
+              key={String(option.value)}
               className={`px-3 py-2 cursor-pointer hover:bg-[#F9FAFB] ${
                 value === option.value ? 'bg-[#F9FAFB] text-[#0B498B]' : 'text-gray-900'
               }`}
@@ -91,7 +91,7 @@ const CustomDropdown: React.FC<CustomDropdownProps> = ({
       )}
       
       {/* Hidden input for form submission */}
-      <input type="hidden" name={name} value={value} />
+      <input type="hidden" name={name} value={String(value)} />
     </div>
   );
 };

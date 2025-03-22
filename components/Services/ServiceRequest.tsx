@@ -4,16 +4,38 @@ import React, { useState } from 'react';
 import { FiMapPin, FiPhone, FiGlobe } from 'react-icons/fi';
 import CustomDropdown from './CustomDropdown';
 import { useRouter } from 'next/navigation';
+import { 
+  CUSTOMER_TYPE, CUSTOMER_TYPE_LABELS,
+  COUNTRY, COUNTRY_LABELS,
+  STATE, STATE_LABELS,
+  CITIZENSHIP, CITIZENSHIP_LABELS,
+  SERVICE, SERVICE_LABELS,
+  REFERRER, REFERRER_LABELS,
+  FILE_NO, FILE_NO_LABELS,
+  createEnumOptions
+} from '@component/constants/dropdownConstants';
+
+interface FormData {
+  title: string;
+  paxType: CUSTOMER_TYPE;
+  countryOfResidence: COUNTRY;
+  client: string;
+  stateOfResidence: STATE | '';
+  citizenship: CITIZENSHIP;
+  services: SERVICE | '';
+  referrer: REFERRER | '';
+  fileNo: FILE_NO | '';
+}
 
 const ServiceRequest = () => {
   const router = useRouter();
-  const [formData, setFormData] = useState({
+  const [formData, setFormData] = useState<FormData>({
     title: '',
-    paxType: 'Corporate',
-    countryOfResidence: 'India',
+    paxType: CUSTOMER_TYPE.CORPORATE,
+    countryOfResidence: COUNTRY.INDIA,
     client: '',
     stateOfResidence: '',
-    citizenship: 'Indian',
+    citizenship: CITIZENSHIP.INDIAN,
     services: '',
     referrer: '',
     fileNo: ''
@@ -28,7 +50,7 @@ const ServiceRequest = () => {
     }));
   };
 
-  const handleDropdownChange = (name: string, value: string) => {
+  const handleDropdownChange = (name: string, value: string | number) => {
     setFormData(prev => ({
       ...prev,
       [name]: value
@@ -57,51 +79,25 @@ const ServiceRequest = () => {
     }
   };
 
-  const paxTypeOptions = [
-    { value: 'Corporate', label: 'Corporate' },
-    { value: 'Individual', label: 'Individual' }
-  ];
-
-  const countryOptions = [
-    { value: 'India', label: 'India' },
-    { value: 'USA', label: 'USA' },
-    { value: 'UK', label: 'UK' },
-    { value: 'Canada', label: 'Canada' }
-  ];
-
+  // Create dropdown options using our enums and helper function
+  const paxTypeOptions = createEnumOptions(CUSTOMER_TYPE, CUSTOMER_TYPE_LABELS);
+  const countryOptions = createEnumOptions(COUNTRY, COUNTRY_LABELS);
   const stateOptions = [
     { value: '', label: 'Select' },
-    { value: 'Delhi', label: 'Delhi' },
-    { value: 'Maharashtra', label: 'Maharashtra' },
-    { value: 'Karnataka', label: 'Karnataka' }
+    ...createEnumOptions(STATE, STATE_LABELS)
   ];
-
-  const citizenshipOptions = [
-    { value: 'Indian', label: 'Indian' },
-    { value: 'American', label: 'American' },
-    { value: 'British', label: 'British' },
-    { value: 'Canadian', label: 'Canadian' }
-  ];
-
+  const citizenshipOptions = createEnumOptions(CITIZENSHIP, CITIZENSHIP_LABELS);
   const serviceOptions = [
     { value: '', label: 'Select' },
-    { value: 'Visa', label: 'Visa' },
-    { value: 'Passport', label: 'Passport' },
-    { value: 'Travel', label: 'Travel' }
+    ...createEnumOptions(SERVICE, SERVICE_LABELS)
   ];
-
   const referrerOptions = [
     { value: '', label: 'Select' },
-    { value: 'Agent', label: 'Agent' },
-    { value: 'Friend', label: 'Friend' },
-    { value: 'Online', label: 'Online' }
+    ...createEnumOptions(REFERRER, REFERRER_LABELS)
   ];
-
   const fileNoOptions = [
     { value: '', label: 'Select' },
-    { value: 'File1', label: 'File 1' },
-    { value: 'File2', label: 'File 2' },
-    { value: 'Company1', label: 'Company 1' }
+    ...createEnumOptions(FILE_NO, FILE_NO_LABELS)
   ];
 
   return (

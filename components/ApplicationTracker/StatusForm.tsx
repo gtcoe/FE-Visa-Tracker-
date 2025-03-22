@@ -1,14 +1,38 @@
 // components/StatusForm.tsx
 import { useState, useRef, useEffect, useCallback, ChangeEvent } from "react";
 import CustomDropdown from "../common/CustomDropdown";
+import {
+  CUSTOMER_TYPE, CUSTOMER_TYPE_LABELS,
+  BRANCH, BRANCH_LABELS,
+  QUEUE, QUEUE_LABELS,
+  STATUS, STATUS_LABELS,
+  COUNTRY, COUNTRY_LABELS,
+  createEnumOptions
+} from '@component/constants/dropdownConstants';
 
 interface StatusFormProps {
   onSearch: (data: any) => void;
 }
 
+interface FormData {
+  referenceNo: string;
+  customerType: CUSTOMER_TYPE | '';
+  customer: string;
+  travelersName: string;
+  travelersPassportNo: string;
+  visaBranch: BRANCH | '';
+  entryGenerationBranch: BRANCH | '';
+  fromDate: string;
+  toDate: string;
+  queue: QUEUE;
+  status: STATUS;
+  country: COUNTRY | '';
+  billingToCompany: string;
+}
+
 interface DropdownOption {
   label: string;
-  value: string;
+  value: string | number;
 }
 
 // Define a more flexible type for change events
@@ -60,7 +84,7 @@ const DateInput: React.FC<DateInputProps> = ({
           }
         } else {
           // If it's already in DD/MM/YYYY format, use it directly
-          setInputValue(value);
+          setInputValue(value || '');
         }
       } catch (e) {
         setInputValue(value || '');
@@ -226,7 +250,7 @@ const DateInput: React.FC<DateInputProps> = ({
 };
 
 const StatusForm = ({ onSearch }: StatusFormProps) => {
-  const [formData, setFormData] = useState({
+  const [formData, setFormData] = useState<FormData>({
     referenceNo: "",
     customerType: "",
     customer: "",
@@ -236,24 +260,37 @@ const StatusForm = ({ onSearch }: StatusFormProps) => {
     entryGenerationBranch: "",
     fromDate: "",
     toDate: "",
-    queue: "In Transit Queue", // Default value as shown in Figma
-    status: "Doc Received", // Default value as shown in Figma
+    queue: QUEUE.IN_TRANSIT, // Default value
+    status: STATUS.DOC_RECEIVED, // Default value
     country: "",
     billingToCompany: "",
   });
 
-  const createOptions = (items: string[]): DropdownOption[] => {
-    return items.map(item => ({ label: item, value: item }));
-  };
+  // Use our helper function to create options from enums
+  const customerTypeOptions = [
+    { value: '', label: 'Select' },
+    ...createEnumOptions(CUSTOMER_TYPE, CUSTOMER_TYPE_LABELS)
+  ];
+  
+  const visaBranchOptions = [
+    { value: '', label: 'Select' },
+    ...createEnumOptions(BRANCH, BRANCH_LABELS)
+  ];
+  
+  const entryGenerationOptions = [
+    { value: '', label: 'Select' },
+    ...createEnumOptions(BRANCH, BRANCH_LABELS)
+  ];
+  
+  const queueOptions = createEnumOptions(QUEUE, QUEUE_LABELS);
+  const statusOptions = createEnumOptions(STATUS, STATUS_LABELS);
+  
+  const countryOptions = [
+    { value: '', label: 'Select Country' },
+    ...createEnumOptions(COUNTRY, COUNTRY_LABELS)
+  ];
 
-  const customerTypeOptions = createOptions(["Individual", "Corporate", "Family"]);
-  const visaBranchOptions = createOptions(["Branch 1", "Branch 2", "Branch 3"]);
-  const entryGenerationOptions = createOptions(["Branch 1", "Branch 2", "Branch 3"]);
-  const queueOptions = createOptions(["In Transit Queue", "Processing Queue", "Completed Queue"]);
-  const statusOptions = createOptions(["Doc Received", "Processing", "Approved", "Rejected"]);
-  const countryOptions = createOptions(["United States", "United Kingdom", "Canada", "Australia"]);
-
-  const handleChange = (field: string, value: string) => {
+  const handleChange = (field: string, value: string | number) => {
     setFormData({
       ...formData,
       [field]: value,
@@ -297,10 +334,11 @@ const StatusForm = ({ onSearch }: StatusFormProps) => {
             <label className="block text-xs text-[#696969] mb-1">Customer Type</label>
             <CustomDropdown
               options={customerTypeOptions}
-              value={formData.customerType || ''}
+              value={formData.customerType}
               onChange={(value) => handleChange("customerType", value)}
               placeholder="Select"
               className="h-10"
+              name="customerType"
             />
           </div>
 
@@ -352,10 +390,11 @@ const StatusForm = ({ onSearch }: StatusFormProps) => {
             </label>
             <CustomDropdown
               options={visaBranchOptions}
-              value={formData.visaBranch || ''}
+              value={formData.visaBranch}
               onChange={(value) => handleChange("visaBranch", value)}
               placeholder="Select"
               className="h-10"
+              name="visaBranch"
             />
           </div>
 
@@ -365,10 +404,11 @@ const StatusForm = ({ onSearch }: StatusFormProps) => {
             </label>
             <CustomDropdown
               options={entryGenerationOptions}
-              value={formData.entryGenerationBranch || ''}
+              value={formData.entryGenerationBranch}
               onChange={(value) => handleChange("entryGenerationBranch", value)}
               placeholder="Select"
               className="h-10"
+              name="entryGenerationBranch"
             />
           </div>
 
@@ -392,10 +432,11 @@ const StatusForm = ({ onSearch }: StatusFormProps) => {
             <label className="block text-xs text-[#696969] mb-1">Queue</label>
             <CustomDropdown
               options={queueOptions}
-              value={formData.queue || ''}
+              value={formData.queue}
               onChange={(value) => handleChange("queue", value)}
               placeholder="Select"
               className="h-10"
+              name="queue"
             />
           </div>
         </div>
@@ -406,10 +447,11 @@ const StatusForm = ({ onSearch }: StatusFormProps) => {
             <label className="block text-xs text-[#696969] mb-1">Status</label>
             <CustomDropdown
               options={statusOptions}
-              value={formData.status || ''}
+              value={formData.status}
               onChange={(value) => handleChange("status", value)}
               placeholder="Select"
               className="h-10"
+              name="status"
             />
           </div>
 
@@ -417,10 +459,11 @@ const StatusForm = ({ onSearch }: StatusFormProps) => {
             <label className="block text-xs text-[#696969] mb-1">Country</label>
             <CustomDropdown
               options={countryOptions}
-              value={formData.country || ''}
+              value={formData.country}
               onChange={(value) => handleChange("country", value)}
               placeholder="Select Country"
               className="h-10"
+              name="country"
             />
           </div>
 
