@@ -16,8 +16,8 @@ const AddClientForm = ({ onSubmit }: AddClientFormProps) => {
     ownerName: '',
     ownerPhone: '',
     ownerEmail: '',
-    country: '',
-    state: '',
+    country: 0,
+    state: 0,
     city: '',
     zipCode: '',
     gstNo: '',
@@ -28,10 +28,8 @@ const AddClientForm = ({ onSubmit }: AddClientFormProps) => {
   });
 
   const handleSubmit = () => {
-    console.log("===>handleSubmit");
     // Validation
     if (!formData.name) {
-      console.log("===>name");
       ToastNotifyError("Client name is required");
       return;
     }

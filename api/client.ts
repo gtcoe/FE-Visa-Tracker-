@@ -32,18 +32,18 @@ const mapBackendClientToFrontend = (backendClient: any): Client => {
 // Map frontend Client to backend format
 const mapFrontendClientToBackend = (client: Client) => {
   return {
-    client_type: client.type,
-    client_name: client.name,
-    client_address: client.address,
+    type: client.type,
+    name: client.name,
+    address: client.address,
     branches: client.branches,
-    full_name: client.ownerName,
+    owner_name: client.ownerName,
     owner_phone: client.ownerPhone,
     owner_email: client.ownerEmail,
     country: client.country,
     state: client.state,
     city: client.city,
     zip_code: client.zipCode,
-    gst_no: client.gstNo,
+    gst_number: client.gstNo,
     billing_cycle: client.billingCycle,
     spoke_name: client.spokeName,
     spoke_phone: client.spokePhone,
@@ -57,7 +57,6 @@ const mapFrontendClientToBackend = (client: Client) => {
 export const getAllClients = async (): Promise<Client[]> => {
   try {
     const response = await get<any>(API_ENDPOINTS.GET_ALL_CLIENTS, {requiresAuth: true});
-    console.log("===============", response);
 
     if (!response.status || !response.data || !response.data.clients_info) {
       throw new Error(response.message || 'Failed to fetch clients');

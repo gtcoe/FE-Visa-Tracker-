@@ -17,8 +17,8 @@ export interface Client {
   ownerName: string;
   ownerPhone: string;
   ownerEmail: string;
-  country?: string;
-  state?: string;
+  country?: number;
+  state?: number;
   city?: string;
   zipCode?: string;
   gstNo?: string;

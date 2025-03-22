@@ -6,9 +6,11 @@ import {
   BRANCH, BRANCH_LABELS,
   QUEUE, QUEUE_LABELS,
   STATUS, STATUS_LABELS,
-  COUNTRY, COUNTRY_LABELS,
   createEnumOptions
-} from '@component/constants/dropdownConstants';
+} from '@component/constants/dropdown/dropdownConstants';
+import {
+  COUNTRY, COUNTRY_LABELS
+} from '@component/constants/dropdown/geographical';
 
 interface StatusFormProps {
   onSearch: (data: any) => void;

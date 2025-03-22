@@ -1,19 +1,23 @@
 "use client";
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { FiMapPin, FiPhone, FiGlobe } from 'react-icons/fi';
 import CustomDropdown from './CustomDropdown';
+import GroupedDropdown from './GroupedDropdown';
 import { useRouter } from 'next/navigation';
 import { 
   CUSTOMER_TYPE, CUSTOMER_TYPE_LABELS,
-  COUNTRY, COUNTRY_LABELS,
-  STATE, STATE_LABELS,
   CITIZENSHIP, CITIZENSHIP_LABELS,
   SERVICE, SERVICE_LABELS,
+  SERVICE_CATEGORY, SERVICE_CATEGORY_LABELS, SERVICE_CATEGORIES,
   REFERRER, REFERRER_LABELS,
-  FILE_NO, FILE_NO_LABELS,
   createEnumOptions
-} from '@component/constants/dropdownConstants';
+} from '@component/constants/dropdown/dropdownConstants';
+import {
+  COUNTRY, COUNTRY_LABELS,
+  STATE, STATE_LABELS,
+  COUNTRY_STATES
+} from '@component/constants/dropdown/geographical';
 
 interface FormData {
   title: string;
@@ -24,7 +28,7 @@ interface FormData {
   citizenship: CITIZENSHIP;
   services: SERVICE | '';
   referrer: REFERRER | '';
-  fileNo: FILE_NO | '';
+  fileNo: string;
 }
 
 const ServiceRequest = () => {
@@ -41,6 +45,21 @@ const ServiceRequest = () => {
     fileNo: ''
   });
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [filteredStates, setFilteredStates] = useState<STATE[]>([]);
+
+  // Filter states based on selected country
+  useEffect(() => {
+    if (formData.countryOfResidence) {
+      setFilteredStates(COUNTRY_STATES[formData.countryOfResidence] || []);
+      // Reset state selection if changing country
+      setFormData(prev => ({
+        ...prev,
+        stateOfResidence: ''
+      }));
+    } else {
+      setFilteredStates([]);
+    }
+  }, [formData.countryOfResidence]);
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
@@ -82,22 +101,30 @@ const ServiceRequest = () => {
   // Create dropdown options using our enums and helper function
   const paxTypeOptions = createEnumOptions(CUSTOMER_TYPE, CUSTOMER_TYPE_LABELS);
   const countryOptions = createEnumOptions(COUNTRY, COUNTRY_LABELS);
+  
+  // Generate state options based on filtered states
   const stateOptions = [
     { value: '', label: 'Select' },
-    ...createEnumOptions(STATE, STATE_LABELS)
+    ...filteredStates.map(stateId => ({
+      value: stateId,
+      label: STATE_LABELS[stateId]
+    }))
   ];
-  const citizenshipOptions = createEnumOptions(CITIZENSHIP, CITIZENSHIP_LABELS);
-  const serviceOptions = [
-    { value: '', label: 'Select' },
-    ...createEnumOptions(SERVICE, SERVICE_LABELS)
-  ];
+  
+  // Create citizenship options and sort them alphabetically by label
+  const citizenshipOptions = createEnumOptions(CITIZENSHIP, CITIZENSHIP_LABELS)
+    .sort((a, b) => a.label.localeCompare(b.label));
+    
+  // Create service options with a select option and sorted alphabetically
+  const serviceOptions = createEnumOptions(SERVICE, SERVICE_LABELS)
+    .map(option => ({
+      ...option,
+      category: SERVICE_CATEGORIES[option.value as SERVICE],
+      categoryLabel: SERVICE_CATEGORY_LABELS[SERVICE_CATEGORIES[option.value as SERVICE]]
+    }));
   const referrerOptions = [
     { value: '', label: 'Select' },
     ...createEnumOptions(REFERRER, REFERRER_LABELS)
-  ];
-  const fileNoOptions = [
-    { value: '', label: 'Select' },
-    ...createEnumOptions(FILE_NO, FILE_NO_LABELS)
   ];
 
   return (
@@ -188,11 +215,12 @@ const ServiceRequest = () => {
                   <label htmlFor="services" className="block text-sm font-medium text-[#1C1C1C] mb-2">
                     Choose Services
                   </label>
-                  <CustomDropdown
+                  <GroupedDropdown
                     options={serviceOptions}
                     value={formData.services}
                     onChange={(value) => handleDropdownChange('services', value)}
                     name="services"
+                    placeholder="Select a service"
                   />
                 </div>
                 
@@ -212,11 +240,14 @@ const ServiceRequest = () => {
                   <label htmlFor="fileNo" className="block text-sm font-medium text-[#1C1C1C] mb-2">
                     File No/ Company Name
                   </label>
-                  <CustomDropdown
-                    options={fileNoOptions}
-                    value={formData.fileNo}
-                    onChange={(value) => handleDropdownChange('fileNo', value)}
+                  <input
+                    type="text"
+                    id="fileNo"
                     name="fileNo"
+                    placeholder=""
+                    value={formData.fileNo}
+                    onChange={handleChange}
+                    className="w-full px-3 py-2 border border-[#E6EAF2] rounded-md focus:outline-none focus:ring-1 focus:ring-[#0B498B]"
                   />
                 </div>
                 
