@@ -109,9 +109,8 @@ const ManageUsers = () => {
   const confirmStatusChange = async () => {
     if (selectedUser) {
       try {
-      
-        await updateUserStatus(selectedUser.id!, selectedUser.status);
         setIsStatusModalOpen(false);
+        await updateUserStatus(selectedUser.id!, selectedUser.status);
 
         // Refetch users to get the updated list
         await fetchUsers();

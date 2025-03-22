@@ -7,6 +7,40 @@
   .Toastify .Toastify__toast {
     color: white;
   }
+  /* Style for the toast icon */
+  .Toastify .Toastify__toast-icon {
+    background-color: white;
+    border-radius: 50%;
+    width: 22px;
+    height: 22px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin-right: 10px;
+  }
+  /* Ensure the actual icon (svg) retains its original color */
+  .Toastify .Toastify__toast-icon svg {
+    fill: currentColor;
+    width: 16px;
+    height: 16px;
+  }
+  /* Specific coloring for each toast type icon */
+  .Toastify .Toastify__toast--info .Toastify__toast-icon svg {
+    fill: #f0b81f;
+  }
+  .Toastify .Toastify__toast--success .Toastify__toast-icon svg {
+    fill: #47a515;
+  }
+  .Toastify .Toastify__toast--error .Toastify__toast-icon svg {
+    fill: #b92736;
+  }
+  .Toastify .Toastify__toast--warning .Toastify__toast-icon svg {
+    fill: #397ef5;
+  }
+  .Toastify .Toastify__toast--dark .Toastify__toast-icon svg {
+    fill: #44454a;
+  }
+  /* Toast backgrounds */
   .Toastify .Toastify__toast--info {
     background: #f0b81f;
     border-radius: 4px;
@@ -19,12 +53,10 @@
     background: #b92736;
     border-radius: 4px;
   }
-  
   .Toastify .Toastify__toast--warning {
     background: #397ef5;
     border-radius: 4px;
   }
-  
   .Toastify .Toastify__toast--dark {
     background: #44454a;
     border-radius: 4px;
