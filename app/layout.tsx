@@ -14,6 +14,8 @@ import {
 } from "@component/constants/appConstants";
 import { ClientProvider } from "@component/context/ClientContext";
 import { UserProvider } from "@component/context/UserContext";
+import { ToastContainer } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -82,6 +84,7 @@ export default function RootLayout({
               )}
               <main className="flex-grow">{children}</main>
             </div>
+            <ToastContainer />
           </ClientProvider>
         </UserProvider>
       </body>

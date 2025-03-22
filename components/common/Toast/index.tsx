@@ -8,6 +8,7 @@ const options: ToastOptions = {
   pauseOnHover: true,
   autoClose: 3000,
   draggable: false,
+  style: { color: 'white' },
 };
 
 const optionsInfo: ToastOptions = {

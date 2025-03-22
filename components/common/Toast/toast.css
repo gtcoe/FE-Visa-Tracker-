@@ -4,6 +4,9 @@
   .Toastify .Toastify__toast-container {
     text-align: center;
   }
+  .Toastify .Toastify__toast {
+    color: white;
+  }
   .Toastify .Toastify__toast--info {
     background: #f0b81f;
     border-radius: 4px;
