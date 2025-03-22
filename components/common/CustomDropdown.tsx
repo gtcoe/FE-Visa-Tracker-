@@ -96,7 +96,14 @@ const CustomDropdown = ({
       </div>
 
       {isOpen && (
-        <div className="absolute z-10 w-full mt-1 bg-white border border-[#E6EAF2] rounded shadow-sm py-1 max-h-60 overflow-auto">
+        <div 
+          className="fixed z-50 mt-1 bg-white border border-[#E6EAF2] rounded shadow-sm py-1 max-h-60 overflow-auto"
+          style={{
+            width: dropdownRef.current ? dropdownRef.current.offsetWidth : 'auto',
+            top: dropdownRef.current ? dropdownRef.current.getBoundingClientRect().bottom + window.scrollY : 0,
+            left: dropdownRef.current ? dropdownRef.current.getBoundingClientRect().left + window.scrollX : 0
+          }}
+        >
           {options.map((option) => (
             <div
               key={option.value}

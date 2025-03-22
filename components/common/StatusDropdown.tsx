@@ -75,20 +75,12 @@ const StatusDropdown: React.FC<StatusDropdownProps> = ({
       </div>
       {isOpen && (
         <div 
+          className="fixed z-50 bg-white border border-[#E6EAF2] rounded-lg shadow-lg overflow-hidden"
           style={{ 
-            width: buttonRef.current ? `${buttonRef.current.offsetWidth}px` : 'auto' 
+            width: buttonRef.current ? `${buttonRef.current.offsetWidth}px` : 'auto',
+            top: buttonRef.current ? buttonRef.current.getBoundingClientRect().bottom + window.scrollY : 0,
+            left: buttonRef.current ? buttonRef.current.getBoundingClientRect().left + window.scrollX : 0
           }}
-          className="
-            absolute 
-            z-10 
-            bg-white 
-            border 
-            border-[#E6EAF2] 
-            rounded-lg 
-            shadow-lg 
-            mt-1
-            overflow-hidden
-          "
         >
           {statusOptions.map((option) => (
             <div
