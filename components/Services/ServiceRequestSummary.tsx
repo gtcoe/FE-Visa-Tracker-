@@ -14,6 +14,7 @@ import {
   VISA_CATEGORY, VISA_CATEGORY_LABELS,
   ENTRY_TYPE, ENTRY_TYPE_LABELS
 } from '@component/constants/dropdown/geographical';
+import { FORM_MODE, TAB_NAME, STORAGE_KEY } from '@component/constants/formConstants';
 
 // Constants for dispatch mediums
 enum DISPATCH_MEDIUM {
@@ -33,7 +34,12 @@ interface VisaApplicationRow {
 }
 
 // Component for Service Request Summary tab
-const ServiceRequestSummary: React.FC = () => {
+const ServiceRequestSummary: React.FC<{
+  handleTabChange?: (tabName: string) => void,
+  formMode?: FORM_MODE,
+  setFormMode?: React.Dispatch<React.SetStateAction<FORM_MODE>>
+  handleAddMore: () => void
+}> = ({ handleTabChange, formMode, setFormMode, handleAddMore }) => {
   const router = useRouter();
   
   // State for visa applications
@@ -130,7 +136,7 @@ const ServiceRequestSummary: React.FC = () => {
       return;
     }
     
-    const referenceNumber = localStorage.getItem('serviceReferenceNumber');
+    const referenceNumber = localStorage.getItem(STORAGE_KEY.SERVICE_REFERENCE_NUMBER);
     if (!referenceNumber) {
       setError("Reference number not found. Please try again.");
       return;
@@ -146,7 +152,7 @@ const ServiceRequestSummary: React.FC = () => {
         dispatch_medium_number: dispatchDetails.medium2,
         remarks: dispatchDetails.remark,
         reference_number: referenceNumber,
-        token_user_id: localStorage.getItem('userId') || 0, // Fallback to 1 if not found
+        token_user_id: localStorage.getItem(STORAGE_KEY.USER_ID) || 0, // Fallback to 0 if not found
       };
       
       // Submit to API
@@ -158,8 +164,8 @@ const ServiceRequestSummary: React.FC = () => {
         console.log('Step 4 data submitted successfully:', response);
         
         // Clear localStorage data that's no longer needed
-        localStorage.removeItem('applicationInfo');
-        localStorage.removeItem('serviceReferenceNumber');
+        localStorage.removeItem(STORAGE_KEY.APPLICATION_INFO);
+        localStorage.removeItem(STORAGE_KEY.SERVICE_REFERENCE_NUMBER);
         
         // Navigate to dashboard or success page
         router.push('/application-tracker');
@@ -180,21 +186,65 @@ const ServiceRequestSummary: React.FC = () => {
   };
 
   const handleEditRow = (id: string) => {
-    console.log('Edit row', id);
-    // Navigate to edit screen with the row data
-    router.push(`/services/edit/${id}`);
+    // Add null checks before calling potentially undefined functions
+    handleTabChange?.(TAB_NAME.FILL);
+    setFormMode?.(FORM_MODE.EDIT);
+
+    // console.log('Edit row - START', id);
+    // // Store mode in localStorage to indicate edit mode
+    // localStorage.setItem(STORAGE_KEY.FORM_MODE, FORM_MODE.EDIT);
+    // console.log('Set formMode in localStorage:', localStorage.getItem(STORAGE_KEY.FORM_MODE));
+    // // Set the application ID in localStorage
+    // localStorage.setItem(STORAGE_KEY.APPLICATION_ID, id);
+    // console.log('Set applicationId in localStorage:', localStorage.getItem(STORAGE_KEY.APPLICATION_ID));
+    // // Set the active tab to 'fill' to show the FillServiceForm
+    // localStorage.setItem(STORAGE_KEY.ACTIVE_TAB, TAB_NAME.FILL);
+    // console.log('Set activeTab in localStorage:', localStorage.getItem(STORAGE_KEY.ACTIVE_TAB));
+    // // Navigate to services/common page
+    // console.log('Navigating to /services/common');
+    // router.push('/services/common');
   };
 
   const handleViewRow = (id: string) => {
-    console.log('View row', id);
-    // Navigate to view screen with the row data
-    router.push(`/services/view/${id}`);
+
+    // Add null checks before calling potentially undefined functions
+    handleTabChange?.(TAB_NAME.FILL);
+    setFormMode?.(FORM_MODE.VIEW);
+
+
+    
+    // console.log('View row - START', id);
+    // // Store mode in localStorage to indicate view mode (readonly)
+    // localStorage.setItem(STORAGE_KEY.FORM_MODE, FORM_MODE.VIEW);
+    // console.log('Set formMode in localStorage:', localStorage.getItem(STORAGE_KEY.FORM_MODE));
+    // // Set the application ID in localStorage
+    // localStorage.setItem(STORAGE_KEY.APPLICATION_ID, id);
+    // console.log('Set applicationId in localStorage:', localStorage.getItem(STORAGE_KEY.APPLICATION_ID));
+    // // Set the active tab to 'fill' to show the FillServiceForm
+    // localStorage.setItem(STORAGE_KEY.ACTIVE_TAB, TAB_NAME.FILL);
+    // console.log('Set activeTab in localStorage:', localStorage.getItem(STORAGE_KEY.ACTIVE_TAB));
+    // // Navigate to services/common page
+    // console.log('Navigating to /services/common');
+    // router.push('/services/common');
   };
 
   const handleAddSubRequest = (id: string) => {
-    console.log('Add sub request for', id);
-    // Navigate to add sub request screen or open a modal
-    router.push(`/services/subrequest/${id}`);
+    handleAddMore()
+    handleTabChange?.(TAB_NAME.FILL);
+    setFormMode?.(FORM_MODE.EDIT);
+    // console.log('Add sub request - START', id);
+    // // Store mode in localStorage to indicate add sub request mode
+    // localStorage.setItem(STORAGE_KEY.FORM_MODE, FORM_MODE.ADD_SUB_REQUEST);
+    // console.log('Set formMode in localStorage:', localStorage.getItem(STORAGE_KEY.FORM_MODE));
+    // // Set the application ID in localStorage
+    // localStorage.setItem(STORAGE_KEY.APPLICATION_ID, id);
+    // console.log('Set applicationId in localStorage:', localStorage.getItem(STORAGE_KEY.APPLICATION_ID));
+    // // Set the active tab to 'fill' to show the FillServiceForm
+    // localStorage.setItem(STORAGE_KEY.ACTIVE_TAB, TAB_NAME.FILL);
+    // console.log('Set activeTab in localStorage:', localStorage.getItem(STORAGE_KEY.ACTIVE_TAB));
+    // // Navigate to services/common page
+    // console.log('Navigating to /services/common');
+    // router.push('/services/common');
   };
 
   return (
@@ -205,7 +255,7 @@ const ServiceRequestSummary: React.FC = () => {
         <div className="rounded-lg border border-[#E6EAF2] m-4">
           <div className="border-b border-[#E6EAF2] px-6 py-4 bg-[#F9FAFB]">
             <div className="flex flex-wrap items-center text-[14px] leading-[20px] font-medium space-x-2">
-              <span className="font-medium text-[#0B498B]">{`Reference No: ${localStorage.getItem('serviceReferenceNumber')}`}</span>
+              <span className="font-medium text-[#0B498B]">{`Reference No: ${localStorage.getItem(STORAGE_KEY.SERVICE_REFERENCE_NUMBER)}`}</span>
               <span className="font-medium text-[#0B498B]">•</span>
               <span className="font-medium text-[#0B498B]">Client name: {clientName}</span>
               <span className="font-medium text-[#0B498B]">•</span>

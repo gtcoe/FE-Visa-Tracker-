@@ -5,6 +5,14 @@ import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { debounce } from 'lodash'; // Add lodash for debouncing
 import { searchPax } from '@component/api/application'; // Import the searchPax API
+import { FORM_MODE, TAB_NAME, STORAGE_KEY } from '@component/constants/formConstants';
+import { 
+  VISA_COUNTRY, VISA_COUNTRY_LABELS, 
+  VISA_CATEGORY, VISA_CATEGORY_LABELS,
+  NATIONALITY, NATIONALITY_LABELS,
+  STATE, STATE_LABELS,
+  ENTRY_TYPE, ENTRY_TYPE_LABELS
+} from '@component/constants/dropdown/geographical';
 
 // Lazy load all tab components for code splitting
 const FillServiceForm = lazy(() => import('./FillServiceForm'));
@@ -29,19 +37,58 @@ const SearchPax = () => {
     referenceNo: ''
   });
   const [isSearching, setIsSearching] = useState(false);
-  const [activeTab, setActiveTab] = useState('search');
+  const [activeTab, setActiveTab] = useState(TAB_NAME.SEARCH);
   const [tabsToPreload, setTabsToPreload] = useState<string[]>([]);
   const [searchResults, setSearchResults] = useState<any[]>([]);
   const [searchError, setSearchError] = useState<string | null>(null);
+  const [formMode, setFormMode] = useState<FORM_MODE>(FORM_MODE.EDIT); // Default mode is edit
+  const [visaRequests, setVisaRequests] = useState([
+    {
+      visaCountry: VISA_COUNTRY_LABELS[VISA_COUNTRY.NETHERLAND],
+      visaCategory: VISA_CATEGORY_LABELS[VISA_CATEGORY.BUSINESS],
+      nationality: NATIONALITY_LABELS[NATIONALITY.INDIAN],
+      state: STATE_LABELS[STATE.DELHI],
+      entryType: ENTRY_TYPE_LABELS[ENTRY_TYPE.NORMAL],
+      remark: '',
+    }
+  ]);
 
-  // Initialize reference number from localStorage or URL query parameter
+  const handleAddMore = useCallback(() => {
+    setVisaRequests(prev => [
+      ...prev,
+      {
+        visaCountry: VISA_COUNTRY_LABELS[VISA_COUNTRY.NETHERLAND],
+        visaCategory: VISA_CATEGORY_LABELS[VISA_CATEGORY.BUSINESS],
+        nationality: NATIONALITY_LABELS[NATIONALITY.INDIAN],
+        state: STATE_LABELS[STATE.DELHI],
+        entryType: ENTRY_TYPE_LABELS[ENTRY_TYPE.NORMAL],
+        remark: ''
+      }
+    ]);
+  }, []);
+
+  // Initialize reference number from localStorage or URL query parameter and set active tab
   useEffect(() => {
-    const referenceNumber = localStorage.getItem('serviceReferenceNumber');
+    console.log('CommonScreen - initialization useEffect');
+    // Get reference number from localStorage
+    const referenceNumber = localStorage.getItem(STORAGE_KEY.SERVICE_REFERENCE_NUMBER);
+    console.log('Found serviceReferenceNumber in localStorage:', referenceNumber);
     if (referenceNumber) {
       setSearchData(prev => ({
         ...prev,
         referenceNo: referenceNumber
       }));
+    }
+    
+    // Check for active tab in localStorage
+    const storedActiveTab = localStorage.getItem(STORAGE_KEY.ACTIVE_TAB);
+    console.log('Found activeTab in localStorage:', storedActiveTab);
+    if (storedActiveTab && [TAB_NAME.SEARCH, TAB_NAME.FILL, TAB_NAME.SUMMARY].includes(storedActiveTab as TAB_NAME)) {
+      console.log('Setting activeTab to:', storedActiveTab);
+      setActiveTab(storedActiveTab as TAB_NAME);
+      // Clear the activeTab from localStorage to avoid persisting it across refreshes
+      localStorage.removeItem(STORAGE_KEY.ACTIVE_TAB);
+      console.log('Removed activeTab from localStorage');
     }
   }, []);
 
@@ -49,9 +96,9 @@ const SearchPax = () => {
   useEffect(() => {
     // Preload the adjacent tabs
     const preloadAdjacentTabs = () => {
-      if (activeTab === 'search') {
+      if (activeTab === TAB_NAME.SEARCH) {
         import('./FillServiceForm'); // Preload the next tab
-      } else if (activeTab === 'fill') {
+      } else if (activeTab === TAB_NAME.FILL) {
         import('./ServiceRequestSummary'); // Preload the next tab
       }
     };
@@ -128,7 +175,7 @@ const SearchPax = () => {
 
   // Handle tab change with preloading
   const handleTabChange = useCallback((tab: string) => {
-    setActiveTab(tab);
+    setActiveTab(tab as TAB_NAME);
   }, []);
 
   // Tab hover handler to initiate preloading
@@ -137,11 +184,11 @@ const SearchPax = () => {
       setTabsToPreload(prev => [...prev, tab]);
       
       // Dynamically import the component when user hovers
-      if (tab === 'fill') {
+      if (tab === TAB_NAME.FILL) {
         import('./FillServiceForm');
-      } else if (tab === 'summary') {
+      } else if (tab === TAB_NAME.SUMMARY) {
         import('./ServiceRequestSummary');
-      } else if (tab === 'search') {
+      } else if (tab === TAB_NAME.SEARCH) {
         import('./SearchPaxContent');
       }
     }
@@ -151,7 +198,7 @@ const SearchPax = () => {
   const renderTabContent = useCallback(() => {
     return (
       <Suspense fallback={<LoadingFallback />}>
-        {activeTab === 'search' && (
+        {activeTab === TAB_NAME.SEARCH && (
           <SearchPaxContent
             searchData={searchData}
             setSearchData={setSearchData}
@@ -162,12 +209,12 @@ const SearchPax = () => {
           />
         )}
         
-        {activeTab === 'fill' && <FillServiceForm handleTabChange={handleTabChange}/>}
+        {activeTab === TAB_NAME.FILL && <FillServiceForm handleTabChange={handleTabChange} formMode={formMode} setFormMode={setFormMode} handleAddMore={handleAddMore} visaRequests={visaRequests} setVisaRequests={setVisaRequests}/>}
         
-        {activeTab === 'summary' && <ServiceRequestSummary />}
+        {activeTab === TAB_NAME.SUMMARY && <ServiceRequestSummary handleTabChange={handleTabChange} formMode={formMode} setFormMode={setFormMode} handleAddMore={handleAddMore}/>}
       </Suspense>
     );
-  }, [activeTab, searchData, handleChange, handleSearch, handleClear, isSearching]);
+  }, [activeTab, searchData, handleChange, handleSearch, handleClear, isSearching, formMode]);
 
   return (
     <div className="py-6 px-[80px]">
@@ -185,21 +232,23 @@ const SearchPax = () => {
         {/* Tabs */}
         <div className="flex border-b border-gray-200">
           <div 
-            className={`px-6 py-5 font-medium text-base cursor-pointer ${activeTab === 'search' ? 'text-[#0B498B] border-b-[3px] border-[#0B498B] font-semibold' : 'text-gray-600'}`}
-            onClick={() => handleTabChange('search')}
-            onMouseEnter={() => handleTabHover('search')}
+            className={`px-6 py-5 font-medium text-base cursor-pointer ${activeTab === TAB_NAME.SEARCH ? 'text-[#0B498B] border-b-[3px] border-[#0B498B] font-semibold' : 'text-gray-600'}`}
+            onClick={() => handleTabChange(TAB_NAME.SEARCH)}
+            onMouseEnter={() => handleTabHover(TAB_NAME.SEARCH)}
           >
             Search Pax
           </div>
           <div 
-            className={`px-6 py-5 font-medium text-base cursor-pointer ${activeTab === 'fill' ? 'text-[#0B498B] border-b-[3px] border-[#0B498B] font-semibold' : 'text-gray-600'}`}
-            onClick={() => handleTabChange('fill')}
-            onMouseEnter={() => handleTabHover('fill')}
+            className={`px-6 py-5 font-medium text-base cursor-pointer ${activeTab === TAB_NAME.FILL ? 'text-[#0B498B] border-b-[3px] border-[#0B498B] font-semibold' : 'text-gray-600'}`}
+            onClick={() => handleTabChange(TAB_NAME.FILL)}
+            onMouseEnter={() => handleTabHover(TAB_NAME.FILL)}
           >
             Fill Online Service Request Form
           </div>
           <div 
-            className={`px-6 py-5 font-medium text-base cursor-pointer ${activeTab === 'summary' ? 'text-[#0B498B] border-b-[3px] border-[#0B498B] font-semibold' : 'text-gray-600'}`}
+            className={`px-6 py-5 font-medium text-base cursor-pointer ${activeTab === TAB_NAME.SUMMARY ? 'text-[#0B498B] border-b-[3px] border-[#0B498B] font-semibold' : 'text-gray-600'}`}
+            onClick={() => handleTabChange(TAB_NAME.SUMMARY)}
+            onMouseEnter={() => handleTabHover(TAB_NAME.SUMMARY)}
           >
             Service Request Summary
           </div>

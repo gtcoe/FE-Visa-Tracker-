@@ -12,6 +12,7 @@ import {
   ENTRY_TYPE, ENTRY_TYPE_LABELS,
   PROCESSING_BRANCH, PROCESSING_BRANCH_LABELS
 } from '@component/constants/dropdown/geographical';
+import { FORM_MODE, TAB_NAME, STORAGE_KEY } from '@component/constants/formConstants';
 
 // Define a more flexible type for change events
 type FormChangeEvent = {
@@ -30,6 +31,7 @@ interface DateInputProps {
   required?: boolean;
   placeholder?: string;
   handleTabChange?: (tabName: string) => void;
+  readOnly?: boolean;
 }
 
 // Custom DateInput component that supports both manual entry and date picker
@@ -40,7 +42,8 @@ const DateInput: React.FC<DateInputProps> = ({
   handleTabChange,
   label, 
   required = false,
-  placeholder = "DD/MM/YYYY"
+  placeholder = "DD/MM/YYYY",
+  readOnly = false
 }) => {
   const [inputValue, setInputValue] = useState('');
   const [showPicker, setShowPicker] = useState(false);
@@ -64,7 +67,7 @@ const DateInput: React.FC<DateInputProps> = ({
           }
         } else {
           // If it's already in DD/MM/YYYY format, use it directly
-          setInputValue(value);
+          setInputValue(value || '');
         }
       } catch (e) {
         setInputValue(value || '');
@@ -159,11 +162,13 @@ const DateInput: React.FC<DateInputProps> = ({
   
   // Toggle date picker visibility
   const openCalendar = useCallback(() => {
+    if (readOnly) return;
+    
     if (hiddenDateInputRef.current) {
       // Use the native date picker
       hiddenDateInputRef.current.showPicker?.();
     }
-  }, []);
+  }, [readOnly]);
   
   // Handle keyboard accessibility
   const handleKeyDown = useCallback((e: React.KeyboardEvent) => {
@@ -186,13 +191,15 @@ const DateInput: React.FC<DateInputProps> = ({
           placeholder={placeholder}
           className="w-full px-3 py-2.5 border border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-[#0B498B] text-[#6A6A6A] pr-10"
           aria-label={`${label} in format DD/MM/YYYY`}
+          readOnly={readOnly}
         />
         <button
           type="button"
           onClick={openCalendar}
-          className="absolute right-2 top-1/2 transform -translate-y-1/2 text-gray-500 hover:text-gray-700 focus:outline-none"
+          className={`absolute right-2 top-1/2 transform -translate-y-1/2 text-gray-500 hover:text-gray-700 focus:outline-none ${readOnly ? 'opacity-50 cursor-not-allowed' : ''}`}
           aria-label="Open date picker"
           title="Open date picker"
+          disabled={readOnly}
         >
           <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
@@ -207,6 +214,7 @@ const DateInput: React.FC<DateInputProps> = ({
           defaultValue={value || ''}
           onChange={handleDatePickerChange}
           aria-hidden="true"
+          disabled={readOnly}
         />
         
         {showPicker && (
@@ -218,6 +226,7 @@ const DateInput: React.FC<DateInputProps> = ({
               onChange={handleDatePickerChange}
               className="w-full px-3 py-2 border-0 focus:outline-none focus:ring-1 focus:ring-[#0B498B]"
               aria-label={`Date picker for ${label}`}
+              disabled={readOnly}
             />
           </div>
         )}
@@ -226,24 +235,161 @@ const DateInput: React.FC<DateInputProps> = ({
   );
 };
 
-const FillServiceForm = ({ handleTabChange }: { handleTabChange: (tabName: string) => void }) => {
+const FillServiceForm = ({ 
+  handleTabChange, 
+  formMode, 
+  setFormMode,
+  visaRequests,
+  setVisaRequests,
+  handleAddMore
+}: { 
+  handleTabChange: (tabName: string) => void, 
+  formMode: FORM_MODE, 
+  setFormMode: React.Dispatch<React.SetStateAction<FORM_MODE>>,
+  visaRequests: any[],
+  setVisaRequests: React.Dispatch<React.SetStateAction<any[]>>,
+  handleAddMore: () => void
+}) => {
   const router = useRouter();
   const [applicationId, setApplicationId] = useState<number | null>(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [error, setError] = useState<string | null>(null);
   
-  // Try to get application ID from localStorage or URL
+  // Try to get application ID from localStorage or URL and also determine the form mode
   useEffect(() => {
+    console.log('FillServiceForm - initialization useEffect');
     // Check localStorage for application ID
-    const storedAppId = localStorage.getItem('applicationId');
-    console.log('==========>storedAppId', storedAppId);
+    const storedAppId = localStorage.getItem(STORAGE_KEY.APPLICATION_ID);
+    console.log('Found applicationId in localStorage:', storedAppId);
     if (storedAppId) {
-      console.log('==========>storedAppId2', storedAppId);
       setApplicationId(parseInt(storedAppId, 10));
+      console.log('Set applicationId state to:', parseInt(storedAppId, 10));
     }
     
-    // You could also check URL params if available
+    // Get form mode from localStorage
+    const mode = localStorage.getItem(STORAGE_KEY.FORM_MODE);
+    console.log('Found formMode in localStorage:', mode);
+    if (mode === FORM_MODE.VIEW || mode === FORM_MODE.EDIT || mode === FORM_MODE.ADD_SUB_REQUEST) {
+      setFormMode(mode as FORM_MODE);
+      console.log('Set formMode state to:', mode);
+    }
+    
+    // If add-sub-request mode, add a new visa request
+    if (mode === FORM_MODE.ADD_SUB_REQUEST) {
+      console.log('Adding new visa request for add-sub-request mode');
+      setVisaRequests(prev => [
+        ...prev,
+        {
+          visaCountry: VISA_COUNTRY_LABELS[VISA_COUNTRY.NETHERLAND],
+          visaCategory: VISA_CATEGORY_LABELS[VISA_CATEGORY.BUSINESS],
+          nationality: NATIONALITY_LABELS[NATIONALITY.INDIAN],
+          state: STATE_LABELS[STATE.DELHI],
+          entryType: ENTRY_TYPE_LABELS[ENTRY_TYPE.NORMAL],
+          remark: ''
+        }
+      ]);
+    }
+    
+    // Load previously saved application data from localStorage
+    const loadApplicationData = () => {
+      try {
+        const applicationData = localStorage.getItem(STORAGE_KEY.APPLICATION_INFO);
+        if (applicationData) {
+          const parsedData = JSON.parse(applicationData);
+          if (parsedData) {
+            // Populate form fields with saved data
+            if (parsedData.personal_info) {
+              setPersonalInfo({
+                firstName: parsedData.personal_info.first_name || '',
+                lastName: parsedData.personal_info.last_name || '',
+                emailId: parsedData.personal_info.email_id || '',
+                dateOfBirth: parsedData.personal_info.date_of_birth || '',
+                processingBranch: parsedData.personal_info.processing_branch 
+                  ? PROCESSING_BRANCH_LABELS[parsedData.personal_info.processing_branch as PROCESSING_BRANCH] || PROCESSING_BRANCH_LABELS[PROCESSING_BRANCH.VISAISTIC_DELHI]
+                  : PROCESSING_BRANCH_LABELS[PROCESSING_BRANCH.VISAISTIC_DELHI],
+              });
+            }
+            
+            if (parsedData.passport_info) {
+              setPassportInfo({
+                passportNumber: parsedData.passport_info.passport_number || '',
+                dateOfIssue: parsedData.passport_info.date_of_issue || '',
+                dateOfExpiry: parsedData.passport_info.date_of_expiry || '',
+                issueAt: parsedData.passport_info.issue_at || '',
+                noOfExpiredPassport: parsedData.passport_info.no_of_expired_passport?.toString() || '',
+                expiredPassportNumber: parsedData.passport_info.expired_passport_number || '',
+              });
+            }
+            
+            if (parsedData.travel_info) {
+              setTravelInfo({
+                travelDate: parsedData.travel_info.travel_date || '',
+                personalAppearance: parsedData.travel_info.interview_date || '',
+                fileNo: parsedData.travel_info.file_no || '',
+              });
+              // Set submission type and fixed based on the parsed data
+              setSubmissionType(parsedData.travel_info.is_travel_date_tentative === 1 ? 'tentative' : 'fixed');
+              setIsFixed(parsedData.travel_info.priority_submission === 1);
+            }
+            
+            if (parsedData.visa_requests && parsedData.visa_requests.length > 0) {
+              // If not in add-sub-request mode, replace visa requests with saved data
+              if (mode !== FORM_MODE.ADD_SUB_REQUEST) {
+                const mappedRequests = parsedData.visa_requests.map((request: any) => ({
+                  visaCountry: request.visa_country
+                    ? VISA_COUNTRY_LABELS[request.visa_country as VISA_COUNTRY] || VISA_COUNTRY_LABELS[VISA_COUNTRY.NETHERLAND]
+                    : VISA_COUNTRY_LABELS[VISA_COUNTRY.NETHERLAND],
+                  visaCategory: request.visa_category
+                    ? VISA_CATEGORY_LABELS[request.visa_category as VISA_CATEGORY] || VISA_CATEGORY_LABELS[VISA_CATEGORY.BUSINESS]
+                    : VISA_CATEGORY_LABELS[VISA_CATEGORY.BUSINESS],
+                  nationality: request.nationality
+                    ? NATIONALITY_LABELS[request.nationality as NATIONALITY] || NATIONALITY_LABELS[NATIONALITY.INDIAN]
+                    : NATIONALITY_LABELS[NATIONALITY.INDIAN],
+                  state: request.state
+                    ? STATE_LABELS[request.state as STATE] || STATE_LABELS[STATE.DELHI]
+                    : STATE_LABELS[STATE.DELHI],
+                  entryType: request.entry_type
+                    ? ENTRY_TYPE_LABELS[request.entry_type as ENTRY_TYPE] || ENTRY_TYPE_LABELS[ENTRY_TYPE.NORMAL]
+                    : ENTRY_TYPE_LABELS[ENTRY_TYPE.NORMAL],
+                  remark: request.remark || '',
+                }));
+                setVisaRequests(mappedRequests);
+              }
+            }
+            
+            if (parsedData.address_info) {
+              setAddressInfo({
+                addressLine1: parsedData.address_info.address_line1 || '',
+                addressLine2: parsedData.address_info.address_line2 || '',
+                country: findLabelByValue(parsedData.address_info.country, COUNTRY_LABELS) || '',
+                state: findLabelByValue(parsedData.address_info.state, STATE_LABELS) || '',
+                city: parsedData.address_info.city?.toString() || '',
+                zip: parsedData.address_info.zip || '',
+                occupation: parsedData.address_info.occupation || '',
+                position: parsedData.address_info.position || '',
+              });
+            }
+            
+            if (parsedData.mi_fields) {
+              setMiFields({
+                oldNumber: parsedData.mi_fields.olvt_number || ''
+              });
+            }
+          }
+        }
+      } catch (error) {
+        console.error('Error loading application data:', error);
+      }
+    };
+    
+    loadApplicationData();
   }, []);
+  
+  // Helper function to find label by numeric value
+  const findLabelByValue = (value: number, labelMap: Record<string, string>) => {
+    const entry = Object.entries(labelMap).find(([key]) => parseInt(key, 10) === value);
+    return entry ? entry[1] : '';
+  };
   
   // Split form state into logical groups
   const [personalInfo, setPersonalInfo] = useState({
@@ -268,17 +414,6 @@ const FillServiceForm = ({ handleTabChange }: { handleTabChange: (tabName: strin
     personalAppearance: '',
     fileNo: '',
   });
-
-  const [visaRequests, setVisaRequests] = useState([
-    {
-      visaCountry: VISA_COUNTRY_LABELS[VISA_COUNTRY.NETHERLAND],
-      visaCategory: VISA_CATEGORY_LABELS[VISA_CATEGORY.BUSINESS],
-      nationality: NATIONALITY_LABELS[NATIONALITY.INDIAN],
-      state: STATE_LABELS[STATE.DELHI],
-      entryType: ENTRY_TYPE_LABELS[ENTRY_TYPE.NORMAL],
-      remark: '',
-    }
-  ]);
 
   const [addressInfo, setAddressInfo] = useState({
     addressLine1: '',
@@ -333,6 +468,7 @@ const FillServiceForm = ({ handleTabChange }: { handleTabChange: (tabName: strin
   const handleVisaInfoChange = useCallback((e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>, index: number) => {
     const { name, value } = e.target;
     setVisaRequests(prev => {
+      console.log('=====>handleVisaInfoChange - prev', prev,name, value); 
       const newRequests = [...prev];
       newRequests[index] = {
         ...newRequests[index],
@@ -401,23 +537,15 @@ const FillServiceForm = ({ handleTabChange }: { handleTabChange: (tabName: strin
     setIsFixed(e.target.checked);
   }, []);
   
-  const handleAddMore = useCallback(() => {
-    setVisaRequests(prev => [
-      ...prev,
-      {
-        visaCountry: VISA_COUNTRY_LABELS[VISA_COUNTRY.NETHERLAND],
-        visaCategory: VISA_CATEGORY_LABELS[VISA_CATEGORY.BUSINESS],
-        nationality: NATIONALITY_LABELS[NATIONALITY.INDIAN],
-        state: STATE_LABELS[STATE.DELHI],
-        entryType: ENTRY_TYPE_LABELS[ENTRY_TYPE.NORMAL],
-        remark: ''
-      }
-    ]);
-  }, []);
-  
   // Modified handleSubmit with API integration
   const handleSubmit = useCallback(async (e: React.FormEvent) => {
     e.preventDefault();
+    
+    // If in view mode, just navigate to the summary page without API call
+    if (formMode === FORM_MODE.VIEW) {
+      handleTabChange(TAB_NAME.SUMMARY);
+      return;
+    }
     
     // Force applicationId to be a number - default to 0 if null (API will handle this)
     const appId = applicationId || 0;
@@ -472,7 +600,7 @@ const FillServiceForm = ({ handleTabChange }: { handleTabChange: (tabName: strin
           olvt_number: miFields.oldNumber
         },
         application_id: appId,
-        is_sub_request: 0
+        is_sub_request: formMode === FORM_MODE.ADD_SUB_REQUEST ? 1 : 0 // Set is_sub_request based on mode
       };
       
       // Submit to API
@@ -484,11 +612,11 @@ const FillServiceForm = ({ handleTabChange }: { handleTabChange: (tabName: strin
         
         // Store the response data in localStorage for use in summary page
         if (response.data && response.data.application_requests) {
-          localStorage.setItem('applicationInfo', JSON.stringify(response.data.application_requests));
+          localStorage.setItem(STORAGE_KEY.APPLICATION_INFO, JSON.stringify(response.data.application_requests));
         }
         
         // Navigate to next step or show success message
-        handleTabChange('summary');
+        handleTabChange(TAB_NAME.SUMMARY);
       } else {
         setError(response.message || 'Failed to submit application. Please try again.');
       }
@@ -499,6 +627,7 @@ const FillServiceForm = ({ handleTabChange }: { handleTabChange: (tabName: strin
       setIsSubmitting(false);
     }
   }, [
+    formMode, // Added formMode to dependencies
     applicationId,
     personalInfo,
     passportInfo,
@@ -606,7 +735,7 @@ const FillServiceForm = ({ handleTabChange }: { handleTabChange: (tabName: strin
       {/* Reference Number */}
       <div className="mx-6 mt-[21px] mb-6  bg-white rounded-2xl border border-[#E6EAF2] shadow-sm overflow-hidden">
         <div className="bg-[#F6F7F9] py-4 px-6 border-b border-gray-200">
-          <p className="text-[15px] font-medium text-[#0B498B]">{`Reference No: ${localStorage.getItem('referenceNumber')}`}</p>
+          <p className="text-[15px] font-medium text-[#0B498B]">{`Reference No: ${localStorage.getItem(STORAGE_KEY.SERVICE_REFERENCE_NUMBER)}`}</p>
         </div>
         
         <div className="p-6">
@@ -622,6 +751,7 @@ const FillServiceForm = ({ handleTabChange }: { handleTabChange: (tabName: strin
                 onChange={handlePersonalInfoChange}
                 placeholder="Enter first name"
                 className="w-full px-3 py-2.5 border border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-[#0B498B] text-[#6A6A6A]"
+                readOnly={formMode === FORM_MODE.VIEW}
               />
             </div>
             
@@ -636,6 +766,7 @@ const FillServiceForm = ({ handleTabChange }: { handleTabChange: (tabName: strin
                 onChange={handlePersonalInfoChange}
                 placeholder="Enter Name"
                 className="w-full px-3 py-2.5 border border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-[#0B498B] text-[#6A6A6A]"
+                readOnly={formMode === FORM_MODE.VIEW}
               />
             </div>
             
@@ -650,6 +781,7 @@ const FillServiceForm = ({ handleTabChange }: { handleTabChange: (tabName: strin
                 onChange={handlePersonalInfoChange}
                 placeholder="Enter Email id"
                 className="w-full px-3 py-2.5 border border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-[#0B498B] text-[#6A6A6A]"
+                readOnly={formMode === FORM_MODE.VIEW}
               />
             </div>
             
@@ -659,6 +791,7 @@ const FillServiceForm = ({ handleTabChange }: { handleTabChange: (tabName: strin
               onChange={createDateChangeAdapter(handlePersonalInfoChange)}
               label="Date of Birth"
               handleTabChange={handleTabChange}
+              readOnly={formMode === FORM_MODE.VIEW}
             />
 
           <div className="mt-4 col-span-1">
@@ -670,6 +803,7 @@ const FillServiceForm = ({ handleTabChange }: { handleTabChange: (tabName: strin
               value={personalInfo.processingBranch}
               onChange={handlePersonalInfoChange}
               className="w-full max-w-xs px-3 py-2.5 border border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-[#0B498B] text-[#6A6A6A] appearance-none bg-white"
+              disabled={formMode === FORM_MODE.VIEW}
             >
               {processingBranchOptions.map((option) => (
                 <option key={option.value} value={option.value}>
@@ -701,6 +835,7 @@ const FillServiceForm = ({ handleTabChange }: { handleTabChange: (tabName: strin
                 onChange={handlePassportInfoChange}
                 placeholder="Enter passport number"
                 className="w-full px-3 py-2.5 border border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-[#0B498B] text-[#6A6A6A]"
+                readOnly={formMode === FORM_MODE.VIEW}
               />
             </div>
             
@@ -710,6 +845,7 @@ const FillServiceForm = ({ handleTabChange }: { handleTabChange: (tabName: strin
               onChange={createDateChangeAdapter(handlePassportInfoChange)}
               label="Date of Issue"
               handleTabChange={handleTabChange}
+              readOnly={formMode === FORM_MODE.VIEW}
             />
             
             <DateInput
@@ -718,6 +854,7 @@ const FillServiceForm = ({ handleTabChange }: { handleTabChange: (tabName: strin
               onChange={createDateChangeAdapter(handlePassportInfoChange)}
               label="Date of Expiry"
               handleTabChange={handleTabChange}
+              readOnly={formMode === FORM_MODE.VIEW}
             />
             
             <div>
@@ -731,6 +868,7 @@ const FillServiceForm = ({ handleTabChange }: { handleTabChange: (tabName: strin
                 onChange={handlePassportInfoChange}
                 placeholder="Enter issue location"
                 className="w-full px-3 py-2.5 border border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-[#0B498B] text-[#6A6A6A]"
+                readOnly={formMode === FORM_MODE.VIEW}
               />
             </div>
           </div>
@@ -745,6 +883,7 @@ const FillServiceForm = ({ handleTabChange }: { handleTabChange: (tabName: strin
                 value={passportInfo.noOfExpiredPassport}
                 onChange={handlePassportInfoChange}
                 className="w-full px-3 py-2.5 border border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-[#0B498B] text-[#6A6A6A] appearance-none bg-white"
+                disabled={formMode === FORM_MODE.VIEW}
               >
                 <option value="">Select</option>
                 <option value="0">0</option>
@@ -765,6 +904,7 @@ const FillServiceForm = ({ handleTabChange }: { handleTabChange: (tabName: strin
                 onChange={handlePassportInfoChange}
                 placeholder="Enter expired passport number"
                 className="w-full px-3 py-2.5 border border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-[#0B498B] text-[#6A6A6A]"
+                readOnly={formMode === FORM_MODE.VIEW}
               />
             </div>
           </div>
@@ -786,6 +926,7 @@ const FillServiceForm = ({ handleTabChange }: { handleTabChange: (tabName: strin
               label="Travel Date"
               required={true}
               handleTabChange={handleTabChange}
+              readOnly={formMode === FORM_MODE.VIEW}
             />
             
             <DateInput
@@ -794,6 +935,7 @@ const FillServiceForm = ({ handleTabChange }: { handleTabChange: (tabName: strin
               onChange={createDateChangeAdapter(handleTravelInfoChange)}
               label="Personal Appearance/Interview Date"
               handleTabChange={handleTabChange}
+              readOnly={formMode === FORM_MODE.VIEW}
             />
             
             <div className='col-span-2'>
@@ -807,6 +949,7 @@ const FillServiceForm = ({ handleTabChange }: { handleTabChange: (tabName: strin
                 onChange={handleTravelInfoChange}
                 placeholder="Enter name"
                 className="w-full px-3 py-2.5 border border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-[#0B498B] text-[#6A6A6A]"
+                readOnly={formMode === FORM_MODE.VIEW}
               />
             </div>
           </div>
@@ -819,6 +962,7 @@ const FillServiceForm = ({ handleTabChange }: { handleTabChange: (tabName: strin
                 checked={submissionType === 'tentative'}
                 onChange={() => handleRadioChange('tentative')}
                 className="h-4 w-4 text-[#0B498B] focus:ring-[#0B498B]"
+                disabled={formMode === FORM_MODE.VIEW}
               />
               <label htmlFor="tentative" className="text-sm font-medium text-gray-700">
                 Tentative
@@ -832,6 +976,7 @@ const FillServiceForm = ({ handleTabChange }: { handleTabChange: (tabName: strin
                 checked={submissionType === 'fixed'}
                 onChange={() => handleRadioChange('fixed')}
                 className="h-4 w-4 text-[#0B498B] focus:ring-[#0B498B]"
+                disabled={formMode === FORM_MODE.VIEW}
               />
               <label htmlFor="fixed" className="text-sm font-medium text-gray-700">
                 Fixed
@@ -849,6 +994,7 @@ const FillServiceForm = ({ handleTabChange }: { handleTabChange: (tabName: strin
                 checked={isFixed}
                 onChange={handleCheckboxChange}
                 className="h-4 w-4 text-[#0B498B] focus:ring-[#0B498B] rounded"
+                disabled={formMode === FORM_MODE.VIEW}
               />
               <label htmlFor="isFixed" className="text-sm font-medium text-gray-700">
                 Fixed
@@ -876,6 +1022,7 @@ const FillServiceForm = ({ handleTabChange }: { handleTabChange: (tabName: strin
                   value={request.visaCountry}
                   onChange={(e) => handleVisaInfoChange(e, index)}
                   className="w-full px-3 py-2.5 border border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-[#0B498B] text-[#6A6A6A] appearance-none bg-white"
+                  disabled={formMode === FORM_MODE.VIEW}
                 >
                   {Object.entries(VISA_COUNTRY_LABELS).map(([value, label]) => (
                     <option key={value} value={value}>
@@ -894,6 +1041,7 @@ const FillServiceForm = ({ handleTabChange }: { handleTabChange: (tabName: strin
                   value={request.visaCategory}
                   onChange={(e) => handleVisaInfoChange(e, index)}
                   className="w-full px-3 py-2.5 border border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-[#0B498B] text-[#6A6A6A] appearance-none bg-white"
+                  disabled={formMode === FORM_MODE.VIEW}
                 >
                   {Object.entries(VISA_CATEGORY_LABELS).map(([value, label]) => (
                     <option key={value} value={value}>
@@ -912,6 +1060,7 @@ const FillServiceForm = ({ handleTabChange }: { handleTabChange: (tabName: strin
                   value={request.nationality}
                   onChange={(e) => handleVisaInfoChange(e, index)}
                   className="w-full px-3 py-2.5 border border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-[#0B498B] text-[#6A6A6A] appearance-none bg-white"
+                  disabled={formMode === FORM_MODE.VIEW}
                 >
                   {Object.entries(NATIONALITY_LABELS).map(([value, label]) => (
                     <option key={value} value={value}>
@@ -930,6 +1079,7 @@ const FillServiceForm = ({ handleTabChange }: { handleTabChange: (tabName: strin
                   value={request.state}
                   onChange={(e) => handleVisaInfoChange(e, index)}
                   className="w-full px-3 py-2.5 border border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-[#0B498B] text-[#6A6A6A] appearance-none bg-white"
+                  disabled={formMode === FORM_MODE.VIEW}
                 >
                   {Object.entries(STATE_LABELS).map(([value, label]) => (
                     <option key={value} value={value}>
@@ -950,6 +1100,7 @@ const FillServiceForm = ({ handleTabChange }: { handleTabChange: (tabName: strin
                   value={request.entryType}
                   onChange={(e) => handleVisaInfoChange(e, index)}
                   className="w-full px-3 py-2.5 border border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-[#0B498B] text-[#6A6A6A] appearance-none bg-white"
+                  disabled={formMode === FORM_MODE.VIEW}
                 >
                   {Object.entries(ENTRY_TYPE_LABELS).map(([value, label]) => (
                     <option key={value} value={value}>
@@ -970,11 +1121,12 @@ const FillServiceForm = ({ handleTabChange }: { handleTabChange: (tabName: strin
                   onChange={(e) => handleVisaInfoChange(e, index)}
                   placeholder=""
                   className="w-full px-3 py-2.5 border border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-[#0B498B] text-[#6A6A6A]"
+                  readOnly={formMode === FORM_MODE.VIEW}
                 />
               </div>
               
               <div className="col-span-2 flex items-end justify-end">
-                {index === visaRequests.length - 1 && (
+                {index === visaRequests.length - 1 && formMode !== FORM_MODE.VIEW && (
                   <button
                     type="button"
                     onClick={handleAddMore}
@@ -1008,6 +1160,7 @@ const FillServiceForm = ({ handleTabChange }: { handleTabChange: (tabName: strin
                 onChange={handleAddressInfoChange}
                 placeholder="Enter first name"
                 className="w-full px-3 py-2.5 border border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-[#0B498B] text-[#6A6A6A]"
+                readOnly={formMode === FORM_MODE.VIEW}
               />
             </div>
             
@@ -1022,6 +1175,7 @@ const FillServiceForm = ({ handleTabChange }: { handleTabChange: (tabName: strin
                 onChange={handleAddressInfoChange}
                 placeholder="Enter Name"
                 className="w-full px-3 py-2.5 border border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-[#0B498B] text-[#6A6A6A]"
+                readOnly={formMode === FORM_MODE.VIEW}
               />
             </div>
 
@@ -1034,6 +1188,7 @@ const FillServiceForm = ({ handleTabChange }: { handleTabChange: (tabName: strin
                 value={addressInfo.country}
                 onChange={handleAddressInfoChange}
                 className="w-full px-3 py-2.5 border border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-[#0B498B] text-[#6A6A6A] appearance-none bg-white"
+                disabled={formMode === FORM_MODE.VIEW}
               >
                 {countryOptions.map((option) => (
                   <option key={option.value} value={option.value}>
@@ -1052,6 +1207,7 @@ const FillServiceForm = ({ handleTabChange }: { handleTabChange: (tabName: strin
                 value={addressInfo.state}
                 onChange={handleAddressInfoChange}
                 className="w-full px-3 py-2.5 border border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-[#0B498B] text-[#6A6A6A] appearance-none bg-white"
+                disabled={formMode === FORM_MODE.VIEW}
               >
                 {indianStateOptions.map((option) => (
                   <option key={option.value} value={option.value}>
@@ -1072,6 +1228,7 @@ const FillServiceForm = ({ handleTabChange }: { handleTabChange: (tabName: strin
                 value={addressInfo.city}
                 onChange={handleAddressInfoChange}
                 className="w-full px-3 py-2.5 border border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-[#0B498B] text-[#6A6A6A] appearance-none bg-white"
+                disabled={formMode === FORM_MODE.VIEW}
               >
                 <option value="">Select</option>
               </select>
@@ -1088,6 +1245,7 @@ const FillServiceForm = ({ handleTabChange }: { handleTabChange: (tabName: strin
                 onChange={handleAddressInfoChange}
                 placeholder="Enter Zip"
                 className="w-full px-3 py-2.5 border border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-[#0B498B] text-[#6A6A6A]"
+                readOnly={formMode === FORM_MODE.VIEW}
               />
             </div>
 
@@ -1102,6 +1260,7 @@ const FillServiceForm = ({ handleTabChange }: { handleTabChange: (tabName: strin
                 onChange={handleAddressInfoChange}
                 placeholder="Enter Occupation"
                 className="w-full px-3 py-2.5 border border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-[#0B498B] text-[#6A6A6A]"
+                readOnly={formMode === FORM_MODE.VIEW}
               />
             </div>
             
@@ -1116,19 +1275,22 @@ const FillServiceForm = ({ handleTabChange }: { handleTabChange: (tabName: strin
                 onChange={handleAddressInfoChange}
                 placeholder="Enter Position"
                 className="w-full px-3 py-2.5 border border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-[#0B498B] text-[#6A6A6A]"
+                readOnly={formMode === 'view'}
               />
             </div>
             
           </div>
           
           <div className="flex justify-end mt-4">
-            <button
-              type="button"
-              onClick={handleUpdateApplicant}
-              className="bg-[#0B498B] text-white px-4 py-2 rounded-md hover:bg-[#083968] transition-colors focus:outline-none focus:ring-2 focus:ring-[#0B498B] focus:ring-opacity-50 font-medium"
-            >
-              Update Applicant
-            </button>
+            {formMode !== 'view' && (
+              <button
+                type="button"
+                onClick={handleUpdateApplicant}
+                className="bg-[#0B498B] text-white px-4 py-2 rounded-md hover:bg-[#083968] transition-colors focus:outline-none focus:ring-2 focus:ring-[#0B498B] focus:ring-opacity-50 font-medium"
+              >
+                Update Applicant
+              </button>
+            )}
           </div>
         </div>
       </div>
@@ -1151,6 +1313,7 @@ const FillServiceForm = ({ handleTabChange }: { handleTabChange: (tabName: strin
               onChange={handleMiFieldsChange}
               placeholder="Enter Olvt number"
               className="w-full max-w-md px-3 py-2.5 border border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-[#0B498B] text-[#6A6A6A]"
+              readOnly={formMode === 'view'}
             />
           </div>
         </div>
@@ -1171,9 +1334,9 @@ const FillServiceForm = ({ handleTabChange }: { handleTabChange: (tabName: strin
           type="button"
           onClick={handleUpdateAndContinue}
           className="bg-[#0B498B] text-white px-8 py-2.5 rounded-md hover:bg-[#083968] transition-colors focus:outline-none focus:ring-1 focus:ring-[#0B498B] font-medium"
-          disabled={!isFormValid || isSubmitting}
+          disabled={(formMode !== 'view' && !isFormValid) || isSubmitting}
         >
-          {isSubmitting ? 'Submitting...' : 'Update & Continue'}
+          {isSubmitting ? 'Submitting...' : formMode === 'view' ? 'Next' : 'Update & Continue'}
         </button>
       </div>
     </div>

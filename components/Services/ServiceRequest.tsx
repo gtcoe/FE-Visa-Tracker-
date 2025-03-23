@@ -21,6 +21,7 @@ import {
 import { getAllClients } from '@component/api/client';
 import { Client as APIClient } from '@component/components/ManageClients/ManageClients';
 import { submitServiceRequest, ServiceRequestPayload, ServiceRequestResponse } from '@component/api/application';
+import { STORAGE_KEY } from '@component/constants/formConstants';
 
 // Local client interface for dropdown
 interface Client {
@@ -64,6 +65,7 @@ const ServiceRequest = () => {
   // Fetch clients when component mounts
   useEffect(() => {
     fetchClients();
+    localStorage.setItem('formMode', '');
   }, []);
 
   // Fetch clients from API
@@ -188,6 +190,7 @@ const ServiceRequest = () => {
       }
       
       // Navigate to the Common Screen with reference number as a query parameter
+      localStorage.setItem(STORAGE_KEY.APPLICATION_INFO, '');
       router.push(`/services/common?reference=${response.requestCode || ''}`);
     } catch (error) {
       console.error('Error submitting service request:', error);
