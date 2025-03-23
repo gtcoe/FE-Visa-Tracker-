@@ -1,0 +1,7 @@
+{
+  "version": 3,
+  "sources": [],
+  "sections": [
+    {"offset": {"line": 1, "column": 0}, "map": {"version":3,"sources":["turbopack:///[project]/components/ManageUsers/UsersTable.css"],"sourcesContent":["/* Custom styling for status dropdown options */\nselect {\n  -webkit-appearance: none;\n  -moz-appearance: none;\n  appearance: none;\n}\n\nselect::-ms-expand {\n  display: none;\n}\n\nselect option {\n  background-color: white;\n  color: #1C1C1C;\n  padding: 10px 15px;\n  transition: all 0.3s ease;\n}\n\nselect option:hover {\n  background-color: #F5F5F5;\n}\n\nselect option:checked {\n  background-color: rgba(11, 73, 139, 0.05);\n  color: #0B498B;\n}\n\nselect option.active {\n  background-color: rgba(22, 163, 74, 0.1);\n  color: #16A34A;\n}\n\nselect option.inactive {\n  background-color: rgba(220, 38, 38, 0.1);\n  color: #DC2626;\n}\n\n/* Dropdown arrow styling */\n.dropdown-wrapper {\n  position: relative;\n  display: inline-block;\n}\n\n.dropdown-wrapper::after {\n  content: '▼';\n  position: absolute;\n  top: 50%;\n  right: 10px;\n  transform: translateY(-50%);\n  pointer-events: none;\n  color: #8A8A8A;\n} "],"names":[],"mappings":"AACA;;;;;;AAMA;;;;AAIA;;;;;;;AAOA;;;;AAIA;;;;;AAKA;;;;;AAKA;;;;;AAMA;;;;;AAKA"}},
+    {"offset": {"line": 51, "column": 0}, "map": {"version":3,"sources":[],"names":[],"mappings":"A"}}]
+}

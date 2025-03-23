@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { User } from './ManageUsers';
 import { USER_STATUS, USER_TYPE, USER_TYPE_REVERSE_MANAGE_USERS, USER_STATUS_REVERSE } from '../../constants/userConstants';
-import { ToastNotifySuccess, ToastNotifyError } from '../common/Toast';
+import {  ToastNotifyError } from '../common/Toast';
 import { EMAIL_REGEX } from '../../constants/regex';
 import CustomDropdown, { DropdownOption } from '../common/CustomDropdown';
 import { UserContextUser } from '@component/context/UserContext';

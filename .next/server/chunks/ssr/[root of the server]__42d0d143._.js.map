@@ -1,0 +1,7 @@
+{
+  "version": 3,
+  "sources": [],
+  "sections": [
+    {"offset": {"line": 55, "column": 0}, "map": {"version":3,"sources":["file:///Users/garvittyagi/Documents/visaistic/pages/_document.tsx"],"sourcesContent":["import Document, { Html, Head, Main, NextScript } from 'next/document';\n\nclass MyDocument extends Document {\n  render() {\n    return (\n      <Html>\n        <Head>\n          <link rel=\"preconnect\" href=\"https://fonts.googleapis.com\" />\n          <link rel=\"preconnect\" href=\"https://fonts.gstatic.com\" crossOrigin=\"anonymous\" />\n          <link\n            href=\"https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap\"\n            rel=\"stylesheet\"\n          />\n        </Head>\n        <body>\n          <Main />\n          <NextScript />\n        </body>\n      </Html>\n    );\n  }\n}\n\nexport default MyDocument; "],"names":[],"mappings":";;;;AAAA;;;AAEA,MAAM,mBAAmB,yHAAA,CAAA,UAAQ;IAC/B,SAAS;QACP,qBACE,qKAAC,yHAAA,CAAA,OAAI;;8BACH,qKAAC,yHAAA,CAAA,OAAI;;sCACH,qKAAC;4BAAK,KAAI;4BAAa,MAAK;;;;;;sCAC5B,qKAAC;4BAAK,KAAI;4BAAa,MAAK;4BAA4B,aAAY;;;;;;sCACpE,qKAAC;4BACC,MAAK;4BACL,KAAI;;;;;;;;;;;;8BAGR,qKAAC;;sCACC,qKAAC,yHAAA,CAAA,OAAI;;;;;sCACL,qKAAC,yHAAA,CAAA,aAAU;;;;;;;;;;;;;;;;;IAInB;AACF;uCAEe","debugId":null}},
+    {"offset": {"line": 126, "column": 0}, "map": {"version":3,"sources":[],"names":[],"mappings":"A"}}]
+}

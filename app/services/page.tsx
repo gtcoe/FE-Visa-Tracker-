@@ -15,8 +15,8 @@ const PageLoading = () => (
   </div>
 );
 
-// Dynamically import the SearchPax component with SSR disabled for faster client-side rendering
-const SearchPax = dynamic(() => import('@component/components/Services/CommonScreen'), {
+// Dynamically import the ServiceRequest component
+const ServiceRequestComponent = dynamic(() => import('@component/components/Services/ServiceRequest'), {
   loading: () => <PageLoading />,
   ssr: false, // Disable server-side rendering for this component to improve initial load time
 });

@@ -1,0 +1,10 @@
+{
+  "[project]/components/Services/ServiceRequest.tsx [app-client] (ecmascript, next/dynamic entry)": {
+    "id": "[project]/components/Services/ServiceRequest.tsx [app-client] (ecmascript, next/dynamic entry)",
+    "files": [
+      "static/chunks/node_modules_react-icons_6ed981ab._.js",
+      "static/chunks/components_Services_fcf6bc33._.js",
+      "static/chunks/components_Services_ServiceRequest_tsx_bcca2654._.js"
+    ]
+  }
+}

@@ -1,0 +1,7 @@
+{
+  "version": 3,
+  "sources": [],
+  "sections": [
+    {"offset": {"line": 1, "column": 0}, "map": {"version":3,"sources":["turbopack:///[project]/components/common/Toast/toast.css"],"sourcesContent":[".Toastify .Toastify__close-button {\n    display: none;\n  }\n  .Toastify .Toastify__toast-container {\n    text-align: center;\n  }\n  .Toastify .Toastify__toast--info {\n    background: #f0b81f;\n    border-radius: 4px;\n  }\n  .Toastify .Toastify__toast--success {\n    background: #47a515;\n    border-radius: 4px;\n  }\n  .Toastify .Toastify__toast--error {\n    background: #b92736;\n    border-radius: 4px;\n  }\n  \n  .Toastify .Toastify__toast--warning {\n    background: #397ef5;\n    border-radius: 4px;\n  }\n  \n  .Toastify .Toastify__toast--dark {\n    background: #44454a;\n    border-radius: 4px;\n  }"],"names":[],"mappings":"AAAA;;;;AAGE;;;;AAGA;;;;;AAIA;;;;;AAIA;;;;;AAKA;;;;;AAKA"}},
+    {"offset": {"line": 33, "column": 0}, "map": {"version":3,"sources":[],"names":[],"mappings":"A"}}]
+}

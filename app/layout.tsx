@@ -2,13 +2,10 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { useRouter, usePathname } from "next/navigation";
+import { usePathname } from "next/navigation";
 import Navbar from "@component/components/common/NavBar";
-import type { Metadata } from "next";
-import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
 import {
-  defaultRoutes,
   roleBasedNavItems,
   UserRole,
 } from "@component/constants/appConstants";
@@ -18,23 +15,12 @@ import { ApplicationProvider } from "@component/context/ApplicationContext";
 import { ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 
-const geistSans = Geist({
-  variable: "--font-geist-sans",
-  subsets: ["latin"],
-});
-
-const geistMono = Geist_Mono({
-  variable: "--font-geist-mono",
-  subsets: ["latin"],
-});
-
 export default function RootLayout({
   children,
 }: {
   children: React.ReactNode;
 }) {
   const [userRole, setUserRole] = useState<UserRole | null>(null);
-  const router = useRouter();
   const pathname = usePathname();
 
   useEffect(() => {

@@ -1,0 +1,6 @@
+{
+  "/application-tracker/page": "app/application-tracker/page.js",
+  "/favicon.ico/route": "app/favicon.ico/route.js",
+  "/services/page": "app/services/page.js",
+  "/services/common-screen/page": "app/services/common-screen/page.js"
+}
