@@ -137,6 +137,7 @@ const AddClientForm = ({ onSubmit }: AddClientFormProps) => {
           <div className="col-span-1">
             <label className="block text-xs text-[#1C1C1C] mb-2">Type</label>
             <CustomDropdown
+              name="type"
               value={formData.type.toString()}
               onChange={handleDropdownChange('type')}
               options={typeOptions}
@@ -208,6 +209,7 @@ const AddClientForm = ({ onSubmit }: AddClientFormProps) => {
           <div className="col-span-1">
             <label className="block text-xs text-[#1C1C1C] mb-2">City</label>
             <CustomDropdown
+              name="city"
               value={formData.city || ''}
               onChange={(value) => setFormData(prev => ({ ...prev, city: value.toString() }))}
               options={cityOptions}
