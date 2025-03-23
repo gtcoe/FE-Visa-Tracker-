@@ -189,7 +189,7 @@ const DateInput: React.FC<DateInputProps> = ({
           value={inputValue}
           onChange={handleInputChange}
           placeholder={placeholder}
-          className="w-full px-3 py-2.5 border border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-[#0B498B] text-[#6A6A6A] pr-10"
+          className={`w-full px-3 py-2.5 border border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-[#0B498B] text-[#6A6A6A] pr-10 ${readOnly ? 'bg-gray-100' : 'bg-white'}`}
           aria-label={`${label} in format DD/MM/YYYY`}
           readOnly={readOnly}
         />
@@ -750,7 +750,7 @@ const FillServiceForm = ({
                 value={personalInfo.firstName}
                 onChange={handlePersonalInfoChange}
                 placeholder="Enter first name"
-                className="w-full px-3 py-2.5 border border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-[#0B498B] text-[#6A6A6A]"
+                className={`w-full px-3 py-2.5 border border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-[#0B498B] text-[#6A6A6A] ${formMode === FORM_MODE.VIEW ? 'bg-gray-100' : 'bg-white'}`}
                 readOnly={formMode === FORM_MODE.VIEW}
               />
             </div>
@@ -765,7 +765,7 @@ const FillServiceForm = ({
                 value={personalInfo.lastName}
                 onChange={handlePersonalInfoChange}
                 placeholder="Enter Name"
-                className="w-full px-3 py-2.5 border border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-[#0B498B] text-[#6A6A6A]"
+                className={`w-full px-3 py-2.5 border border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-[#0B498B] text-[#6A6A6A] ${formMode === FORM_MODE.VIEW ? 'bg-gray-100' : 'bg-white'}`}
                 readOnly={formMode === FORM_MODE.VIEW}
               />
             </div>
@@ -780,7 +780,7 @@ const FillServiceForm = ({
                 value={personalInfo.emailId}
                 onChange={handlePersonalInfoChange}
                 placeholder="Enter Email id"
-                className="w-full px-3 py-2.5 border border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-[#0B498B] text-[#6A6A6A]"
+                className={`w-full px-3 py-2.5 border border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-[#0B498B] text-[#6A6A6A] ${formMode === FORM_MODE.VIEW ? 'bg-gray-100' : 'bg-white'}`}
                 readOnly={formMode === FORM_MODE.VIEW}
               />
             </div>
@@ -802,7 +802,7 @@ const FillServiceForm = ({
               name="processingBranch"
               value={personalInfo.processingBranch}
               onChange={handlePersonalInfoChange}
-              className="w-full max-w-xs px-3 py-2.5 border border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-[#0B498B] text-[#6A6A6A] appearance-none bg-white"
+              className={`w-full px-3 py-2.5 border border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-[#0B498B] text-[#6A6A6A] appearance-none ${formMode === FORM_MODE.VIEW ? 'bg-gray-100' : 'bg-white'}`}
               disabled={formMode === FORM_MODE.VIEW}
             >
               {processingBranchOptions.map((option) => (
@@ -834,7 +834,7 @@ const FillServiceForm = ({
                 value={passportInfo.passportNumber}
                 onChange={handlePassportInfoChange}
                 placeholder="Enter passport number"
-                className="w-full px-3 py-2.5 border border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-[#0B498B] text-[#6A6A6A]"
+                className={`w-full px-3 py-2.5 border border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-[#0B498B] text-[#6A6A6A] ${formMode === FORM_MODE.VIEW ? 'bg-gray-100' : 'bg-white'}`}
                 readOnly={formMode === FORM_MODE.VIEW}
               />
             </div>
@@ -867,7 +867,7 @@ const FillServiceForm = ({
                 value={passportInfo.issueAt}
                 onChange={handlePassportInfoChange}
                 placeholder="Enter issue location"
-                className="w-full px-3 py-2.5 border border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-[#0B498B] text-[#6A6A6A]"
+                className={`w-full px-3 py-2.5 border border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-[#0B498B] text-[#6A6A6A] ${formMode === FORM_MODE.VIEW ? 'bg-gray-100' : 'bg-white'}`}
                 readOnly={formMode === FORM_MODE.VIEW}
               />
             </div>
@@ -882,7 +882,7 @@ const FillServiceForm = ({
                 name="noOfExpiredPassport"
                 value={passportInfo.noOfExpiredPassport}
                 onChange={handlePassportInfoChange}
-                className="w-full px-3 py-2.5 border border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-[#0B498B] text-[#6A6A6A] appearance-none bg-white"
+                className={`w-full px-3 py-2.5 border border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-[#0B498B] text-[#6A6A6A] appearance-none ${formMode === FORM_MODE.VIEW ? 'bg-gray-100' : 'bg-white'}`}
                 disabled={formMode === FORM_MODE.VIEW}
               >
                 <option value="">Select</option>
@@ -903,7 +903,7 @@ const FillServiceForm = ({
                 value={passportInfo.expiredPassportNumber}
                 onChange={handlePassportInfoChange}
                 placeholder="Enter expired passport number"
-                className="w-full px-3 py-2.5 border border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-[#0B498B] text-[#6A6A6A]"
+                className={`w-full px-3 py-2.5 border border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-[#0B498B] text-[#6A6A6A] ${formMode === FORM_MODE.VIEW ? 'bg-gray-100' : 'bg-white'}`}
                 readOnly={formMode === FORM_MODE.VIEW}
               />
             </div>
@@ -948,14 +948,14 @@ const FillServiceForm = ({
                 value={travelInfo.fileNo}
                 onChange={handleTravelInfoChange}
                 placeholder="Enter name"
-                className="w-full px-3 py-2.5 border border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-[#0B498B] text-[#6A6A6A]"
+                className={`w-full px-3 py-2.5 border border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-[#0B498B] text-[#6A6A6A] ${formMode === FORM_MODE.VIEW ? 'bg-gray-100' : 'bg-white'}`}
                 readOnly={formMode === FORM_MODE.VIEW}
               />
             </div>
           </div>
           
           <div className="flex items-center space-x-8 mt-4">
-            <div className="flex items-center space-x-2">
+            <div className={`flex items-center space-x-2 ${formMode === FORM_MODE.VIEW ? 'opacity-70' : ''}`}>
               <input
                 type="radio"
                 id="tentative"
@@ -969,7 +969,7 @@ const FillServiceForm = ({
               </label>
             </div>
             
-            <div className="flex items-center space-x-2">
+            <div className={`flex items-center space-x-2 ${formMode === FORM_MODE.VIEW ? 'opacity-70' : ''}`}>
               <input
                 type="radio"
                 id="fixed"
@@ -987,7 +987,7 @@ const FillServiceForm = ({
               Priority Submission
             </div>
             
-            <div className="flex items-center space-x-2">
+            <div className={`flex items-center space-x-2 ${formMode === FORM_MODE.VIEW ? 'opacity-70' : ''}`}>
               <input
                 type="checkbox"
                 id="isFixed"
@@ -1021,7 +1021,7 @@ const FillServiceForm = ({
                   name="visaCountry"
                   value={request.visaCountry}
                   onChange={(e) => handleVisaInfoChange(e, index)}
-                  className="w-full px-3 py-2.5 border border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-[#0B498B] text-[#6A6A6A] appearance-none bg-white"
+                  className={`w-full px-3 py-2.5 border border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-[#0B498B] text-[#6A6A6A] appearance-none ${formMode === FORM_MODE.VIEW ? 'bg-gray-100' : 'bg-white'}`}
                   disabled={formMode === FORM_MODE.VIEW}
                 >
                   {Object.entries(VISA_COUNTRY_LABELS).map(([value, label]) => (
@@ -1040,7 +1040,7 @@ const FillServiceForm = ({
                   name="visaCategory"
                   value={request.visaCategory}
                   onChange={(e) => handleVisaInfoChange(e, index)}
-                  className="w-full px-3 py-2.5 border border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-[#0B498B] text-[#6A6A6A] appearance-none bg-white"
+                  className={`w-full px-3 py-2.5 border border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-[#0B498B] text-[#6A6A6A] appearance-none ${formMode === FORM_MODE.VIEW ? 'bg-gray-100' : 'bg-white'}`}
                   disabled={formMode === FORM_MODE.VIEW}
                 >
                   {Object.entries(VISA_CATEGORY_LABELS).map(([value, label]) => (
@@ -1059,7 +1059,7 @@ const FillServiceForm = ({
                   name="nationality"
                   value={request.nationality}
                   onChange={(e) => handleVisaInfoChange(e, index)}
-                  className="w-full px-3 py-2.5 border border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-[#0B498B] text-[#6A6A6A] appearance-none bg-white"
+                  className={`w-full px-3 py-2.5 border border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-[#0B498B] text-[#6A6A6A] appearance-none ${formMode === FORM_MODE.VIEW ? 'bg-gray-100' : 'bg-white'}`}
                   disabled={formMode === FORM_MODE.VIEW}
                 >
                   {Object.entries(NATIONALITY_LABELS).map(([value, label]) => (
@@ -1078,7 +1078,7 @@ const FillServiceForm = ({
                   name="state"
                   value={request.state}
                   onChange={(e) => handleVisaInfoChange(e, index)}
-                  className="w-full px-3 py-2.5 border border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-[#0B498B] text-[#6A6A6A] appearance-none bg-white"
+                  className={`w-full px-3 py-2.5 border border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-[#0B498B] text-[#6A6A6A] appearance-none ${formMode === FORM_MODE.VIEW ? 'bg-gray-100' : 'bg-white'}`}
                   disabled={formMode === FORM_MODE.VIEW}
                 >
                   {Object.entries(STATE_LABELS).map(([value, label]) => (
@@ -1099,7 +1099,7 @@ const FillServiceForm = ({
                   name="entryType"
                   value={request.entryType}
                   onChange={(e) => handleVisaInfoChange(e, index)}
-                  className="w-full px-3 py-2.5 border border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-[#0B498B] text-[#6A6A6A] appearance-none bg-white"
+                  className={`w-full px-3 py-2.5 border border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-[#0B498B] text-[#6A6A6A] appearance-none ${formMode === FORM_MODE.VIEW ? 'bg-gray-100' : 'bg-white'}`}
                   disabled={formMode === FORM_MODE.VIEW}
                 >
                   {Object.entries(ENTRY_TYPE_LABELS).map(([value, label]) => (
@@ -1120,7 +1120,7 @@ const FillServiceForm = ({
                   value={request.remark}
                   onChange={(e) => handleVisaInfoChange(e, index)}
                   placeholder=""
-                  className="w-full px-3 py-2.5 border border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-[#0B498B] text-[#6A6A6A]"
+                  className={`w-full px-3 py-2.5 border border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-[#0B498B] text-[#6A6A6A] ${formMode === FORM_MODE.VIEW ? 'bg-gray-100' : 'bg-white'}`}
                   readOnly={formMode === FORM_MODE.VIEW}
                 />
               </div>
@@ -1159,7 +1159,7 @@ const FillServiceForm = ({
                 value={addressInfo.addressLine1}
                 onChange={handleAddressInfoChange}
                 placeholder="Enter first name"
-                className="w-full px-3 py-2.5 border border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-[#0B498B] text-[#6A6A6A]"
+                className={`w-full px-3 py-2.5 border border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-[#0B498B] text-[#6A6A6A] ${formMode === FORM_MODE.VIEW ? 'bg-gray-100' : 'bg-white'}`}
                 readOnly={formMode === FORM_MODE.VIEW}
               />
             </div>
@@ -1174,7 +1174,7 @@ const FillServiceForm = ({
                 value={addressInfo.addressLine2}
                 onChange={handleAddressInfoChange}
                 placeholder="Enter Name"
-                className="w-full px-3 py-2.5 border border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-[#0B498B] text-[#6A6A6A]"
+                className={`w-full px-3 py-2.5 border border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-[#0B498B] text-[#6A6A6A] ${formMode === FORM_MODE.VIEW ? 'bg-gray-100' : 'bg-white'}`}
                 readOnly={formMode === FORM_MODE.VIEW}
               />
             </div>
@@ -1187,7 +1187,7 @@ const FillServiceForm = ({
                 name="country"
                 value={addressInfo.country}
                 onChange={handleAddressInfoChange}
-                className="w-full px-3 py-2.5 border border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-[#0B498B] text-[#6A6A6A] appearance-none bg-white"
+                className={`w-full px-3 py-2.5 border border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-[#0B498B] text-[#6A6A6A] appearance-none ${formMode === FORM_MODE.VIEW ? 'bg-gray-100' : 'bg-white'}`}
                 disabled={formMode === FORM_MODE.VIEW}
               >
                 {countryOptions.map((option) => (
@@ -1206,7 +1206,7 @@ const FillServiceForm = ({
                 name="state"
                 value={addressInfo.state}
                 onChange={handleAddressInfoChange}
-                className="w-full px-3 py-2.5 border border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-[#0B498B] text-[#6A6A6A] appearance-none bg-white"
+                className={`w-full px-3 py-2.5 border border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-[#0B498B] text-[#6A6A6A] appearance-none ${formMode === FORM_MODE.VIEW ? 'bg-gray-100' : 'bg-white'}`}
                 disabled={formMode === FORM_MODE.VIEW}
               >
                 {indianStateOptions.map((option) => (
@@ -1227,7 +1227,7 @@ const FillServiceForm = ({
                 name="city"
                 value={addressInfo.city}
                 onChange={handleAddressInfoChange}
-                className="w-full px-3 py-2.5 border border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-[#0B498B] text-[#6A6A6A] appearance-none bg-white"
+                className={`w-full px-3 py-2.5 border border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-[#0B498B] text-[#6A6A6A] appearance-none ${formMode === FORM_MODE.VIEW ? 'bg-gray-100' : 'bg-white'}`}
                 disabled={formMode === FORM_MODE.VIEW}
               >
                 <option value="">Select</option>
@@ -1244,7 +1244,7 @@ const FillServiceForm = ({
                 value={addressInfo.zip}
                 onChange={handleAddressInfoChange}
                 placeholder="Enter Zip"
-                className="w-full px-3 py-2.5 border border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-[#0B498B] text-[#6A6A6A]"
+                className={`w-full px-3 py-2.5 border border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-[#0B498B] text-[#6A6A6A] ${formMode === FORM_MODE.VIEW ? 'bg-gray-100' : 'bg-white'}`}
                 readOnly={formMode === FORM_MODE.VIEW}
               />
             </div>
@@ -1259,7 +1259,7 @@ const FillServiceForm = ({
                 value={addressInfo.occupation}
                 onChange={handleAddressInfoChange}
                 placeholder="Enter Occupation"
-                className="w-full px-3 py-2.5 border border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-[#0B498B] text-[#6A6A6A]"
+                className={`w-full px-3 py-2.5 border border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-[#0B498B] text-[#6A6A6A] ${formMode === FORM_MODE.VIEW ? 'bg-gray-100' : 'bg-white'}`}
                 readOnly={formMode === FORM_MODE.VIEW}
               />
             </div>
@@ -1274,15 +1274,15 @@ const FillServiceForm = ({
                 value={addressInfo.position}
                 onChange={handleAddressInfoChange}
                 placeholder="Enter Position"
-                className="w-full px-3 py-2.5 border border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-[#0B498B] text-[#6A6A6A]"
-                readOnly={formMode === 'view'}
+                className={`w-full px-3 py-2.5 border border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-[#0B498B] text-[#6A6A6A] ${formMode === FORM_MODE.VIEW ? 'bg-gray-100' : 'bg-white'}`}
+                readOnly={formMode === FORM_MODE.VIEW}
               />
             </div>
             
           </div>
           
           <div className="flex justify-end mt-4">
-            {formMode !== 'view' && (
+            {formMode !== FORM_MODE.VIEW && (
               <button
                 type="button"
                 onClick={handleUpdateApplicant}
@@ -1312,8 +1312,8 @@ const FillServiceForm = ({
               value={miFields.oldNumber}
               onChange={handleMiFieldsChange}
               placeholder="Enter Olvt number"
-              className="w-full max-w-md px-3 py-2.5 border border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-[#0B498B] text-[#6A6A6A]"
-              readOnly={formMode === 'view'}
+              className={`w-full max-w-md px-3 py-2.5 border border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-[#0B498B] text-[#6A6A6A] ${formMode === FORM_MODE.VIEW ? 'bg-gray-100' : 'bg-white'}`}
+              readOnly={formMode === FORM_MODE.VIEW}
             />
           </div>
         </div>
@@ -1334,9 +1334,9 @@ const FillServiceForm = ({
           type="button"
           onClick={handleUpdateAndContinue}
           className="bg-[#0B498B] text-white px-8 py-2.5 rounded-md hover:bg-[#083968] transition-colors focus:outline-none focus:ring-1 focus:ring-[#0B498B] font-medium"
-          disabled={(formMode !== 'view' && !isFormValid) || isSubmitting}
+          disabled={(formMode !== FORM_MODE.VIEW && !isFormValid) || isSubmitting}
         >
-          {isSubmitting ? 'Submitting...' : formMode === 'view' ? 'Next' : 'Update & Continue'}
+          {isSubmitting ? 'Submitting...' : formMode === FORM_MODE.VIEW ? 'Next' : 'Update & Continue'}
         </button>
       </div>
     </div>
