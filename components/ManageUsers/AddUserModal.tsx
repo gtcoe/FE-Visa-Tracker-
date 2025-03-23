@@ -3,7 +3,7 @@ import { User } from './ManageUsers';
 import { USER_STATUS, USER_TYPE, USER_TYPE_REVERSE_MANAGE_USERS, USER_STATUS_REVERSE } from '../../constants/userConstants';
 import {  ToastNotifyError } from '../common/Toast';
 import { EMAIL_REGEX } from '../../constants/regex';
-import CustomDropdown, { DropdownOption } from '../common/CustomDropdown';
+import CustomDropdown from '../common/CustomDropdown';
 import { UserContextUser } from '@component/context/UserContext';
 
 interface AddUserModalProps {
@@ -76,6 +76,7 @@ const AddUserModal = ({ onClose, onSubmit }: AddUserModalProps) => {
               <label className="block text-xs font-normal text-[#1C1C1C] mb-2">Status</label>
               <div className="relative">
                 <CustomDropdown
+                  name="status"
                   value={formData.status.toString()}
                   onChange={(value) => setFormData({ 
                     ...formData, 
@@ -92,6 +93,7 @@ const AddUserModal = ({ onClose, onSubmit }: AddUserModalProps) => {
               <label className="block text-xs font-normal text-[#1C1C1C] mb-2">Ownership</label>
               <div className="relative">
                 <CustomDropdown
+                  name="type"
                   value={formData.type.toString()}
                   onChange={(value) => setFormData({ 
                     ...formData, 
