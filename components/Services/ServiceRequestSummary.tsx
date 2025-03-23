@@ -1,17 +1,26 @@
 "use client";
 
 import React, { useState, useEffect } from 'react';
+import { useRouter } from 'next/navigation';
 import { 
   ApplicationRequestData, 
   getApplicationInfo, 
   getFullName, 
   formatDateForDisplay 
 } from '@component/types/applicationTypes';
+import { addApplicationStep4 } from '@component/api/application';
 import { 
   VISA_COUNTRY, VISA_COUNTRY_LABELS, 
   VISA_CATEGORY, VISA_CATEGORY_LABELS,
   ENTRY_TYPE, ENTRY_TYPE_LABELS
 } from '@component/constants/dropdown/geographical';
+
+// Constants for dispatch mediums
+enum DISPATCH_MEDIUM {
+  EMAIL = 1,
+  COURIER = 2,
+  HAND_DELIVERY = 3
+}
 
 interface VisaApplicationRow {
   id: string;
@@ -25,11 +34,15 @@ interface VisaApplicationRow {
 
 // Component for Service Request Summary tab
 const ServiceRequestSummary: React.FC = () => {
+  const router = useRouter();
+  
   // State for visa applications
   const [visaApplications, setVisaApplications] = useState<VisaApplicationRow[]>([]);
   // State for loading application data
   const [isLoading, setIsLoading] = useState<boolean>(true);
   const [clientName, setClientName] = useState<string>('');
+  const [isSubmitting, setIsSubmitting] = useState<boolean>(false);
+  const [error, setError] = useState<string | null>(null);
 
   // Effect to load application data from localStorage on mount
   useEffect(() => {
@@ -81,31 +94,107 @@ const ServiceRequestSummary: React.FC = () => {
       ...prev,
       [name]: value
     }));
+    
+    // Clear error when user makes changes
+    if (error) setError(null);
   };
 
-  const handleFinalSubmission = () => {
-    console.log('Final submission', { visaApplications, dispatchDetails });
-    // Here you would typically send this data to your API
+  // Map dispatch medium from string to numeric value
+  const getDispatchMediumValue = (medium: string): number => {
+    switch (medium) {
+      case 'email':
+        return DISPATCH_MEDIUM.EMAIL;
+      case 'courier':
+        return DISPATCH_MEDIUM.COURIER;
+      case 'hand_delivery':
+        return DISPATCH_MEDIUM.HAND_DELIVERY;
+      default:
+        return 0;
+    }
+  };
+
+  const handleFinalSubmission = async () => {
+    // Validate inputs
+    if (!dispatchDetails.medium1) {
+      setError("Please select a dispatch medium");
+      return;
+    }
+    
+    if (!dispatchDetails.medium2) {
+      setError("Please enter a dispatch medium number");
+      return;
+    }
+    
+    if (!dispatchDetails.remark) {
+      setError("Please enter remarks");
+      return;
+    }
+    
+    const referenceNumber = localStorage.getItem('serviceReferenceNumber');
+    if (!referenceNumber) {
+      setError("Reference number not found. Please try again.");
+      return;
+    }
+    
+    setIsSubmitting(true);
+    setError(null);
+    
+    try {
+      // Prepare payload according to API requirements
+      const payload = {
+        dispatch_medium: getDispatchMediumValue(dispatchDetails.medium1),
+        dispatch_medium_number: dispatchDetails.medium2,
+        remarks: dispatchDetails.remark,
+        reference_number: referenceNumber,
+        token_user_id: localStorage.getItem('userId') || 0, // Fallback to 1 if not found
+      };
+      
+      // Submit to API
+      const response = await addApplicationStep4(payload);
+      console.log('=====>Step 4 response:', response);
+      
+      if (response && response.status) {
+        // Success handling
+        console.log('Step 4 data submitted successfully:', response);
+        
+        // Clear localStorage data that's no longer needed
+        localStorage.removeItem('applicationInfo');
+        localStorage.removeItem('serviceReferenceNumber');
+        
+        // Navigate to dashboard or success page
+        router.push('/application-tracker');
+      } else {
+        setError(response?.message || 'Failed to submit. Please try again.');
+      }
+    } catch (error: any) {
+      setError(error.message || 'An error occurred. Please try again.');
+      console.error('Error submitting final data:', error);
+    } finally {
+      setIsSubmitting(false);
+    }
   };
 
   const handleAddMoreServiceRequest = () => {
-    console.log('Add more service request');
-    // Navigate to the appropriate screen or open a modal
+    // Navigate to service request screen
+    router.push('/services');
   };
 
   const handleEditRow = (id: string) => {
     console.log('Edit row', id);
     // Navigate to edit screen with the row data
+    router.push(`/services/edit/${id}`);
   };
 
   const handleViewRow = (id: string) => {
     console.log('View row', id);
     // Navigate to view screen with the row data
+    router.push(`/services/view/${id}`);
   };
 
   const handleAddSubRequest = (id: string) => {
     console.log('Add sub request for', id);
     // Navigate to add sub request screen or open a modal
+    router.push(`/services/subrequest/${id}`);
   };
 
   return (
@@ -201,18 +290,25 @@ const ServiceRequestSummary: React.FC = () => {
           <h3 className="text-[14px] leading-[20px] font-medium text-[#1C1C1C] mb-4">Dispatch Details</h3>
           
           <div className="relative">
+            {/* Error message */}
+            {error && (
+              <div className="mb-4 p-3 bg-red-50 border border-red-200 rounded-md text-red-700 text-sm">
+                {error}
+              </div>
+            )}
             
             <div className="border border-[#E6EAF2] rounded-md p-6 pt-8">
               <div className="grid grid-cols-4 gap-6 mb-6">
                 <div>
                   <label className="block text-xs font-normal text-gray-700 mb-2">
-                    Dispatch Medium
+                    Dispatch Medium<span className="text-red-500">*</span>
                   </label>
                   <select
                     name="medium1"
                     value={dispatchDetails.medium1}
                     onChange={handleDispatchChange}
                     className="text-sm w-full h-10 px-3 border border-[#E6EAF2] rounded-md focus:outline-none focus:ring-1 focus:ring-[#0B498B] text-gray-700 appearance-none bg-white"
+                    disabled={isSubmitting}
                   >
                     <option value="">Select</option>
                     <option value="email">Email</option>
@@ -223,7 +319,7 @@ const ServiceRequestSummary: React.FC = () => {
                 
                 <div>
                   <label className="block text-xs font-normal text-gray-700 mb-2">
-                    Dispatch Medium No.
+                    Dispatch Medium No.<span className="text-red-500">*</span>
                   </label>
                   <input
                     type="text"
@@ -232,21 +328,23 @@ const ServiceRequestSummary: React.FC = () => {
                     onChange={handleDispatchChange}
                     placeholder="Enter dispatch medium number"
                     className="text-sm w-full h-10 px-3 border border-[#E6EAF2] rounded-md focus:outline-none focus:ring-1 focus:ring-[#0B498B] text-gray-700 bg-white"
+                    disabled={isSubmitting}
                   />
                 </div>
               </div>
               
               <div>
                 <label className="block text-xs font-normal text-gray-700 mb-2">
-                  Remark
+                  Remark<span className="text-red-500">*</span>
                 </label>
                 <textarea
                   name="remark"
                   value={dispatchDetails.remark}
                   onChange={handleDispatchChange}
                   rows={1}
-                  className=" text-sm w-full px-3 py-2 border border-[#E6EAF2] rounded-md focus:outline-none focus:ring-1 focus:ring-[#0B498B] text-gray-700 resize-none"
+                  className="text-sm w-full px-3 py-2 border border-[#E6EAF2] rounded-md focus:outline-none focus:ring-1 focus:ring-[#0B498B] text-gray-700 resize-none"
                   placeholder="Enter remarks here..."
+                  disabled={isSubmitting}
                 />
               </div>
             </div>
@@ -255,9 +353,25 @@ const ServiceRequestSummary: React.FC = () => {
             <button
               type="button"
               onClick={handleFinalSubmission}
-              className="bg-[#0B498B] text-white px-6 py-2.5 rounded-md hover:bg-[#083968] transition-colors focus:outline-none font-medium w-[183px]"
+              disabled={isSubmitting}
+              className={`
+                bg-[#0B498B] text-white px-6 py-2.5 rounded-md 
+                hover:bg-[#083968] transition-colors focus:outline-none 
+                font-medium w-[183px] flex items-center justify-center
+                ${isSubmitting ? 'opacity-70 cursor-not-allowed' : ''}
+              `}
             >
-              Final Submission
+              {isSubmitting ? (
+                <>
+                  <svg className="animate-spin -ml-1 mr-2 h-4 w-4 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                    <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
+                    <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                  </svg>
+                  Submitting...
+                </>
+              ) : (
+                'Final Submission'
+              )}
             </button>
           </div>
           </div>

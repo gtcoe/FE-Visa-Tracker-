@@ -471,7 +471,8 @@ const FillServiceForm = ({ handleTabChange }: { handleTabChange: (tabName: strin
         mi_fields: {
           olvt_number: miFields.oldNumber
         },
-        application_id: appId
+        application_id: appId,
+        is_sub_request: 0
       };
       
       // Submit to API

@@ -113,6 +113,7 @@ export interface Step3RequestPayload {
   mi_fields?: Step3MIFields;
   application_id: number;
   token_user_id?: number;
+  is_sub_request: number;
 }
 
 /**
@@ -222,7 +223,7 @@ export const addApplicationStep4 = async (applicationData: any): Promise<any> =>
       throw new Error(response.message || 'Failed to add application step 4');
     }
     
-    return response.data;
+    return response;
   } catch (error) {
     console.error('Error adding application step 4:', error);
     throw error;
