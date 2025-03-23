@@ -467,16 +467,17 @@ const FillServiceForm = ({
 
   const handleVisaInfoChange = useCallback((e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>, index: number) => {
     const { name, value } = e.target;
+    console.log(`handleVisaInfoChange called with field: ${name}, value: ${value}, for index: ${index}`);
     setVisaRequests(prev => {
-      console.log('=====>handleVisaInfoChange - prev', prev,name, value); 
       const newRequests = [...prev];
+      // Create a new object reference to ensure React detects the change
       newRequests[index] = {
         ...newRequests[index],
         [name]: value
       };
       return newRequests;
     });
-  }, []);
+  }, [setVisaRequests]);
 
   const handleAddressInfoChange = useCallback((e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
     const { name, value } = e.target;
@@ -584,7 +585,7 @@ const FillServiceForm = ({
           nationality: nationalityMap[request.nationality] || 1,
           state: stateMap[request.state] || 6, // Default to Delhi
           entry_type: entryTypeMap[request.entryType] || 1,
-          remark: request.remark
+          remark: request.remark || '' // Ensure remark is always a string, never undefined
         })),
         address_info: {
           address_line1: addressInfo.addressLine1,
@@ -602,6 +603,10 @@ const FillServiceForm = ({
         application_id: appId,
         is_sub_request: formMode === FORM_MODE.ADD_SUB_REQUEST ? 1 : 0 // Set is_sub_request based on mode
       };
+
+      if (payload.is_sub_request === 1) {
+        payload.application_id = 0;
+      }
       
       // Submit to API
       const response = await addApplicationStep3(payload);
@@ -1117,9 +1122,9 @@ const FillServiceForm = ({
                 <input
                   type="text"
                   name="remark"
-                  value={request.remark}
+                  value={request.remark || ''}
                   onChange={(e) => handleVisaInfoChange(e, index)}
-                  placeholder=""
+                  placeholder="Enter remarks here"
                   className={`w-full px-3 py-2.5 border border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-[#0B498B] text-[#6A6A6A] ${formMode === FORM_MODE.VIEW ? 'bg-gray-100' : 'bg-white'}`}
                   readOnly={formMode === FORM_MODE.VIEW}
                 />
