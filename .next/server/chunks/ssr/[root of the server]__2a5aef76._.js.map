@@ -2,6 +2,6 @@
   "version": 3,
   "sources": [],
   "sections": [
-    {"offset": {"line": 25, "column": 0}, "map": {"version":3,"sources":["file:///Users/garvittyagi/Documents/visaistic/pages/_app.tsx"],"sourcesContent":["import '../styles/globals.css';\nimport { AppProps } from 'next/app';\nimport { ToastContainer } from 'react-toastify';\nimport 'react-toastify/dist/ReactToastify.css';\n\nfunction MyApp({ Component, pageProps }: AppProps) {\n  return (\n    <>\n      <ToastContainer />\n      <Component {...pageProps} />\n    </>\n  );\n}\n\nexport default MyApp; "],"names":[],"mappings":";;;;AAEA;;;;;;;;;AAGA,SAAS,MAAM,EAAE,SAAS,EAAE,SAAS,EAAY;IAC/C,qBACE;;0BACE,qKAAC,kIAAA,CAAA,iBAAc;;;;;0BACf,qKAAC;gBAAW,GAAG,SAAS;;;;;;;;AAG9B;uCAEe","debugId":null}},
+    {"offset": {"line": 25, "column": 0}, "map": {"version":3,"sources":["file:///Users/garvittyagi/Documents/Final%20Visa/visaistic/pages/_app.tsx"],"sourcesContent":["import '../styles/globals.css';\nimport { AppProps } from 'next/app';\nimport { ToastContainer } from 'react-toastify';\nimport 'react-toastify/dist/ReactToastify.css';\n\nfunction MyApp({ Component, pageProps }: AppProps) {\n  return (\n    <>\n      <ToastContainer />\n      <Component {...pageProps} />\n    </>\n  );\n}\n\nexport default MyApp; "],"names":[],"mappings":";;;;AAEA;;;;;;;;;AAGA,SAAS,MAAM,EAAE,SAAS,EAAE,SAAS,EAAY;IAC/C,qBACE;;0BACE,qKAAC,kIAAA,CAAA,iBAAc;;;;;0BACf,qKAAC;gBAAW,GAAG,SAAS;;;;;;;;AAG9B;uCAEe","debugId":null}},
     {"offset": {"line": 57, "column": 0}, "map": {"version":3,"sources":[],"names":[],"mappings":"A"}}]
 }

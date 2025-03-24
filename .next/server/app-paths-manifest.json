@@ -1,6 +1,4 @@
 {
-  "/services/service-request/page": "app/services/service-request/page.js",
-  "/favicon.ico/route": "app/favicon.ico/route.js",
-  "/manage-clients/page": "app/manage-clients/page.js",
-  "/manage-users/page": "app/manage-users/page.js"
+  "/check-list/page": "app/check-list/page.js",
+  "/favicon.ico/route": "app/favicon.ico/route.js"
 }

@@ -58,7 +58,7 @@ const CustomDropdown: React.FC<CustomDropdownProps> = ({
         className="w-full px-3 py-2 border border-[#E6EAF2] rounded-md bg-white flex items-center justify-between cursor-pointer"
         onClick={() => setIsOpen(!isOpen)}
       >
-        <span className={`${!selectedOption ? 'text-gray-400' : 'text-gray-900'}`}>
+        <span className={`${!selectedOption ? 'text-[#8A8A8A]' : 'text-gray-900'}`}>
           {selectedOption ? selectedOption.label : placeholder}
         </span>
         <svg
