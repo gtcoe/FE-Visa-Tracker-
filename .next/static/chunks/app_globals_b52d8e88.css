@@ -1012,6 +1012,12 @@
     margin-inline-end: calc(calc(var(--spacing) * 4) * calc(1 - var(--tw-space-x-reverse)));
   }
 
+  :where(.space-x-6 > :not(:last-child)) {
+    --tw-space-x-reverse: 0;
+    margin-inline-start: calc(calc(var(--spacing) * 6) * var(--tw-space-x-reverse));
+    margin-inline-end: calc(calc(var(--spacing) * 6) * calc(1 - var(--tw-space-x-reverse)));
+  }
+
   :where(.space-x-8 > :not(:last-child)) {
     --tw-space-x-reverse: 0;
     margin-inline-start: calc(calc(var(--spacing) * 8) * var(--tw-space-x-reverse));
@@ -1796,6 +1802,12 @@
   }
 
   @media (hover: hover) {
+    .hover\:bg-\[\#093d75\]:hover {
+      background-color: #093d75;
+    }
+  }
+
+  @media (hover: hover) {
     .hover\:bg-\[\#083968\]:hover {
       background-color: #083968;
     }
@@ -1816,6 +1828,12 @@
   @media (hover: hover) {
     .hover\:bg-gray-50:hover {
       background-color: var(--color-gray-50);
+    }
+  }
+
+  @media (hover: hover) {
+    .hover\:text-\[\#0B498B\]:hover {
+      color: #0b498b;
     }
   }
 

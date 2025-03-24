@@ -24,44 +24,20 @@ export default function RootLayout({
   const pathname = usePathname();
 
   useEffect(() => {
-    //update role to check
+    // For demo purposes, set a default user role
+    // In a real app, this would come from an API or auth service
     setUserRole("client");
   }, []);
 
-  // useEffect(() => {
-  //   // Fetch the user role from headers or API
-  //   const fetchUserRole = async () => {
-  //     try {
-  //       const response = await fetch("/api/auth/me");
-  //       if (response.ok) {
-  //         const data = await response.json();
-  //         // const data = { role: "client" };
-  //         setUserRole(data.role as UserRole);
-
-  //         // If user is on the root path, redirect to the default page based on role
-  //         if (pathname === "/visaistic" && data.role) {
-  //           router.push(defaultRoutes[data.role as UserRole]);
-  //         }
-  //       } else {
-  //         // Handle authentication errors
-  //         console.error("Authentication error");
-  //         router.push("/visaistic"); // Redirect to login if not authenticated
-  //       }
-  //     } catch (error) {
-  //       console.error("Error fetching user role:", error);
-  //     }
-  //   };
-
-  //   fetchUserRole();
-  // }, [pathname, router]);
-
   // Render navigation items based on user role
-
   const navItems =
     userRole && pathname !== "/" ? roleBasedNavItems[userRole] : [];
   
   // Check if we're on the checklist-details page
   const isChecklistDetailsPage = pathname?.includes('checklist-details');
+  
+  // Check if we're on the login/sign-in page
+  const isLoginPage = pathname === "/";
 
   return (
     <html lang="en">
@@ -70,7 +46,7 @@ export default function RootLayout({
           <ClientProvider>
             <ApplicationProvider>
               <div className="min-h-screen flex flex-col">
-                {userRole && navItems.length > 0 && !isChecklistDetailsPage && (
+                {userRole && navItems.length > 0 && !isChecklistDetailsPage && !isLoginPage && (
                   <Navbar items={navItems} userRole={userRole} />
                 )}
                 <main className="flex-grow">{children}</main>

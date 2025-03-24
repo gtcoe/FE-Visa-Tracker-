@@ -23,10 +23,8 @@ export const roleBasedNavItems = {
     { label: "Check list", path: "/check-list" },
     { label: "Services", path: "/services" },
     { label: "Manage Clients", path: "/manage-clients" },
-
   ],
   manager: [
-    
     { label: "Application Tracker", path: "/application-tracker" },
     { label: "Manage Users", path: "/manage-users" },
     { label: "Check list", path: "/check-list" },

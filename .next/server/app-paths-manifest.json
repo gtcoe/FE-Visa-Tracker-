@@ -3,5 +3,6 @@
   "/favicon.ico/route": "app/favicon.ico/route.js",
   "/check-list/page": "app/check-list/page.js",
   "/application-tracker/page": "app/application-tracker/page.js",
-  "/checklist-details/page": "app/checklist-details/page.js"
+  "/checklist-details/page": "app/checklist-details/page.js",
+  "/manage-users/page": "app/manage-users/page.js"
 }
