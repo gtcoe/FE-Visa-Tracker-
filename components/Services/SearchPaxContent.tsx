@@ -1,6 +1,6 @@
 "use client";
 
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 
 // Define the types for the SearchPaxContent props
 interface SearchPaxContentProps {
@@ -29,13 +29,22 @@ const SearchPaxContent: React.FC<SearchPaxContentProps> = ({
   handleClear,
   isSearching
 }) => {
+  const [referenceNumber, setReferenceNumber] = useState<string>('');
+  
+  // Only access localStorage on the client side
+  useEffect(() => {
+    if (typeof window !== 'undefined') {
+      setReferenceNumber(localStorage.getItem('serviceReferenceNumber') || '');
+    }
+  }, []);
+
   return (
     <>
       {/* Form Container */}
       <div className="mx-6 mt-[21px] mb-6 border-[1.5px] border-[#E6EAF2] rounded-2xl">
         {/* Reference No Header with gray background */}
         <div className="bg-[#F6F7F9] py-4 px-6 border-b border-gray-200 rounded-t-2xl">
-          <p className="text-base font-medium text-[#1C1C1C]">{`Reference No:  ${localStorage.getItem('serviceReferenceNumber')}`}</p>
+          <p className="text-base font-medium text-[#1C1C1C]">{`Reference No: ${referenceNumber}`}</p>
         </div>
         
         {/* Form */}

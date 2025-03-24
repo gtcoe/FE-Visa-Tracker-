@@ -89,6 +89,11 @@ export interface Step3Response {
  * @returns The parsed application data or null if not found
  */
 export function getApplicationInfo(): ApplicationRequestData | null {
+  // Check if we're in a browser environment
+  if (typeof window === 'undefined') {
+    return null;
+  }
+  
   try {
     const storedData = localStorage.getItem('applicationInfo');
     if (!storedData) return null;
