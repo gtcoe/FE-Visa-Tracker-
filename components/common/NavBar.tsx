@@ -5,13 +5,13 @@ import { useState } from "react";
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
 import Image from "next/image";
-import { UserRole } from "@component/constants/appConstants";
+import { USER_TYPE } from "@component/constants/userConstants";
 import visaisticLogo from "../../public/visaisticLogo.svg";
 import { logout } from "@component/api/auth";
 
 interface NavbarProps {
   items: { label: string; path: string }[];
-  userRole: UserRole;
+  userRole: USER_TYPE;
 }
 
 export default function Navbar({ items, userRole }: NavbarProps) {

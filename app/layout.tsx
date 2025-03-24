@@ -14,20 +14,18 @@ import { UserProvider } from "@component/context/UserContext";
 import { ApplicationProvider } from "@component/context/ApplicationContext";
 import { ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
-import { isLoggedIn, getToken } from "@component/api/auth";
+import { isLoggedIn } from "@component/api/auth";
 import config from '@component/constants/config';
+import { USER_TYPE } from "@component/constants/userConstants";
 
 const { USER_TYPE_KEY } = config;
-
-// Define user roles type
-type UserRole = "client" | "manager" | "admin";
 
 export default function RootLayout({
   children,
 }: {
   children: React.ReactNode;
 }) {
-  const [userRole, setUserRole] = useState<UserRole | null>(null);
+  const [userRole, setUserRole] = useState<USER_TYPE | null>(null);
   const [loading, setLoading] = useState(true);
   const pathname = usePathname();
   const router = useRouter();
@@ -38,19 +36,21 @@ export default function RootLayout({
       try {
         if (isLoggedIn()) {
           // Get user type from localStorage
-          const userType = localStorage.getItem(USER_TYPE_KEY);
+          const userTypeStr = localStorage.getItem(USER_TYPE_KEY);
           
-          if (userType) {
-            // Map user type to role (1 = admin, 2 = manager, 3 = client)
-            const role = 
-              userType === "1" ? "admin" :
-              userType === "2" ? "manager" : "client";
+          if (userTypeStr) {
+            // Convert string to number and validate it's a valid USER_TYPE
+            const userTypeNum = Number(userTypeStr);
             
-            setUserRole(role as UserRole);
-            
-            // If user is on the login page but already logged in, redirect to default page
-            if (pathname === "/") {
-              router.push("/application-tracker");
+            if (userTypeNum === USER_TYPE.ADMIN || 
+                userTypeNum === USER_TYPE.MANAGER || 
+                userTypeNum === USER_TYPE.CLIENT) {
+              setUserRole(userTypeNum);
+              
+              // If user is on the login page but already logged in, redirect to default page
+              if (pathname === "/") {
+                router.push("/application-tracker");
+              }
             }
           }
         } else {
@@ -73,9 +73,12 @@ export default function RootLayout({
     checkAuth();
   }, [pathname, router]);
 
-  // Render navigation items based on user role
-  const navItems =
-    userRole && pathname !== "/" ? roleBasedNavItems[userRole] : [];
+  // Render navigation items based on user role with fallback to empty array
+  let navItems: Array<{ label: string; path: string }> = [];
+  if (userRole && pathname !== "/") {
+    // Now that userRole is USER_TYPE, this should work properly
+    navItems = roleBasedNavItems[userRole] || [];
+  }
   
   // Check if we're on the checklist-details page
   const isChecklistDetailsPage = pathname?.includes('checklist-details');
@@ -102,7 +105,7 @@ export default function RootLayout({
           <ClientProvider>
             <ApplicationProvider>
               <div className="min-h-screen flex flex-col">
-                {userRole && navItems.length > 0 && !isChecklistDetailsPage && !isLoginPage && (
+                {userRole && Array.isArray(navItems) && navItems.length > 0 && !isChecklistDetailsPage && !isLoginPage && (
                   <Navbar items={navItems} userRole={userRole} />
                 )}
                 <main className="flex-grow">{children}</main>

@@ -54,7 +54,17 @@ export const login = async (credentials: LoginCredentials): Promise<LoginRespons
 
 // Function to log out a user
 export const logout = (): void => {
+  // Clear localStorage
   localStorage.removeItem(AUTH_TOKEN_KEY);
+  localStorage.removeItem(USER_ID_KEY);
+  localStorage.removeItem(USER_TYPE_KEY);
+  localStorage.removeItem(LOGIN_STATUS_KEY);
+  
+  // Clear cookies
+  document.cookie = `${AUTH_TOKEN_KEY}=; path=/; expires=Thu, 01 Jan 1970 00:00:00 GMT`;
+  document.cookie = `${USER_TYPE_KEY}=; path=/; expires=Thu, 01 Jan 1970 00:00:00 GMT`;
+  document.cookie = `${USER_ID_KEY}=; path=/; expires=Thu, 01 Jan 1970 00:00:00 GMT`;
+  document.cookie = `${LOGIN_STATUS_KEY}=; path=/; expires=Thu, 01 Jan 1970 00:00:00 GMT`;
 };
 
 // Function to check if a user is logged in

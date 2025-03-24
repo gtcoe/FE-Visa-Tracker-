@@ -3,9 +3,9 @@ import { NextResponse } from "next/server";
 import type { NextRequest } from "next/server";
 import { DEFAULT_PATHS, ROLE_ROUTES } from "./constants/appConstants";
 import { USER_TYPE } from "./constants/userConstants";
-import config2 from "./constants/config";
+import appConfig from "./constants/config";
 
-const { AUTH_TOKEN_KEY, USER_TYPE_KEY } = config2;
+const { AUTH_TOKEN_KEY, USER_TYPE_KEY } = appConfig;
 
 export async function middleware(request: NextRequest) {
   // Get the pathname from the URL
@@ -20,32 +20,44 @@ export async function middleware(request: NextRequest) {
     return NextResponse.next();
   }
 
-  // Get the auth token from the request cookies or headers
-  //   const authToken =
-  //     request.cookies.get("auth_token")?.value ||
-  //     request.headers.get("authorization");
-
-  //update role to check
-  const authToken = localStorage.getItem(AUTH_TOKEN_KEY);
-  const userType = Number(localStorage.getItem(USER_TYPE_KEY)) as USER_TYPE;
-
-  // If no authentication, redirect to login
-  if (!authToken && path !== "/visaistic") {
+  // Add debug information
+  console.log("Middleware running on path:", path);
+  
+  // Get the auth token from the request cookies
+  const authToken = request.cookies.get(AUTH_TOKEN_KEY)?.value;
+  console.log("Auth token found:", !!authToken);
+  
+  const userTypeFromCookie = request.cookies.get(USER_TYPE_KEY)?.value;
+  console.log("User type from cookie:", userTypeFromCookie);
+  
+  // If no authentication and not on login page, redirect to login
+  if (!authToken) {
+    console.log("No auth token, redirecting to login");
     return NextResponse.redirect(new URL("/visaistic", request.url));
   }
 
-  // Root path should redirect to the default page for the role
-  if (path === "/" || path === "/visaistic" ) {
+  const userType = userTypeFromCookie ? Number(userTypeFromCookie) as USER_TYPE : USER_TYPE.CLIENT; 
+  console.log("Using user type:", userType);
+
+
+  if ((path === "/" || path === "/visaistic") && authToken && userType) {
+    console.log("Accessing root path, redirecting to default path");
     return NextResponse.redirect(new URL(DEFAULT_PATHS[userType], request.url));
+ 
   }
 
   // Check if the user has access to the requested path
-  if (!ROLE_ROUTES[userType].some((route: string) => path.startsWith(route))) {
+  const hasAccess = ROLE_ROUTES[userType].some((route: string) => path.startsWith(route));
+  console.log("User has access to path:", hasAccess);
+  
+  if (!hasAccess) {
     // Redirect to the default path for their role if they don't have access
+    console.log("User doesn't have access, redirecting to default path");
     return NextResponse.redirect(new URL(DEFAULT_PATHS[userType], request.url));
   }
 
   // Allow the request to proceed
+  console.log("Access granted, proceeding");
   return NextResponse.next();
 }
 

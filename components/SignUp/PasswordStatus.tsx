@@ -2,16 +2,18 @@ import React from "react";
 import Image from "next/image";
 import alertIcon from "../../public/alert-01.svg";
 import CheckFill from "../../public/CheckFill.svg";
+import { SIGN_IN_STATUS_TYPE } from "@component/constants/appConstants";
 
 export interface PasswordStatusProps {
-  status: string;
+  status: number;
 }
 
 const PasswordStatus: React.FC<PasswordStatusProps> = ({ status }) => {
   switch (status) {
-    case "expired":
+    case SIGN_IN_STATUS_TYPE.EXPIRED_REQUEST_NOT_INITIATED:
+    case SIGN_IN_STATUS_TYPE.INACTIVE_BY_ADMIN:
       return (
-        <div className="mt-[-8px] w-full bg-[#EF44441A] rounded-xl p-4 text-[14px] flex flex-col gap-2">
+        <div className="w-full bg-[#EF44441A] rounded-xl p-4 text-[14px] flex flex-col gap-2">
           <div className="flex gap-2 font-normal">
             <Image
               src={alertIcon}
@@ -31,9 +33,9 @@ const PasswordStatus: React.FC<PasswordStatusProps> = ({ status }) => {
           </div>
         </div>
       );
-    case "reset":
+    case SIGN_IN_STATUS_TYPE.EXPIRED_REQUEST_INITIATED:
       return (
-        <div className="mt-[-8px] w-full bg-[#f3fbf9] rounded-xl p-4 text-[14px] flex gap-2 font-normal">
+        <div className="w-full bg-[#f3fbf9] rounded-xl p-4 text-[14px] flex gap-2 font-normal">
           <Image
             src={CheckFill}
             alt="check"
@@ -46,9 +48,9 @@ const PasswordStatus: React.FC<PasswordStatusProps> = ({ status }) => {
           </span>
         </div>
       );
-    case "incorrect":
+    case SIGN_IN_STATUS_TYPE.INCORRECT_PASSWORD:
       return (
-        <div className="mt-[-8px] w-full text-[14px] flex gap-2 font-normal">
+        <div className="w-full text-[14px] flex gap-2 font-normal">
           <Image
             src={alertIcon}
             alt="alert"
@@ -58,6 +60,21 @@ const PasswordStatus: React.FC<PasswordStatusProps> = ({ status }) => {
           />
           <span className="text-[#EF4444]">
             Incorrect password please try again.
+          </span>
+        </div>
+      );
+    case SIGN_IN_STATUS_TYPE.EMAIL_NOT_FOUND:
+      return (
+        <div className="w-full text-[14px] flex gap-2 font-normal">
+          <Image
+            src={alertIcon}
+            alt="alert"
+            className="size-5"
+            width={20}
+            height={20}
+          />
+          <span className="text-[#EF4444]">
+            Email not found. Please check your email address.
           </span>
         </div>
       );

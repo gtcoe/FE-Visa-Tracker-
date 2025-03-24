@@ -2,7 +2,6 @@
 import React from "react";
 import SignUpAuthentication from "./SignUpAuthentication";
 import Image from "next/image";
-import dynamic from "next/dynamic";
 import SignUpImg from "../../public/SignUpImg.svg";
 
 const AuthPage = () => {
