@@ -34,7 +34,7 @@ const SearchPaxContent: React.FC<SearchPaxContentProps> = ({
   // Only access localStorage on the client side
   useEffect(() => {
     if (typeof window !== 'undefined') {
-      setReferenceNumber(localStorage.getItem('serviceReferenceNumber') || '');
+      setReferenceNumber(localStorage.getItem('referenceNumber') || '');
     }
   }, []);
 

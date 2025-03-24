@@ -17,7 +17,7 @@ export enum STORAGE_KEY {
   FORM_MODE = 'formMode',
   APPLICATION_ID = 'applicationId',
   ACTIVE_TAB = 'activeTab',
-  SERVICE_REFERENCE_NUMBER = 'serviceReferenceNumber',
+  SERVICE_REFERENCE_NUMBER = 'referenceNumber',
   APPLICATION_INFO = 'applicationInfo',
   USER_ID = 'userId'
 } 

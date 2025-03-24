@@ -255,9 +255,20 @@ const FillServiceForm = ({
   const [applicationId, setApplicationId] = useState<number | null>(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
   
+  // Check if we're in a new tab with prefill URL parameter
+  const isPrefill = typeof window !== 'undefined' && 
+    new URL(window.location.href).searchParams.get('prefill') === 'true';
+  
   // Try to get application ID from localStorage or URL and also determine the form mode
   useEffect(() => {
     console.log('FillServiceForm - initialization useEffect');
+    
+    // Set form mode to EDIT if we're in prefill mode
+    if (isPrefill) {
+      setFormMode(FORM_MODE.EDIT);
+      console.log('Setting form mode to EDIT due to prefill parameter');
+    }
+    
     // Check localStorage for application ID
     const storedAppId = localStorage.getItem(STORAGE_KEY.APPLICATION_ID);
     console.log('Found applicationId in localStorage:', storedAppId);
@@ -266,12 +277,15 @@ const FillServiceForm = ({
       console.log('Set applicationId state to:', parseInt(storedAppId, 10));
     }
     
-    // Get form mode from localStorage
+    // Get form mode from localStorage or set based on prefill parameter
     const mode = localStorage.getItem(STORAGE_KEY.FORM_MODE);
     console.log('Found formMode in localStorage:', mode);
     if (mode === FORM_MODE.VIEW || mode === FORM_MODE.EDIT || mode === FORM_MODE.ADD_SUB_REQUEST) {
       setFormMode(mode as FORM_MODE);
       console.log('Set formMode state to:', mode);
+    } else if (isPrefill) {
+      // If we're prefilling from a new tab, default to EDIT mode
+      setFormMode(FORM_MODE.EDIT);
     }
     
     // If add-sub-request mode, add a new visa request
@@ -290,48 +304,92 @@ const FillServiceForm = ({
       ]);
     }
     
-    // Load previously saved application data from localStorage
+    // Load existing application data
     const loadApplicationData = () => {
       try {
-        const applicationData = localStorage.getItem(STORAGE_KEY.APPLICATION_INFO);
-        if (applicationData) {
-          const parsedData = JSON.parse(applicationData);
-          if (parsedData) {
-            // Populate form fields with saved data
-            if (parsedData.personal_info) {
-              setPersonalInfo({
-                firstName: parsedData.personal_info.first_name || '',
-                lastName: parsedData.personal_info.last_name || '',
-                emailId: parsedData.personal_info.email_id || '',
-                dateOfBirth: parsedData.personal_info.date_of_birth || '',
-                processingBranch: parsedData.personal_info.processing_branch 
-                  ? PROCESSING_BRANCH_LABELS[parsedData.personal_info.processing_branch as PROCESSING_BRANCH] || PROCESSING_BRANCH_LABELS[PROCESSING_BRANCH.VISAISTIC_DELHI]
-                  : PROCESSING_BRANCH_LABELS[PROCESSING_BRANCH.VISAISTIC_DELHI],
-              });
+        // Check for application data in localStorage
+        const appDataStr = localStorage.getItem(STORAGE_KEY.APPLICATION_INFO);
+        
+        if (appDataStr) {
+          const parsedData = JSON.parse(appDataStr);
+          console.log('Application data loaded from localStorage:', parsedData);
+          const url = new URL(window.location.href);
+
+          const referenceNumber = url.searchParams.get('referenceNumber');
+          localStorage.setItem(STORAGE_KEY.SERVICE_REFERENCE_NUMBER, referenceNumber || '');
+          setReferenceNumber(referenceNumber || '');
+          // Populate form fields with saved data for both regular and prefill modes
+          if (parsedData.personal_info) {
+            setPersonalInfo({
+              firstName: parsedData.personal_info.first_name || '',
+              lastName: parsedData.personal_info.last_name || '',
+              emailId: parsedData.personal_info.email_id || '',
+              dateOfBirth: parsedData.personal_info.date_of_birth || '',
+              processingBranch: parsedData.personal_info.processing_branch 
+                ? PROCESSING_BRANCH_LABELS[parsedData.personal_info.processing_branch as PROCESSING_BRANCH] || PROCESSING_BRANCH_LABELS[PROCESSING_BRANCH.VISAISTIC_DELHI]
+                : PROCESSING_BRANCH_LABELS[PROCESSING_BRANCH.VISAISTIC_DELHI],
+            });
+          }
+          
+          if (parsedData.passport_info) {
+            setPassportInfo({
+              passportNumber: parsedData.passport_info.passport_number || '',
+              dateOfIssue: parsedData.passport_info.date_of_issue || '',
+              dateOfExpiry: parsedData.passport_info.date_of_expiry || '',
+              issueAt: parsedData.passport_info.issue_at || '',
+              noOfExpiredPassport: parsedData.passport_info.no_of_expired_passport?.toString() || '',
+              expiredPassportNumber: parsedData.passport_info.expired_passport_number || '',
+            });
+          }
+          
+          if (parsedData.travel_info) {
+            setTravelInfo({
+              travelDate: parsedData.travel_info.travel_date || '',
+              personalAppearance: parsedData.travel_info.interview_date || '',
+              fileNo: parsedData.travel_info.file_no || '',
+            });
+            // Set submission type and fixed based on the parsed data
+            setSubmissionType(parsedData.travel_info.is_travel_date_tentative === 1 ? 'tentative' : 'fixed');
+            setIsFixed(parsedData.travel_info.priority_submission === 1);
+          }
+          
+          // If we're in prefill mode and in a new tab, we want to use the data
+          // but not overwrite existing visa requests (we'll create a new one)
+          if (isPrefill && window.opener) {
+            console.log('Prefilling data in new tab');
+            
+            // Create a new visa request with the data from the previous application
+            if (parsedData.visa_requests && parsedData.visa_requests.length > 0) {
+              const sourceRequest = parsedData.visa_requests[0]; // Use first request as template
+              
+              // Create a new request based on the source
+              const newRequest = {
+                visaCountry: sourceRequest.visa_country
+                  ? VISA_COUNTRY_LABELS[sourceRequest.visa_country as VISA_COUNTRY] || VISA_COUNTRY_LABELS[VISA_COUNTRY.NETHERLAND]
+                  : VISA_COUNTRY_LABELS[VISA_COUNTRY.NETHERLAND],
+                visaCategory: sourceRequest.visa_category
+                  ? VISA_CATEGORY_LABELS[sourceRequest.visa_category as VISA_CATEGORY] || VISA_CATEGORY_LABELS[VISA_CATEGORY.BUSINESS]
+                  : VISA_CATEGORY_LABELS[VISA_CATEGORY.BUSINESS],
+                nationality: sourceRequest.nationality
+                  ? NATIONALITY_LABELS[sourceRequest.nationality as NATIONALITY] || NATIONALITY_LABELS[NATIONALITY.INDIAN]
+                  : NATIONALITY_LABELS[NATIONALITY.INDIAN],
+                state: sourceRequest.state
+                  ? STATE_LABELS[sourceRequest.state as STATE] || STATE_LABELS[STATE.DELHI]
+                  : STATE_LABELS[STATE.DELHI],
+                entryType: sourceRequest.entry_type
+                  ? ENTRY_TYPE_LABELS[sourceRequest.entry_type as ENTRY_TYPE] || ENTRY_TYPE_LABELS[ENTRY_TYPE.NORMAL]
+                  : ENTRY_TYPE_LABELS[ENTRY_TYPE.NORMAL],
+                remark: '',  // Start with empty remark
+              };
+              
+              // Set this as our initial visa request
+              setVisaRequests([newRequest]);
             }
             
-            if (parsedData.passport_info) {
-              setPassportInfo({
-                passportNumber: parsedData.passport_info.passport_number || '',
-                dateOfIssue: parsedData.passport_info.date_of_issue || '',
-                dateOfExpiry: parsedData.passport_info.date_of_expiry || '',
-                issueAt: parsedData.passport_info.issue_at || '',
-                noOfExpiredPassport: parsedData.passport_info.no_of_expired_passport?.toString() || '',
-                expiredPassportNumber: parsedData.passport_info.expired_passport_number || '',
-              });
-            }
-            
-            if (parsedData.travel_info) {
-              setTravelInfo({
-                travelDate: parsedData.travel_info.travel_date || '',
-                personalAppearance: parsedData.travel_info.interview_date || '',
-                fileNo: parsedData.travel_info.file_no || '',
-              });
-              // Set submission type and fixed based on the parsed data
-              setSubmissionType(parsedData.travel_info.is_travel_date_tentative === 1 ? 'tentative' : 'fixed');
-              setIsFixed(parsedData.travel_info.priority_submission === 1);
-            }
-            
+            // Generate a new reference number for this application
+            localStorage.removeItem(STORAGE_KEY.SERVICE_REFERENCE_NUMBER);
+          } else if (!isPrefill) {
+            // Regular application data loading (not prefill mode)
             if (parsedData.visa_requests && parsedData.visa_requests.length > 0) {
               // If not in add-sub-request mode, replace visa requests with saved data
               if (mode !== FORM_MODE.ADD_SUB_REQUEST) {
@@ -356,26 +414,28 @@ const FillServiceForm = ({
                 setVisaRequests(mappedRequests);
               }
             }
-            
-            if (parsedData.address_info) {
-              setAddressInfo({
-                addressLine1: parsedData.address_info.address_line1 || '',
-                addressLine2: parsedData.address_info.address_line2 || '',
-                country: findLabelByValue(parsedData.address_info.country, COUNTRY_LABELS) || '',
-                state: findLabelByValue(parsedData.address_info.state, STATE_LABELS) || '',
-                city: parsedData.address_info.city?.toString() || '',
-                zip: parsedData.address_info.zip || '',
-                occupation: parsedData.address_info.occupation || '',
-                position: parsedData.address_info.position || '',
-              });
-            }
-            
-            if (parsedData.mi_fields) {
-              setMiFields({
-                oldNumber: parsedData.mi_fields.olvt_number || ''
-              });
-            }
           }
+          
+          if (parsedData.address_info) {
+            setAddressInfo({
+              addressLine1: parsedData.address_info.address_line1 || '',
+              addressLine2: parsedData.address_info.address_line2 || '',
+              country: findLabelByValue(parsedData.address_info.country, COUNTRY_LABELS) || '',
+              state: findLabelByValue(parsedData.address_info.state, STATE_LABELS) || '',
+              city: parsedData.address_info.city?.toString() || '',
+              zip: parsedData.address_info.zip || '',
+              occupation: parsedData.address_info.occupation || '',
+              position: parsedData.address_info.position || '',
+            });
+          }
+          
+          if (parsedData.mi_fields) {
+            setMiFields({
+              oldNumber: parsedData.mi_fields.olvt_number || ''
+            });
+          }
+        } else {
+          console.log('No application data found in localStorage');
         }
       } catch (error) {
         console.error('Error loading application data:', error);
@@ -432,6 +492,7 @@ const FillServiceForm = ({
   
   const [submissionType, setSubmissionType] = useState('tentative');
   const [isFixed, setIsFixed] = useState(false);
+  const [referNumber, setReferenceNumber] = useState('');
 
   // Memoized derived values
   const isFormValid = useMemo(() => {
@@ -600,11 +661,17 @@ const FillServiceForm = ({
           olvt_number: miFields.oldNumber
         },
         application_id: appId,
-        is_sub_request: formMode === FORM_MODE.ADD_SUB_REQUEST ? 1 : 0 // Set is_sub_request based on mode
+        reference_number: localStorage.getItem(STORAGE_KEY.SERVICE_REFERENCE_NUMBER) || '',
+        is_sub_request:  0 // Set is_sub_request based on mode
       };
 
-      if (payload.is_sub_request === 1) {
+      const url = new URL(window.location.href);
+      const newApplicationParam = url.searchParams.get('newApplication');
+      const referenceNumber = url.searchParams.get('referenceNumber');
+      if (newApplicationParam === 'true') {
         payload.application_id = 0;
+        payload.is_sub_request = 1;
+        payload.reference_number = referenceNumber || '';
       }
       
       // Submit to API
@@ -613,7 +680,8 @@ const FillServiceForm = ({
       if (response.status) {
         // Success handling - proceed to next step
         console.log('Step 3 data submitted successfully:', response.data);
-        
+        url.searchParams.delete('newApplication');
+        url.searchParams.delete('referenceNumber');
         // Store the response data in localStorage for use in summary page
         if (response.data && response.data.application_requests) {
           localStorage.setItem(STORAGE_KEY.APPLICATION_INFO, JSON.stringify(response.data.application_requests));
@@ -724,7 +792,7 @@ const FillServiceForm = ({
       {/* Reference Number */}
       <div className="mx-6 mt-[21px] mb-6  bg-white rounded-2xl border border-[#E6EAF2] shadow-sm overflow-hidden">
         <div className="bg-[#F6F7F9] py-4 px-6 border-b border-gray-200">
-          <p className="text-[15px] font-medium text-[#0B498B]">{`Reference No: ${localStorage.getItem(STORAGE_KEY.SERVICE_REFERENCE_NUMBER)}`}</p>
+          <p className="text-[15px] font-medium text-[#0B498B]">{`Reference No: ${localStorage.getItem(STORAGE_KEY.SERVICE_REFERENCE_NUMBER) ? localStorage.getItem(STORAGE_KEY.SERVICE_REFERENCE_NUMBER) : referNumber}`}</p>
         </div>
         
         <div className="p-6">

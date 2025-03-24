@@ -37,12 +37,12 @@ const SearchPax = () => {
     referenceNo: ''
   });
   const [isSearching, setIsSearching] = useState(false);
-  const [activeTab, setActiveTab] = useState(TAB_NAME.SEARCH);
+  const [activeTab, setActiveTab] = useState<string>(TAB_NAME.SEARCH);
   const [tabsToPreload, setTabsToPreload] = useState<string[]>([]);
   const [searchResults, setSearchResults] = useState<any[]>([]);
   const [searchError, setSearchError] = useState<string | null>(null);
   const [formMode, setFormMode] = useState<FORM_MODE>(FORM_MODE.EDIT); // Default mode is edit
-  const [visaRequests, setVisaRequests] = useState([
+  const [visaRequests, setVisaRequests] = useState<any[]>([
     {
       visaCountry: VISA_COUNTRY_LABELS[VISA_COUNTRY.NETHERLAND],
       visaCategory: VISA_CATEGORY_LABELS[VISA_CATEGORY.BUSINESS],
@@ -215,6 +215,31 @@ const SearchPax = () => {
       </Suspense>
     );
   }, [activeTab, searchData, handleChange, handleSearch, handleClear, isSearching, formMode]);
+
+  // Check URL parameters on component mount
+  useEffect(() => {
+    // Only run in browser, not during SSR
+    if (typeof window !== 'undefined') {
+      try {
+        const url = new URL(window.location.href);
+        const activeTabParam = url.searchParams.get('activeTab');
+        const prefill = url.searchParams.get('prefill');
+        
+        // If activeTab parameter is present and valid, set it as the active tab
+        if (activeTabParam && Object.values(TAB_NAME).includes(activeTabParam as TAB_NAME)) {
+          setActiveTab(activeTabParam);
+          
+          // Preload the appropriate tab component
+          if (activeTabParam === TAB_NAME.FILL) {
+            setTabsToPreload(prev => [...prev, TAB_NAME.FILL]);
+            import('./FillServiceForm');
+          }
+        }
+      } catch (error) {
+        console.error('Error parsing URL parameters:', error);
+      }
+    }
+  }, []);
 
   return (
     <div className="py-6 px-[80px]">

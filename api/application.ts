@@ -114,6 +114,7 @@ export interface Step3RequestPayload {
   application_id: number;
   token_user_id?: number;
   is_sub_request: number;
+  reference_number?: string;
 }
 
 /**

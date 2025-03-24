@@ -176,8 +176,17 @@ const ServiceRequestSummary: React.FC<{
   };
 
   const handleAddMoreServiceRequest = () => {
-    // Navigate to service request screen
-    router.push('/services');
+    // Open services page in a new tab with parameters
+    const serviceUrl = new URL('/visaistic/services/common', window.location.origin);
+    
+    // Add parameters to indicate we want to prefill the form and focus on the fill tab
+    serviceUrl.searchParams.append('prefill', 'true');
+    serviceUrl.searchParams.append('newApplication', 'true');
+    serviceUrl.searchParams.append('activeTab', TAB_NAME.FILL);
+    serviceUrl.searchParams.append('referenceNumber', localStorage.getItem(STORAGE_KEY.SERVICE_REFERENCE_NUMBER) || '');
+    
+    // Open in new tab
+    window.open(serviceUrl.toString(), '_blank');
   };
 
   const handleEditRow = (id: string) => {

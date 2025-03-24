@@ -171,15 +171,11 @@ const ServiceRequest = () => {
       // Call the API service to submit the request
       const response = await submitServiceRequest(payload);
       
-      console.log('Service request submitted successfully:', response);
-      console.log('==========>Response:', response);
       // Store the application ID and reference number in localStorage
       if (response.id) {
-             console.log('==========>Response.id', response.id);
         localStorage.setItem('applicationId', String(response.id));
       }
       if (response.requestCode) {
-        localStorage.setItem('serviceReferenceNumber', response.requestCode);
         localStorage.setItem('referenceNumber', response.requestCode);
         
         // Show success message with reference number before navigating (optional)
