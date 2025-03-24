@@ -775,6 +775,10 @@
     max-width: 1200px;
   }
 
+  .max-w-full {
+    max-width: 100%;
+  }
+
   .max-w-md {
     max-width: var(--container-md);
   }
