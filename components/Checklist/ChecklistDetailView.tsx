@@ -95,22 +95,25 @@ const ChecklistDetailView: React.FC<ChecklistDetailsProps> = ({
       {/* Main Content */}
       <div className="flex-1 p-8 bg-white">
         {/* Header Information */}
-        <div className="mb-4">
-          <div className="flex flex-wrap gap-8 mb-4">
-            <div className="text-blue-600">
-              <span className="font-semibold">Visa Country : </span>
-              <span>{VISA_COUNTRY_LABELS[visaCountry as keyof typeof VISA_COUNTRY_LABELS]}</span>
+        <div className="mb-6">
+          <div className="flex flex-wrap gap-10 mb-4">
+            <div className="text-[#1976d2]">
+              <span className="font-medium">Visa Country</span>
+              <span className="mx-1">:</span>
+              <span className="font-semibold ml-1">{VISA_COUNTRY_LABELS[visaCountry as keyof typeof VISA_COUNTRY_LABELS]}</span>
             </div>
-            <div className="text-blue-600">
-              <span className="font-semibold">Visa Category : </span>
-              <span>{VISA_CATEGORY_LABELS[visaCategory as keyof typeof VISA_CATEGORY_LABELS]}</span>
+            <div className="text-[#1976d2]">
+              <span className="font-medium">Visa Category</span>
+              <span className="mx-1">:</span>
+              <span className="font-semibold ml-1">{VISA_CATEGORY_LABELS[visaCategory as keyof typeof VISA_CATEGORY_LABELS]}</span>
             </div>
-            <div className="text-blue-600">
-              <span className="font-semibold">Nationality : </span>
-              <span>{NATIONALITY_LABELS[nationality as keyof typeof NATIONALITY_LABELS]}</span>
+            <div className="text-[#1976d2]">
+              <span className="font-medium">Nationality</span>
+              <span className="mx-1">:</span>
+              <span className="font-semibold ml-1">{NATIONALITY_LABELS[nationality as keyof typeof NATIONALITY_LABELS]}</span>
             </div>
           </div>
-          <h2 className="text-base font-semibold mb-5">Visa Notes & Fees</h2>
+          <h2 className="text-sm font-normal mb-6">Visa Notes & Fees</h2>
         </div>
 
         {/* Requirements List - Styled to match expected UI */}

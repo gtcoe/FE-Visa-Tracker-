@@ -387,6 +387,10 @@
     margin-inline: calc(var(--spacing) * -6);
   }
 
+  .mx-1 {
+    margin-inline: calc(var(--spacing) * 1);
+  }
+
   .mx-6 {
     margin-inline: calc(var(--spacing) * 6);
   }
@@ -900,6 +904,10 @@
 
   .gap-8 {
     gap: calc(var(--spacing) * 8);
+  }
+
+  .gap-10 {
+    gap: calc(var(--spacing) * 10);
   }
 
   .gap-\[30px\] {
@@ -1525,6 +1533,10 @@
 
   .text-\[\#10B981\] {
     color: #10b981;
+  }
+
+  .text-\[\#1976d2\] {
+    color: #1976d2;
   }
 
   .text-\[\#696969\] {
