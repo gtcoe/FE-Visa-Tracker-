@@ -93,10 +93,10 @@ const ChecklistDetailView: React.FC<ChecklistDetailsProps> = ({
       </div>
 
       {/* Main Content */}
-      <div className="flex-1 p-8 bg-white">
+      <div className="flex-1 p-6 bg-white">
         {/* Header Information */}
-        <div className="mb-6">
-          <div className="flex flex-wrap gap-10 mb-4">
+        <div className="mb-5">
+          <div className="flex flex-wrap gap-12 mb-3">
             <div className="text-[#1976d2]">
               <span className="font-medium">Visa Country</span>
               <span className="mx-1">:</span>
@@ -113,23 +113,21 @@ const ChecklistDetailView: React.FC<ChecklistDetailsProps> = ({
               <span className="font-semibold ml-1">{NATIONALITY_LABELS[nationality as keyof typeof NATIONALITY_LABELS]}</span>
             </div>
           </div>
-          <h2 className="text-sm font-normal mb-6">Visa Notes & Fees</h2>
+          <h2 className="text-sm font-normal text-gray-800">Visa Notes & Fees</h2>
         </div>
 
         {/* Requirements List - Styled to match expected UI */}
-        <div className="mb-8">
-          <ol className="list-decimal space-y-4">
+        <div className="mb-6">
+          <ol className="list-decimal pl-4 space-y-2">
             {details.requirements.map((req) => (
-              <li key={req.id} className="ml-4">
-                <span>{req.text}</span>
+              <li key={req.id} className="pl-1 text-gray-800 leading-relaxed">
+                {req.text}
                 {req.subItems && (
-                  <ol className="list-none mt-1 space-y-1">
+                  <ol className="mt-1 space-y-1 ml-0">
                     {req.subItems.map((subItem, index) => (
-                      <li key={index} className="ml-4">
-                        {/* Using lowercase letters a), b), etc. for sub-items */}
-                        <span className="text-gray-600">
-                          {String.fromCharCode(97 + index)}) {subItem}
-                        </span>
+                      <li key={index} className="flex">
+                        <span className="text-gray-600 mr-1">{String.fromCharCode(97 + index)})</span>
+                        <span className="text-gray-600">{subItem}</span>
                       </li>
                     ))}
                   </ol>
@@ -142,32 +140,32 @@ const ChecklistDetailView: React.FC<ChecklistDetailsProps> = ({
         {/* Special note visible in second image */}
         {visaCountry === 3 && visaCategory === 2 && (
           <div className="mb-4">
-            <p className="text-gray-700">Please note: Photograph should not be more than 3 months old,scanned/stapled and should not be used in any of the previous visas</p>
+            <p className="text-gray-700 text-sm italic">Please note: Photograph should not be more than 3 months old, scanned/stapled and should not be used in any of the previous visas</p>
           </div>
         )}
 
         {/* Fees Table */}
-        <div className="mb-8">
-          <h3 className="font-medium mb-3">Visa Charges:</h3>
+        <div className="mb-6">
+          <h3 className="text-gray-800 font-medium mb-2">Visa Charges:</h3>
           <div className="overflow-x-auto">
-            <table className="min-w-full border-collapse border border-gray-300">
+            <table className="w-full border border-gray-200">
               <thead>
                 <tr className="bg-white">
-                  <th className="border border-gray-300 px-4 py-2 text-left font-medium">Entry Type</th>
-                  <th className="border border-gray-300 px-4 py-2 text-left font-medium">Visa Fee</th>
-                  <th className="border border-gray-300 px-4 py-2 text-left font-medium">VFS Fee</th>
-                  <th className="border border-gray-300 px-4 py-2 text-left font-medium">Remark</th>
-                  <th className="border border-gray-300 px-4 py-2 text-left font-medium">Charge Location</th>
+                  <th className="border border-gray-200 px-3 py-2 text-left font-medium text-gray-700 text-sm">Entry Type</th>
+                  <th className="border border-gray-200 px-3 py-2 text-left font-medium text-gray-700 text-sm">Visa Fee</th>
+                  <th className="border border-gray-200 px-3 py-2 text-left font-medium text-gray-700 text-sm">VFS Fee</th>
+                  <th className="border border-gray-200 px-3 py-2 text-left font-medium text-gray-700 text-sm w-[40%]">Remark</th>
+                  <th className="border border-gray-200 px-3 py-2 text-left font-medium text-gray-700 text-sm">Charge Location</th>
                 </tr>
               </thead>
               <tbody>
                 {details.fees.map((fee, index) => (
-                  <tr key={index}>
-                    <td className="border border-gray-300 px-4 py-2">{fee.entryType}</td>
-                    <td className="border border-gray-300 px-4 py-2">{fee.visaFee.toFixed(2)}</td>
-                    <td className="border border-gray-300 px-4 py-2">{fee.vesFee.toFixed(2)}</td>
-                    <td className="border border-gray-300 px-4 py-2">{fee.remark}</td>
-                    <td className="border border-gray-300 px-4 py-2">{fee.chargeLocation}</td>
+                  <tr key={index} className="text-sm">
+                    <td className="border border-gray-200 px-3 py-2">{fee.entryType}</td>
+                    <td className="border border-gray-200 px-3 py-2">{fee.visaFee.toFixed(2)}</td>
+                    <td className="border border-gray-200 px-3 py-2">{fee.vesFee.toFixed(2)}</td>
+                    <td className="border border-gray-200 px-3 py-2">{fee.remark}</td>
+                    <td className="border border-gray-200 px-3 py-2">{fee.chargeLocation}</td>
                   </tr>
                 ))}
               </tbody>
@@ -176,14 +174,14 @@ const ChecklistDetailView: React.FC<ChecklistDetailsProps> = ({
         </div>
 
         {/* Disclaimer */}
-        <div className="text-xs text-gray-500 mt-8 border-t pt-4">
+        <div className="text-[11px] text-gray-500 mt-10 border-t border-gray-200 pt-3">
           Although due care has been taken in compiling the contents of this website, Udaan India Pvt Ltd accepts no liability in respect of any errors or omissions contained or referred to in it. No part of this website may be reproduced in any form or by any means without the prior written permission of Udaan India Pvt Ltd.
         </div>
       </div>
 
       {/* User Avatar */}
-      <div className="absolute top-6 right-6">
-        <div className="w-10 h-10 rounded-full bg-purple-600 flex items-center justify-center text-white font-medium">
+      <div className="absolute top-3 right-3">
+        <div className="w-9 h-9 rounded-full bg-purple-600 flex items-center justify-center text-white font-medium">
           J
         </div>
       </div>
