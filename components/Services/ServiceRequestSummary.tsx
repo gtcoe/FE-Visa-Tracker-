@@ -16,6 +16,7 @@ import {
 } from '@component/constants/dropdown/geographical';
 import { FORM_MODE, TAB_NAME, STORAGE_KEY } from '@component/constants/formConstants';
 import { ToastNotifyError } from '@component/components/common/Toast';
+import { APPLICATION_STATUS } from '@component/constants/appConstants';
 
 // Constants for dispatch mediums
 enum DISPATCH_MEDIUM {
@@ -129,15 +130,16 @@ const ServiceRequestSummary: React.FC<{
       return;
     }
     
-    // We need application data to get the IDs
-    if (!visaApplications.length) {
-      ToastNotifyError("Reference number not found. Please try again.");
-      return;
-    }
-    
     setIsSubmitting(true);
     
     try {
+
+      const applicationData = JSON.parse(localStorage.getItem(STORAGE_KEY.APPLICATION_INFO) || '{}');
+
+      if (!applicationData || Number(applicationData.status) !== APPLICATION_STATUS.STEP3_DONE) {
+        ToastNotifyError("Submit service request form on previous tab first.");
+        return;
+      }
       // Prepare payload according to API requirements
       const payload = {
         dispatch_medium: getDispatchMediumValue(dispatchDetails.medium1),

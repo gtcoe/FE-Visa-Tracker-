@@ -173,7 +173,7 @@ const SignUpAuthentication = () => {
             {/* Password status info appears below password field */}
             {infoStatus > 0 && (
               <div className="mt-1">
-                <PasswordStatus status={infoStatus} />
+                <PasswordStatus status={infoStatus} email={email} setInfoStatus={setInfoStatus}/>
               </div>
             )}
           </div>

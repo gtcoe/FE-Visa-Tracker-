@@ -19,10 +19,7 @@ export const ROLE_ROUTES: Record<USER_TYPE, string[]> = {
 export const roleBasedNavItems = {
   [USER_TYPE.CLIENT]: [
     { label: "Application Tracker", path: "/application-tracker" },
-    { label: "Manage Users", path: "/manage-users" },
     { label: "Check list", path: "/check-list" },
-    { label: "Services", path: "/services" },
-    { label: "Manage Clients", path: "/manage-clients" },
   ],
   [USER_TYPE.MANAGER]: [
     { label: "Application Tracker", path: "/application-tracker" },
@@ -67,3 +64,10 @@ export const SIGN_IN_STATUS_MESSAGE: Record<number, string> = {
     "Your password has expired. Request a new password to continue.",
   [SIGN_IN_STATUS_TYPE.EMAIL_NOT_FOUND]: "Email does not exist.",
 };
+
+export const APPLICATION_STATUS: Record<string, number> = {
+  STEP1_DONE: 1,
+  STEP2_DONE: 2,
+  STEP3_DONE: 2,
+  STEP4_DONE: 2,
+}

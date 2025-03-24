@@ -1,14 +1,37 @@
-import React from "react";
+import React, { useState } from "react";
 import Image from "next/image";
 import alertIcon from "../../public/alert-01.svg";
 import CheckFill from "../../public/CheckFill.svg";
 import { SIGN_IN_STATUS_TYPE } from "@component/constants/appConstants";
+import { requestNewPassword } from "@component/api/auth";
+import { ToastNotifyError, ToastNotifySuccess } from "../common/Toast";
 
-export interface PasswordStatusProps {
+interface PasswordStatusProps {
   status: number;
+  email: string;
+  setInfoStatus: (status: number) => void;
 }
 
-const PasswordStatus: React.FC<PasswordStatusProps> = ({ status }) => {
+const PasswordStatus: React.FC<PasswordStatusProps> = ({ status, email, setInfoStatus }) => {
+  const [isLoading, setIsLoading] = useState(false);
+
+  const handleRequestNewPassword = async () => {
+    try {
+      setIsLoading(true);
+      const response = await requestNewPassword(email);
+      
+      if (response.status) {
+        setInfoStatus(SIGN_IN_STATUS_TYPE.EXPIRED_REQUEST_INITIATED);
+      } else {
+        ToastNotifyError(response.message || "Failed to request new password");
+      }
+    } catch (error) {
+      ToastNotifyError("An error occurred while requesting new password");
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
   switch (status) {
     case SIGN_IN_STATUS_TYPE.EXPIRED_REQUEST_NOT_INITIATED:
     case SIGN_IN_STATUS_TYPE.INACTIVE_BY_ADMIN:
@@ -27,8 +50,12 @@ const PasswordStatus: React.FC<PasswordStatusProps> = ({ status }) => {
             </span>
           </div>
           <div className="flex justify-end">
-            <button className="font-medium text-[#0B498B] cursor-pointer underline">
-              Request New Password
+            <button 
+              onClick={handleRequestNewPassword}
+              disabled={isLoading}
+              className="font-medium text-[#0B498B] cursor-pointer underline disabled:opacity-50 disabled:cursor-not-allowed"
+            >
+              {isLoading ? "Requesting..." : "Request New Password"}
             </button>
           </div>
         </div>

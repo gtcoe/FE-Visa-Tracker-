@@ -88,4 +88,22 @@ export const addAuthHeader = (headers: HeadersInit = {}): HeadersInit => {
     };
   }
   return headers;
+};
+
+export const requestNewPassword = async (email: string) => {
+  try {
+    const response = await fetch(`${API_BASE_URL}/auth/requestNewPassword`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({ email }),
+    });
+
+    const data = await response.json();
+    return data;
+  } catch (error) {
+    console.error('Error requesting new password:', error);
+    throw error;
+  }
 }; 

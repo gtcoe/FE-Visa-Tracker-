@@ -10,8 +10,11 @@ __turbopack_context__.s({
 });
 var __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__ = __turbopack_context__.i("[project]/node_modules/next/dist/compiled/react/jsx-dev-runtime.js [app-client] (ecmascript)");
 var __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$index$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__ = __turbopack_context__.i("[project]/node_modules/next/dist/compiled/react/index.js [app-client] (ecmascript)");
+var __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$navigation$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__ = __turbopack_context__.i("[project]/node_modules/next/navigation.js [app-client] (ecmascript)");
 var __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$shared$2f$lib$2f$app$2d$dynamic$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__ = __turbopack_context__.i("[project]/node_modules/next/dist/shared/lib/app-dynamic.js [app-client] (ecmascript)");
 ;
+;
+var _s = __turbopack_context__.k.signature();
 "use client";
 ;
 ;
@@ -26,37 +29,37 @@ const PageLoading = ()=>/*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$pro
                     className: "h-20 w-20 rounded-full bg-gray-200 mb-4"
                 }, void 0, false, {
                     fileName: "[project]/app/services/page.tsx",
-                    lineNumber: 10,
+                    lineNumber: 11,
                     columnNumber: 7
                 }, this),
                 /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
                     className: "h-5 w-48 bg-gray-200 rounded mb-3"
                 }, void 0, false, {
                     fileName: "[project]/app/services/page.tsx",
-                    lineNumber: 11,
+                    lineNumber: 12,
                     columnNumber: 7
                 }, this),
                 /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
                     className: "h-3 w-36 bg-gray-200 rounded"
                 }, void 0, false, {
                     fileName: "[project]/app/services/page.tsx",
-                    lineNumber: 12,
+                    lineNumber: 13,
                     columnNumber: 7
                 }, this)
             ]
         }, void 0, true, {
             fileName: "[project]/app/services/page.tsx",
-            lineNumber: 9,
+            lineNumber: 10,
             columnNumber: 5
         }, this)
     }, void 0, false, {
         fileName: "[project]/app/services/page.tsx",
-        lineNumber: 8,
+        lineNumber: 9,
         columnNumber: 3
     }, this);
 _c = PageLoading;
 // Dynamically import the ServiceRequest component
-const ServiceRequestComponent = (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$shared$2f$lib$2f$app$2d$dynamic$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["default"])(()=>__turbopack_context__.r("[project]/components/Services/ServiceRequest.tsx [app-client] (ecmascript, next/dynamic entry, async loader)")(__turbopack_context__.i), {
+const ServiceRequestComponent = (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$shared$2f$lib$2f$app$2d$dynamic$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["default"])(_c1 = ()=>__turbopack_context__.r("[project]/components/Services/ServiceRequest.tsx [app-client] (ecmascript, next/dynamic entry, async loader)")(__turbopack_context__.i), {
     loadableGenerated: {
         modules: [
             "[project]/components/Services/ServiceRequest.tsx [app-client] (ecmascript, next/dynamic entry)"
@@ -64,42 +67,58 @@ const ServiceRequestComponent = (0, __TURBOPACK__imported__module__$5b$project$5
     },
     loading: ()=>/*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])(PageLoading, {}, void 0, false, {
             fileName: "[project]/app/services/page.tsx",
-            lineNumber: 19,
+            lineNumber: 20,
             columnNumber: 18
         }, this),
     ssr: false
 });
-_c1 = ServiceRequestComponent;
+_c2 = ServiceRequestComponent;
 function ServicesPage() {
+    _s();
+    const router = (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$navigation$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["useRouter"])();
+    // Redirect to service-request page when the services tab is clicked
+    (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$index$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["useEffect"])({
+        "ServicesPage.useEffect": ()=>{
+            router.push('/services/service-request');
+        }
+    }["ServicesPage.useEffect"], [
+        router
+    ]);
     return /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
         className: "min-h-screen bg-[#E6EAF2]",
         children: /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$index$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["Suspense"], {
             fallback: /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])(PageLoading, {}, void 0, false, {
                 fileName: "[project]/app/services/page.tsx",
-                lineNumber: 26,
+                lineNumber: 34,
                 columnNumber: 27
             }, void 0),
-            children: /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])(ServiceRequestComponent, {}, void 0, false, {
+            children: /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])(PageLoading, {}, void 0, false, {
                 fileName: "[project]/app/services/page.tsx",
-                lineNumber: 27,
+                lineNumber: 35,
                 columnNumber: 9
             }, this)
         }, void 0, false, {
             fileName: "[project]/app/services/page.tsx",
-            lineNumber: 26,
+            lineNumber: 34,
             columnNumber: 7
         }, this)
     }, void 0, false, {
         fileName: "[project]/app/services/page.tsx",
-        lineNumber: 25,
+        lineNumber: 33,
         columnNumber: 5
     }, this);
 }
-_c2 = ServicesPage;
-var _c, _c1, _c2;
+_s(ServicesPage, "vQduR7x+OPXj6PSmJyFnf+hU7bg=", false, function() {
+    return [
+        __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$navigation$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["useRouter"]
+    ];
+});
+_c3 = ServicesPage;
+var _c, _c1, _c2, _c3;
 __turbopack_context__.k.register(_c, "PageLoading");
-__turbopack_context__.k.register(_c1, "ServiceRequestComponent");
-__turbopack_context__.k.register(_c2, "ServicesPage");
+__turbopack_context__.k.register(_c1, "ServiceRequestComponent$dynamic");
+__turbopack_context__.k.register(_c2, "ServiceRequestComponent");
+__turbopack_context__.k.register(_c3, "ServicesPage");
 if (typeof globalThis.$RefreshHelpers$ === 'object' && globalThis.$RefreshHelpers !== null) {
     __turbopack_context__.k.registerExports(module, globalThis.$RefreshHelpers$);
 }
