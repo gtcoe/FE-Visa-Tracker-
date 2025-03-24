@@ -177,7 +177,7 @@ const ChecklistDetailView: React.FC<ChecklistDetailsProps> = ({
       </div>
 
       {/* Disclaimer - now outside both sidebar and main content */}
-      <div className="bg-color-[white] text-[11px] text-gray-500 border-t border-gray-200 pt-3 px-6 py-2">
+      <div className="bg-white text-[11px] text-gray-500 border-t border-gray-200 pt-3 px-6 py-2">
         Although due care has been taken in compiling the contents of this website, Udaan India Pvt Ltd accepts no liability in respect of any errors or omissions contained or referred to in it. No part of this website may be reproduced in any form or by any means without the prior written permission of Udaan India Pvt Ltd.
       </div>
     </div>
