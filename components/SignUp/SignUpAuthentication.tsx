@@ -7,6 +7,7 @@ import Image from "next/image";
 import visaisticLogo from "../../public/visaisticLogo.svg";
 import eyeOff from "../../public/eye-off.svg";
 import eye from "../../public/eye.png";
+import { ToastNotifyError } from "../../utils/ToastNotifyError";
 
 const SignUpAuthentication = () => {
   const [email, setEmail] = useState("");
@@ -19,13 +20,21 @@ const SignUpAuthentication = () => {
 
   const handleEmailBlur = () => {
     if (email && !emailRegex.test(email)) {
-      setError("Enter Valid Email Address");
+      ToastNotifyError("Enter Valid Email Address");
     } else {
       setError("");
     }
   };
   const [checked, setChecked] = useState(false);
 
+  // For validation errors
+  const validateLogin = (email: string) => {
+    if (!emailRegex.test(email)) {
+      ToastNotifyError("Enter Valid Email Address");
+      return false;
+    }
+    return true;
+  };
 
   return (
     <div className="bg-white border rounded-[20px] pb-15 w-[74%]">

@@ -13,6 +13,7 @@ import {
   PROCESSING_BRANCH, PROCESSING_BRANCH_LABELS
 } from '@component/constants/dropdown/geographical';
 import { FORM_MODE, TAB_NAME, STORAGE_KEY } from '@component/constants/formConstants';
+import { ToastNotifyError } from '@component/components/common/Toast';
 
 // Define a more flexible type for change events
 type FormChangeEvent = {
@@ -253,7 +254,6 @@ const FillServiceForm = ({
   const router = useRouter();
   const [applicationId, setApplicationId] = useState<number | null>(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
-  const [error, setError] = useState<string | null>(null);
   
   // Try to get application ID from localStorage or URL and also determine the form mode
   useEffect(() => {
@@ -552,7 +552,6 @@ const FillServiceForm = ({
     const appId = applicationId || 0;
     
     setIsSubmitting(true);
-    setError(null);
     
     try {
       // Prepare payload according to API requirements
@@ -623,10 +622,10 @@ const FillServiceForm = ({
         // Navigate to next step or show success message
         handleTabChange(TAB_NAME.SUMMARY);
       } else {
-        setError(response.message || 'Failed to submit application. Please try again.');
+        ToastNotifyError(response.message || 'Failed to submit application. Please try again.');
       }
     } catch (error: any) {
-      setError(error.message || 'An error occurred while submitting the form. Please try again.');
+      ToastNotifyError(error.message || 'An error occurred while submitting the form. Please try again.');
       console.error('Error submitting step 3 data:', error);
     } finally {
       setIsSubmitting(false);
@@ -722,21 +721,6 @@ const FillServiceForm = ({
   return (
     <div className="space-y-6">
       {/* Display error message if any */}
-      {error && (
-        <div className="mx-6 mt-[21px] mb-6 bg-red-50 border border-red-200 rounded-md p-4">
-          <div className="flex">
-            <div className="flex-shrink-0">
-              <svg className="h-5 w-5 text-red-400" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
-                <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z" clipRule="evenodd" />
-              </svg>
-            </div>
-            <div className="ml-3">
-              <p className="text-sm text-red-700">{error}</p>
-            </div>
-          </div>
-        </div>
-      )}
-      
       {/* Reference Number */}
       <div className="mx-6 mt-[21px] mb-6  bg-white rounded-2xl border border-[#E6EAF2] shadow-sm overflow-hidden">
         <div className="bg-[#F6F7F9] py-4 px-6 border-b border-gray-200">

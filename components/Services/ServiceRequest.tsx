@@ -22,6 +22,7 @@ import { getAllClients } from '@component/api/client';
 import { Client as APIClient } from '@component/components/ManageClients/ManageClients';
 import { submitServiceRequest, ServiceRequestPayload, ServiceRequestResponse } from '@component/api/application';
 import { STORAGE_KEY } from '@component/constants/formConstants';
+import { ToastNotifyError } from '@component/components/common/Toast';
 
 // Local client interface for dropdown
 interface Client {
@@ -60,7 +61,6 @@ const ServiceRequest = () => {
   const [filteredStates, setFilteredStates] = useState<STATE[]>([]);
   const [clients, setClients] = useState<Client[]>([]);
   const [isLoadingClients, setIsLoadingClients] = useState(false);
-  const [error, setError] = useState<string | null>(null);
 
   // Fetch clients when component mounts
   useEffect(() => {
@@ -71,7 +71,6 @@ const ServiceRequest = () => {
   // Fetch clients from API
   const fetchClients = async () => {
     setIsLoadingClients(true);
-    setError(null);
     
     try {
       // Use the existing API to fetch clients
@@ -84,12 +83,11 @@ const ServiceRequest = () => {
         })));
       } else {
         console.error('Failed to fetch clients: Invalid response format');
-        setError('Failed to fetch clients. Please try again.');
-        
+        ToastNotifyError('Failed to fetch clients. Please try again.');
       }
     } catch (error) {
       console.error('Error fetching clients:', error);
-      setError(error instanceof Error ? error.message : 'Failed to fetch clients');
+      ToastNotifyError(error instanceof Error ? error.message : 'Failed to fetch clients');
     } finally {
       setIsLoadingClients(false);
     }
@@ -137,7 +135,6 @@ const ServiceRequest = () => {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setIsSubmitting(true);
-    setError(null);
     
     try {
       // Validate required fields
@@ -150,7 +147,7 @@ const ServiceRequest = () => {
       if (missingFields.length > 0) {
         const errorMsg = `Please fill in all required fields: ${missingFields.join(', ')}`;
         console.error('Missing required fields:', missingFields);
-        setError(errorMsg);
+        ToastNotifyError(errorMsg);
         return;
       }
 
@@ -194,7 +191,7 @@ const ServiceRequest = () => {
       router.push(`/services/common?reference=${response.requestCode || ''}`);
     } catch (error) {
       console.error('Error submitting service request:', error);
-      setError(error instanceof Error ? error.message : 'An unknown error occurred');
+      ToastNotifyError(error instanceof Error ? error.message : 'An unknown error occurred');
     } finally {
       setIsSubmitting(false);
     }
@@ -237,12 +234,6 @@ const ServiceRequest = () => {
   return (
     <div className="py-6 px-[80px]">
       <h1 className="text-[28px] font-bold text-[#1C1C1C] mb-6">Service Request</h1>
-      
-      {error && (
-        <div className="bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded mb-4 relative" role="alert">
-          <span className="block sm:inline">{error}</span>
-        </div>
-      )}
       
       <form onSubmit={handleSubmit}>
         {/* First Card - Form Fields */}

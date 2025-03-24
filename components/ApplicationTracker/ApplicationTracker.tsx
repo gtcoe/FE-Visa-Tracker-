@@ -26,7 +26,6 @@ const ApplicationTracker = () => {
   // Handle search form submission
   const handleSearch = async (formData: any) => {
     setIsLoading(true);
-    setError(null);
     setSearchParams(formData);
     
     try {
@@ -48,8 +47,13 @@ const ApplicationTracker = () => {
       setApplications(results);
       setTotalPages(Math.ceil(results.length / 10)); // Assuming 10 items per page
       setCurrentPage(1);
-    } catch (err) {
-      ToastNotifyError("Failed to search applications. Please try again.");
+    } catch (error) {
+      console.error('Error during search:', error);
+      if (error instanceof Error) {
+        ToastNotifyError(error.message);
+      } else {
+        ToastNotifyError('An error occurred during search');
+      }
     } finally {
       setIsLoading(false);
     }

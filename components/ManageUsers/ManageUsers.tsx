@@ -34,53 +34,12 @@ const ManageUsers = () => {
 
   const fetchUsers = async () => {
     setLoading(true);
-    setError(null);
     try {
-      const fetchedUsers = await getAllUsers();
-      setUsers(fetchedUsers);
-    } catch (err) {
-      console.error('Failed to fetch users:', err);
-      setError('Failed to load users. Please try again later.');
-      
-      // Set default users for development if API fails
-      setUsers([
-        {
-          id: 1,
-          name: 'Kartik Chopra',
-          email: 'kartik@gmail.com',
-          type: USER_TYPE.MANAGER,
-          created_at: new Date().toISOString(),
-          last_logged_in_at: new Date().toISOString(),
-          status: USER_STATUS.ACTIVE
-        },
-        {
-          id: 2,
-          name: 'Kartik Chopra',
-          email: 'kartik@gmail.com',
-          type: USER_TYPE.ADMIN,
-          created_at: new Date().toISOString(),
-          last_logged_in_at: new Date().toISOString(),
-          status: USER_STATUS.ACTIVE
-        },
-        {
-          id: 3,
-          name: 'Kartik Chopra',
-          email: 'kartik@gmail.com',
-          type: USER_TYPE.MANAGER,
-          created_at: new Date().toISOString(),
-          last_logged_in_at: new Date().toISOString(),
-          status: USER_STATUS.INACTIVE
-        },
-        {
-          id: 4,
-          name: 'Kartik Chopra',
-          email: 'kartik@gmail.com',
-          type: USER_TYPE.ADMIN,
-          created_at: new Date().toISOString(),
-          last_logged_in_at: new Date().toISOString(),
-          status: USER_STATUS.INACTIVE
-        }
-      ]);
+      const userData = await getAllUsers();
+      setUsers(userData || []);
+    } catch (error) {
+      console.error('Error fetching users:', error);
+      ToastNotifyError('Failed to load users. Please try again later.');
     } finally {
       setLoading(false);
     }

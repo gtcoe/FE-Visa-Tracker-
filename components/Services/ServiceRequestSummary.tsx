@@ -15,6 +15,7 @@ import {
   ENTRY_TYPE, ENTRY_TYPE_LABELS
 } from '@component/constants/dropdown/geographical';
 import { FORM_MODE, TAB_NAME, STORAGE_KEY } from '@component/constants/formConstants';
+import { ToastNotifyError } from '@component/components/common/Toast';
 
 // Constants for dispatch mediums
 enum DISPATCH_MEDIUM {
@@ -48,7 +49,6 @@ const ServiceRequestSummary: React.FC<{
   const [isLoading, setIsLoading] = useState<boolean>(true);
   const [clientName, setClientName] = useState<string>('');
   const [isSubmitting, setIsSubmitting] = useState<boolean>(false);
-  const [error, setError] = useState<string | null>(null);
 
   // Effect to load application data from localStorage on mount
   useEffect(() => {
@@ -100,9 +100,6 @@ const ServiceRequestSummary: React.FC<{
       ...prev,
       [name]: value
     }));
-    
-    // Clear error when user makes changes
-    if (error) setError(null);
   };
 
   // Map dispatch medium from string to numeric value
@@ -119,31 +116,26 @@ const ServiceRequestSummary: React.FC<{
     }
   };
 
-  const handleFinalSubmission = async () => {
-    // Validate inputs
-    if (!dispatchDetails.medium1) {
-      setError("Please select a dispatch medium");
+  const handleSubmit = async () => {
+    // Validate dispatch medium fields if dispatch by email is selected
+    if (getDispatchMediumValue(dispatchDetails.medium1) === DISPATCH_MEDIUM.EMAIL && !dispatchDetails.medium2) {
+      ToastNotifyError("Please enter a dispatch medium number");
       return;
     }
     
-    if (!dispatchDetails.medium2) {
-      setError("Please enter a dispatch medium number");
-      return;
-    }
-    
+    // Validate remarks field
     if (!dispatchDetails.remark) {
-      setError("Please enter remarks");
+      ToastNotifyError("Please enter remarks");
       return;
     }
     
-    const referenceNumber = localStorage.getItem(STORAGE_KEY.SERVICE_REFERENCE_NUMBER);
-    if (!referenceNumber) {
-      setError("Reference number not found. Please try again.");
+    // We need application data to get the IDs
+    if (!visaApplications.length) {
+      ToastNotifyError("Reference number not found. Please try again.");
       return;
     }
     
     setIsSubmitting(true);
-    setError(null);
     
     try {
       // Prepare payload according to API requirements
@@ -151,7 +143,7 @@ const ServiceRequestSummary: React.FC<{
         dispatch_medium: getDispatchMediumValue(dispatchDetails.medium1),
         dispatch_medium_number: dispatchDetails.medium2,
         remarks: dispatchDetails.remark,
-        reference_number: referenceNumber,
+        reference_number: localStorage.getItem(STORAGE_KEY.SERVICE_REFERENCE_NUMBER),
         token_user_id: localStorage.getItem(STORAGE_KEY.USER_ID) || 0, // Fallback to 0 if not found
       };
       
@@ -170,11 +162,12 @@ const ServiceRequestSummary: React.FC<{
         // Navigate to dashboard or success page
         router.push('/application-tracker');
       } else {
-        setError(response?.message || 'Failed to submit. Please try again.');
+        console.error('Error submitting step 4 data:', response);
+        ToastNotifyError(response?.message || 'Failed to submit. Please try again.');
       }
     } catch (error: any) {
-      setError(error.message || 'An error occurred. Please try again.');
-      console.error('Error submitting final data:', error);
+      console.error('Error submitting step 4 data:', error);
+      ToastNotifyError(error.message || 'An error occurred. Please try again.');
     } finally {
       setIsSubmitting(false);
     }
@@ -189,62 +182,18 @@ const ServiceRequestSummary: React.FC<{
     // Add null checks before calling potentially undefined functions
     handleTabChange?.(TAB_NAME.FILL);
     setFormMode?.(FORM_MODE.EDIT);
-
-    // console.log('Edit row - START', id);
-    // // Store mode in localStorage to indicate edit mode
-    // localStorage.setItem(STORAGE_KEY.FORM_MODE, FORM_MODE.EDIT);
-    // console.log('Set formMode in localStorage:', localStorage.getItem(STORAGE_KEY.FORM_MODE));
-    // // Set the application ID in localStorage
-    // localStorage.setItem(STORAGE_KEY.APPLICATION_ID, id);
-    // console.log('Set applicationId in localStorage:', localStorage.getItem(STORAGE_KEY.APPLICATION_ID));
-    // // Set the active tab to 'fill' to show the FillServiceForm
-    // localStorage.setItem(STORAGE_KEY.ACTIVE_TAB, TAB_NAME.FILL);
-    // console.log('Set activeTab in localStorage:', localStorage.getItem(STORAGE_KEY.ACTIVE_TAB));
-    // // Navigate to services/common page
-    // console.log('Navigating to /services/common');
-    // router.push('/services/common');
   };
 
   const handleViewRow = (id: string) => {
-
     // Add null checks before calling potentially undefined functions
     handleTabChange?.(TAB_NAME.FILL);
     setFormMode?.(FORM_MODE.VIEW);
-
-
-    
-    // console.log('View row - START', id);
-    // // Store mode in localStorage to indicate view mode (readonly)
-    // localStorage.setItem(STORAGE_KEY.FORM_MODE, FORM_MODE.VIEW);
-    // console.log('Set formMode in localStorage:', localStorage.getItem(STORAGE_KEY.FORM_MODE));
-    // // Set the application ID in localStorage
-    // localStorage.setItem(STORAGE_KEY.APPLICATION_ID, id);
-    // console.log('Set applicationId in localStorage:', localStorage.getItem(STORAGE_KEY.APPLICATION_ID));
-    // // Set the active tab to 'fill' to show the FillServiceForm
-    // localStorage.setItem(STORAGE_KEY.ACTIVE_TAB, TAB_NAME.FILL);
-    // console.log('Set activeTab in localStorage:', localStorage.getItem(STORAGE_KEY.ACTIVE_TAB));
-    // // Navigate to services/common page
-    // console.log('Navigating to /services/common');
-    // router.push('/services/common');
   };
 
   const handleAddSubRequest = (id: string) => {
     handleAddMore()
     handleTabChange?.(TAB_NAME.FILL);
     setFormMode?.(FORM_MODE.EDIT);
-    // console.log('Add sub request - START', id);
-    // // Store mode in localStorage to indicate add sub request mode
-    // localStorage.setItem(STORAGE_KEY.FORM_MODE, FORM_MODE.ADD_SUB_REQUEST);
-    // console.log('Set formMode in localStorage:', localStorage.getItem(STORAGE_KEY.FORM_MODE));
-    // // Set the application ID in localStorage
-    // localStorage.setItem(STORAGE_KEY.APPLICATION_ID, id);
-    // console.log('Set applicationId in localStorage:', localStorage.getItem(STORAGE_KEY.APPLICATION_ID));
-    // // Set the active tab to 'fill' to show the FillServiceForm
-    // localStorage.setItem(STORAGE_KEY.ACTIVE_TAB, TAB_NAME.FILL);
-    // console.log('Set activeTab in localStorage:', localStorage.getItem(STORAGE_KEY.ACTIVE_TAB));
-    // // Navigate to services/common page
-    // console.log('Navigating to /services/common');
-    // router.push('/services/common');
   };
 
   return (
@@ -340,13 +289,6 @@ const ServiceRequestSummary: React.FC<{
           <h3 className="text-[14px] leading-[20px] font-medium text-[#1C1C1C] mb-4">Dispatch Details</h3>
           
           <div className="relative">
-            {/* Error message */}
-            {error && (
-              <div className="mb-4 p-3 bg-red-50 border border-red-200 rounded-md text-red-700 text-sm">
-                {error}
-              </div>
-            )}
-            
             <div className="border border-[#E6EAF2] rounded-md p-6 pt-8">
               <div className="grid grid-cols-4 gap-6 mb-6">
                 <div>
@@ -402,7 +344,7 @@ const ServiceRequestSummary: React.FC<{
           <div className="flex justify-end mt-6">
             <button
               type="button"
-              onClick={handleFinalSubmission}
+              onClick={handleSubmit}
               disabled={isSubmitting}
               className={`
                 bg-[#0B498B] text-white px-6 py-2.5 rounded-md 

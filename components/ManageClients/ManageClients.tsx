@@ -43,37 +43,12 @@ const ManageClients = () => {
 
   const fetchClients = async () => {
     setLoading(true);
-    setError(null);
     try {
-      const fetchedClients = await getAllClients();
-      // Update the context with the fetched clients
-      setClients(fetchedClients as ClientContextClient[]);
-    } catch (err) {
-      console.error('Failed to fetch clients:', err);
-      setError('Failed to load clients. Please try again later.');
-      // Set default clients for development if API fails
-      setClients([
-        {
-          clientId: 1,
-          type: 1, // Corporate
-          name: 'ABC Corporate',
-          address: '123/b block Dwarka',
-          branches: 'Delhi',
-          ownerName: 'Dev Kumar',
-          ownerPhone: '+91 9898989898',
-          ownerEmail: 'devkumar@gmail.com'
-        },
-        {
-          clientId: 2,
-          type: 2, // Agent
-          name: 'XYX Corporate',
-          address: 'xyz/b block Dwarka',
-          branches: 'Delhi',
-          ownerName: 'Shiv Kumar',
-          ownerPhone: '+91 9898989898',
-          ownerEmail: 'shivkumar@gmail.com'
-        }
-      ]);
+      const clientData = await getAllClients();
+      setClients(clientData || []);
+    } catch (error) {
+      console.error('Error fetching clients:', error);
+      ToastNotifyError('Failed to load clients. Please try again later.');
     } finally {
       setLoading(false);
     }
