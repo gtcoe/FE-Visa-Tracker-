@@ -7,6 +7,47 @@
   text-align: center;
 }
 
+.Toastify .Toastify__toast {
+  color: #fff;
+}
+
+.Toastify .Toastify__toast-icon {
+  background-color: #fff;
+  border-radius: 50%;
+  width: 22px;
+  height: 22px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin-right: 10px;
+}
+
+.Toastify .Toastify__toast-icon svg {
+  fill: currentColor;
+  width: 16px;
+  height: 16px;
+}
+
+.Toastify .Toastify__toast--info .Toastify__toast-icon svg {
+  fill: #f0b81f;
+}
+
+.Toastify .Toastify__toast--success .Toastify__toast-icon svg {
+  fill: #47a515;
+}
+
+.Toastify .Toastify__toast--error .Toastify__toast-icon svg {
+  fill: #b92736;
+}
+
+.Toastify .Toastify__toast--warning .Toastify__toast-icon svg {
+  fill: #397ef5;
+}
+
+.Toastify .Toastify__toast--dark .Toastify__toast-icon svg {
+  fill: #44454a;
+}
+
 .Toastify .Toastify__toast--info {
   background: #f0b81f;
   border-radius: 4px;

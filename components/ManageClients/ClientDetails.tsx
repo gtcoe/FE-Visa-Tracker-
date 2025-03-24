@@ -66,14 +66,14 @@ const ClientDetails: React.FC<ClientDetailsProps> = ({ client }) => {
 
             <div>
               <h3 className="text-sm font-medium text-[#1C1C1C]">
-                {displayValue(client.country)}
+                {displayValue(client.country?.toString())}
               </h3>
               <p className="text-xs text-[#696969] mt-1">Country</p>
             </div>
 
             <div>
               <h3 className="text-sm font-medium text-[#1C1C1C]">
-                {displayValue(client.state)}
+                {displayValue(client.state?.toString())}
               </h3>
               <p className="text-xs text-[#696969] mt-1">State</p>
             </div>
@@ -87,7 +87,7 @@ const ClientDetails: React.FC<ClientDetailsProps> = ({ client }) => {
 
             <div>
               <h3 className="text-sm font-medium text-[#1C1C1C]">
-                {displayValue(client.zipCode)}
+                {displayValue(client.zipCode?.toString())}
               </h3>
               <p className="text-xs text-[#696969] mt-1">Zip Code</p>
             </div>
