@@ -18,8 +18,9 @@ const AddUserModal = ({ onClose, onSubmit }: AddUserModalProps) => {
     type: USER_TYPE.MANAGER,
     status: USER_STATUS.ACTIVE,
   });
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (formData.name.length === 0) {
         ToastNotifyError("Missing Name");
@@ -37,7 +38,13 @@ const AddUserModal = ({ onClose, onSubmit }: AddUserModalProps) => {
         ToastNotifyError("Invalid Status");
         return;
     }
-    onSubmit(formData);
+    
+    setIsSubmitting(true);
+    try {
+      await onSubmit(formData);
+    } finally {
+      setIsSubmitting(false);
+    }
   };
 
   return (
@@ -111,9 +118,10 @@ const AddUserModal = ({ onClose, onSubmit }: AddUserModalProps) => {
           <div className="flex justify-end">
             <button
               onClick={handleSubmit}
-              className="bg-[#0B498B] text-white px-4 rounded-[4px] font-medium w-[115px] h-[36px] text-sm flex items-center justify-center"
+              disabled={isSubmitting}
+              className="bg-[#0B498B] text-white px-4 rounded-[4px] font-medium w-[115px] h-[36px] text-sm flex items-center justify-center disabled:opacity-70 disabled:cursor-not-allowed"
             >
-              Submit
+              {isSubmitting ? 'Submitting...' : 'Submit'}
             </button>
           </div>
         </div>

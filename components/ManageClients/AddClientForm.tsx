@@ -44,6 +44,8 @@ const AddClientForm = ({ onSubmit }: AddClientFormProps) => {
     spokeEmail: ''
   });
 
+  const [isSubmitting, setIsSubmitting] = useState(false);
+
   // State to hold available states based on selected country
   const [availableStates, setAvailableStates] = useState<STATE[]>([]);
 
@@ -61,7 +63,7 @@ const AddClientForm = ({ onSubmit }: AddClientFormProps) => {
     }
   }, [formData.country]);
 
-  const handleSubmit = () => {
+  const handleSubmit = async () => {
     // Validation
     if (!formData.name) {
       ToastNotifyError("Client name is required");
@@ -77,7 +79,12 @@ const AddClientForm = ({ onSubmit }: AddClientFormProps) => {
     }
 
     // Submit form data
-    onSubmit(formData);
+    setIsSubmitting(true);
+    try {
+      await onSubmit(formData);
+    } finally {
+      setIsSubmitting(false);
+    }
   };
 
   const handleDropdownChange = (name: string) => (value: string | number) => {
@@ -336,9 +343,10 @@ const AddClientForm = ({ onSubmit }: AddClientFormProps) => {
       <div className="flex justify-end">
         <button
           onClick={handleSubmit}
-          className="bg-[#0B498B] text-white px-4 py-2 rounded-[8px] font-medium text-sm flex items-center justify-center hover:bg-[#0B498B]/90 transition-colors"
+          disabled={isSubmitting}
+          className="bg-[#0B498B] text-white px-4 py-2 rounded-[8px] font-medium text-sm flex items-center justify-center hover:bg-[#0B498B]/90 transition-colors disabled:opacity-70 disabled:cursor-not-allowed"
         >
-          Save Client
+          {isSubmitting ? 'Saving...' : 'Save Client'}
         </button>
       </div>
     </div>

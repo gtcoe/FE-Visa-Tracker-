@@ -417,9 +417,9 @@ const ServiceRequest = () => {
               <button
                 type="submit"
                 disabled={isSubmitting}
-                className="bg-[#0B498B] text-white px-4 py-2 rounded-md hover:bg-[#083968] transition-colors focus:outline-none focus:ring-2 focus:ring-[#0B498B] focus:ring-opacity-50 disabled:opacity-70 disabled:cursor-not-allowed"
+                className="bg-[#0B498B] text-white px-6 py-2.5 rounded-md hover:bg-[#083968] transition-colors focus:outline-none focus:ring-1 focus:ring-[#0B498B] disabled:opacity-70 disabled:cursor-not-allowed"
               >
-                {isSubmitting ? 'Saving...' : 'Save & Continue'}
+                {isSubmitting ? 'Submitting...' : 'Submit'}
               </button>
             </div>
           </div>

@@ -253,6 +253,7 @@ const DateInput: React.FC<DateInputProps> = ({
 };
 
 const StatusForm = ({ onSearch }: StatusFormProps) => {
+  const [isSubmitting, setIsSubmitting] = useState(false);
   const [formData, setFormData] = useState<FormData>({
     referenceNo: "",
     customerType: "",
@@ -306,9 +307,14 @@ const StatusForm = ({ onSearch }: StatusFormProps) => {
     handleChange(name, value);
   };
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    onSearch(formData);
+    setIsSubmitting(true);
+    try {
+      await onSearch(formData);
+    } finally {
+      setIsSubmitting(false);
+    }
   };
 
   return (
@@ -488,9 +494,10 @@ const StatusForm = ({ onSearch }: StatusFormProps) => {
           <div className="flex justify-end items-end">
             <button
               type="submit"
-              className="h-10 bg-[#0B498B] text-white px-5 rounded font-medium hover:bg-[#0A3E75] transition-colors"
+              disabled={isSubmitting}
+              className="h-10 bg-[#0B498B] text-white px-5 rounded font-medium hover:bg-[#0A3E75] transition-colors disabled:opacity-70 disabled:cursor-not-allowed"
             >
-              Check Status
+              {isSubmitting ? 'Checking...' : 'Check Status'}
             </button>
           </div>
         </div>
