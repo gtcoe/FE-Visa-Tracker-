@@ -84,8 +84,8 @@ const ChecklistDetailView: React.FC<ChecklistDetailsProps> = ({
           </div>
         )}
         
-        {/* Send Mail button aligned to the right with reduced width */}
-        <div className="flex justify-end mt-auto">
+        {/* Send Mail button right-aligned */}
+        <div className="flex justify-end mb-6">
           <button className="bg-[#0B498B] text-white py-2 px-4 rounded-md font-medium w-32">
             Send Mail
           </button>
