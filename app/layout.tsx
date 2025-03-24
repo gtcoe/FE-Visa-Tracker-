@@ -59,6 +59,9 @@ export default function RootLayout({
 
   const navItems =
     userRole && pathname !== "/" ? roleBasedNavItems[userRole] : [];
+  
+  // Check if we're on the checklist-details page
+  const isChecklistDetailsPage = pathname?.includes('checklist-details');
 
   return (
     <html lang="en">
@@ -67,7 +70,7 @@ export default function RootLayout({
           <ClientProvider>
             <ApplicationProvider>
               <div className="min-h-screen flex flex-col">
-                {userRole && navItems.length > 0 && (
+                {userRole && navItems.length > 0 && !isChecklistDetailsPage && (
                   <Navbar items={navItems} userRole={userRole} />
                 )}
                 <main className="flex-grow">{children}</main>

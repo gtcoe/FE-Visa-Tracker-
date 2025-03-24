@@ -39,21 +39,24 @@ const ROLE_ROUTES = {
         "/check-list",
         "/services",
         "/manage-users",
-        "/manage-clients"
+        "/manage-clients",
+        "/checklist-details"
     ],
     manager: [
         "/application-tracker",
         "/check-list",
         "/services",
         "/manage-users",
-        "/manage-clients"
+        "/manage-clients",
+        "/checklist-details"
     ],
     admin: [
         "/application-tracker",
         "/check-list",
         "/services",
         "/manage-users",
-        "/manage-clients"
+        "/manage-clients",
+        "/checklist-details"
     ]
 };
 const roleBasedNavItems = {

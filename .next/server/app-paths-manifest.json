@@ -2,5 +2,6 @@
   "/_not-found/page": "app/_not-found/page.js",
   "/favicon.ico/route": "app/favicon.ico/route.js",
   "/check-list/page": "app/check-list/page.js",
-  "/application-tracker/page": "app/application-tracker/page.js"
+  "/application-tracker/page": "app/application-tracker/page.js",
+  "/checklist-details/page": "app/checklist-details/page.js"
 }

@@ -31,20 +31,24 @@ export enum COUNTRY {
 // Added constants for visa-related data
 export enum VISA_COUNTRY {
   NETHERLAND = 1,
-  FRANCE = 2
+  FRANCE = 2,
+  USA = 3
 }
 
 export const VISA_COUNTRY_LABELS: Record<VISA_COUNTRY, string> = {
   [VISA_COUNTRY.NETHERLAND]: 'Netherland',
-  [VISA_COUNTRY.FRANCE]: 'France'
+  [VISA_COUNTRY.FRANCE]: 'France',
+  [VISA_COUNTRY.USA]: 'United States Of America'
 };
 
 export enum VISA_CATEGORY {
-  BUSINESS = 1
+  BUSINESS = 1,
+  WORK = 2
 }
 
 export const VISA_CATEGORY_LABELS: Record<VISA_CATEGORY, string> = {
-  [VISA_CATEGORY.BUSINESS]: 'Business'
+  [VISA_CATEGORY.BUSINESS]: 'Business',
+  [VISA_CATEGORY.WORK]: 'Work'
 };
 
 export enum NATIONALITY {

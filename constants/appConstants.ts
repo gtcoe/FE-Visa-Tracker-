@@ -10,9 +10,9 @@ export const DEFAULT_PATHS: Record<UserRole, string> = {
 
 // Define routes that are accessible to each role
 export const ROLE_ROUTES: Record<UserRole, string[]> = {
-  client: ["/application-tracker", "/check-list", "/services", "/manage-users", "/manage-clients"],
-  manager: ["/application-tracker", "/check-list", "/services", "/manage-users", "/manage-clients"],
-  admin: ["/application-tracker", "/check-list", "/services", "/manage-users", "/manage-clients"],
+  client: ["/application-tracker", "/check-list", "/services", "/manage-users", "/manage-clients", "/checklist-details"],
+  manager: ["/application-tracker", "/check-list", "/services", "/manage-users", "/manage-clients", "/checklist-details"],
+  admin: ["/application-tracker", "/check-list", "/services", "/manage-users", "/manage-clients", "/checklist-details"],
 };
 
 // Define the navigation items for each role

@@ -40,7 +40,7 @@ export default function ChecklistDetailsPage() {
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-gray-50 flex items-center justify-center">
+      <div className="flex items-center justify-center h-screen">
         <div className="text-center">
           <svg className="animate-spin h-8 w-8 mx-auto text-blue-600" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
             <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
@@ -54,7 +54,7 @@ export default function ChecklistDetailsPage() {
 
   if (!checklistData) {
     return (
-      <div className="min-h-screen bg-gray-50 flex items-center justify-center">
+      <div className="flex items-center justify-center h-screen">
         <div className="text-center text-red-600">
           <h1 className="text-2xl font-bold mb-2">Error</h1>
           <p>Could not find checklist data for the selected parameters.</p>
@@ -64,14 +64,12 @@ export default function ChecklistDetailsPage() {
   }
 
   return (
-    <div className="min-h-screen bg-gray-50 py-8">
-      <ChecklistDetailView
-        visaCountry={params.country}
-        visaCategory={params.category}
-        nationality={params.nationality}
-        state={params.state}
-        details={checklistData}
-      />
-    </div>
+    <ChecklistDetailView
+      visaCountry={params.country}
+      visaCategory={params.category}
+      nationality={params.nationality}
+      state={params.state}
+      details={checklistData}
+    />
   );
 } 
