@@ -1,20 +1,34 @@
 "use client";
 
 import React, { useState } from "react";
+import { useRouter } from "next/navigation";
 import PasswordStatus from "./PasswordStatus";
 import CheckBox from "../common/CheckBox";
 import Image from "next/image";
 import visaisticLogo from "../../public/visaisticLogo.svg";
 import eyeOff from "../../public/eye-off.svg";
 import eye from "../../public/eye.png";
-import { ToastNotifyError } from "../common/Toast";
+import { ToastNotifyError, ToastNotifySuccess } from "../common/Toast";
+import { login } from "@component/api/auth";
+import { USER_TYPE } from '../../constants/userConstants';
+import { 
+  DEFAULT_PATHS, 
+  SIGN_IN_STATUS_TYPE, 
+  SIGN_IN_STATUS_MESSAGE 
+} from '../../constants/appConstants';
+import config from '@component/constants/config';
+
+const { AUTH_TOKEN_KEY, USER_ID_KEY, USER_TYPE_KEY, LOGIN_STATUS_KEY } = config;
 
 const SignUpAuthentication = () => {
+  const router = useRouter();
   const [email, setEmail] = useState("");
   const [error, setError] = useState("");
   const [showPassword, setShowPassword] = useState(false);
   const [password, setPassword] = useState("");
   const [isChecked, setIsChecked] = useState(false);
+  const [loading, setLoading] = useState(false);
+  const [passwordStatus, setPasswordStatus] = useState("none");
 
   const emailRegex = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
 
@@ -25,15 +39,49 @@ const SignUpAuthentication = () => {
       setError("");
     }
   };
-  const [checked, setChecked] = useState(false);
 
   // For validation errors
-  const validateLogin = (email: string) => {
+  const validateLogin = (email: string, password: string) => {
     if (!emailRegex.test(email)) {
       ToastNotifyError("Enter Valid Email Address");
       return false;
     }
+    if (!password.trim()) {
+      ToastNotifyError("Password is required");
+      return false;
+    }
     return true;
+  };
+
+  const handleLogin = async () => {
+    if (!validateLogin(email, password)) return;
+
+    try {
+      setLoading(true);
+      const response = await login({ email, password });
+
+      if (!response || !response.status || !response.data) {
+        console.log("======>response", response);
+        setError(SIGN_IN_STATUS_MESSAGE[response?.data?.login_status || 0] || "Login failed. Please try again.");
+        return;
+      }
+
+      if (response.data.login_status === SIGN_IN_STATUS_TYPE.SUCCESS) {
+        localStorage.setItem(AUTH_TOKEN_KEY, response.data.token);
+        localStorage.setItem(USER_ID_KEY, response.data.user_id.toString());
+        localStorage.setItem(USER_TYPE_KEY, response.data.user_type.toString());
+        localStorage.setItem(LOGIN_STATUS_KEY, response.data.login_status.toString());
+        ToastNotifySuccess("Login successful!");
+        router.push(DEFAULT_PATHS[response.data.user_type as USER_TYPE]);
+      } else {
+        setError(SIGN_IN_STATUS_MESSAGE[response.data.login_status]);
+      }
+      
+    } catch (err: any) {
+      setError("Something went wrong. Please try again later.");
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (
@@ -94,12 +142,16 @@ const SignUpAuthentication = () => {
               />
             </button>
           </div>
-          <PasswordStatus status="none" />
+          <PasswordStatus status={passwordStatus} />
           <CheckBox label={"Keep me logged in"} state={isChecked} updateState={setIsChecked}/>
         </div>
         <div className="mt-2 w-full">
-          <button className="rounded-xl bg-[#0B498B] py-4 text-center w-full text-white text-[18px] font-semibold cursor-pointer">
-            Sign in
+          <button 
+            onClick={handleLogin}
+            disabled={loading}
+            className={`rounded-xl bg-[#0B498B] py-4 text-center w-full text-white text-[18px] font-semibold ${loading ? 'opacity-70 cursor-not-allowed' : 'cursor-pointer'}`}
+          >
+            {loading ? "Signing in..." : "Sign in"}
           </button>
         </div>
       </div>

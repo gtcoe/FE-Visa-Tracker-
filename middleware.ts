@@ -1,7 +1,11 @@
 // middleware.ts
 import { NextResponse } from "next/server";
 import type { NextRequest } from "next/server";
-import { DEFAULT_PATHS, ROLE_ROUTES, UserRole } from "./constants/appConstants";
+import { DEFAULT_PATHS, ROLE_ROUTES } from "./constants/appConstants";
+import { USER_TYPE } from "./constants/userConstants";
+import config2 from "./constants/config";
+
+const { AUTH_TOKEN_KEY, USER_TYPE_KEY } = config2;
 
 export async function middleware(request: NextRequest) {
   // Get the pathname from the URL
@@ -22,33 +26,23 @@ export async function middleware(request: NextRequest) {
   //     request.headers.get("authorization");
 
   //update role to check
-  const authToken = "client";
+  const authToken = localStorage.getItem(AUTH_TOKEN_KEY);
+  const userType = Number(localStorage.getItem(USER_TYPE_KEY)) as USER_TYPE;
 
   // If no authentication, redirect to login
   if (!authToken && path !== "/visaistic") {
     return NextResponse.redirect(new URL("/visaistic", request.url));
   }
 
-  // For this example, we'll determine role from the token
-  // In production, you'd decode the JWT or session token properly
-  let role: UserRole | undefined;
-  if (authToken) {
-    role = authToken.includes("admin")
-      ? "admin" as UserRole
-      : authToken.includes("manager")
-      ? "manager" as UserRole
-      : "client" as UserRole;
-  }
-
   // Root path should redirect to the default page for the role
-  if (path === "/visaistic" && role) {
-    return NextResponse.redirect(new URL(DEFAULT_PATHS[role], request.url));
+  if (path === "/" || path === "/visaistic" ) {
+    return NextResponse.redirect(new URL(DEFAULT_PATHS[userType], request.url));
   }
 
   // Check if the user has access to the requested path
-  if (role && !ROLE_ROUTES[role].some((route: string) => path.startsWith(route))) {
+  if (!ROLE_ROUTES[userType].some((route: string) => path.startsWith(route))) {
     // Redirect to the default path for their role if they don't have access
-    return NextResponse.redirect(new URL(DEFAULT_PATHS[role], request.url));
+    return NextResponse.redirect(new URL(DEFAULT_PATHS[userType], request.url));
   }
 
   // Allow the request to proceed

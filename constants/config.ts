@@ -1,16 +1,20 @@
 // Configuration constants for the application
 
 // API base URL - different for each environment
-// const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8081/api';
-const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || 'https://be-visa-tracker.vercel.app/api';
+const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8081/api';
+// const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || 'https://be-visa-tracker.vercel.app/api';
 // Authentication token key for localStorage/sessionStorage
-const AUTH_TOKEN_KEY = 'visaistic_auth_token';
+const AUTH_TOKEN_KEY = 'auth_token';
+const USER_ID_KEY = 'user_id';
+const USER_TYPE_KEY = 'user_type';
+const LOGIN_STATUS_KEY = 'login_status';
 
 // API endpoints
 const API_ENDPOINTS = {
   // Auth
-  LOGIN: '/auth/login',
+  LOGIN: '/auth/signin',
   REGISTER: '/auth/register',
+  LOGOUT: '/auth/logout',
   
   // Clients
   GET_ALL_CLIENTS: '/client',
@@ -40,7 +44,10 @@ const API_ENDPOINTS = {
 const config = {
   API_BASE_URL,
   AUTH_TOKEN_KEY,
-  API_ENDPOINTS
+  API_ENDPOINTS,
+  USER_ID_KEY,
+  USER_TYPE_KEY,
+  LOGIN_STATUS_KEY
 };
 
 export default config; 

@@ -160,19 +160,19 @@ async function middleware(request) {
     //     request.cookies.get("auth_token")?.value ||
     //     request.headers.get("authorization");
     //update role to check
-    const authToken = "client";
+    const authToken = localStorage.getItem(AUTH_TOKEN_KEY);
     // If no authentication, redirect to login
-    if ("TURBOPACK compile-time falsy", 0) {
-        "TURBOPACK unreachable";
+    if (!authToken && path !== "/visaistic") {
+        return __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$esm$2f$server$2f$web$2f$spec$2d$extension$2f$response$2e$js__$5b$middleware$2d$edge$5d$__$28$ecmascript$29$__["NextResponse"].redirect(new URL("/visaistic", request.url));
     }
     // For this example, we'll determine role from the token
     // In production, you'd decode the JWT or session token properly
     let role;
-    if ("TURBOPACK compile-time truthy", 1) {
+    if (authToken) {
         role = authToken.includes("admin") ? "admin" : authToken.includes("manager") ? "manager" : "client";
     }
     // Root path should redirect to the default page for the role
-    if (path === "/visaistic" && role) {
+    if (path === "/" || path === "/visaistic" && role) {
         return __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$esm$2f$server$2f$web$2f$spec$2d$extension$2f$response$2e$js__$5b$middleware$2d$edge$5d$__$28$ecmascript$29$__["NextResponse"].redirect(new URL(__TURBOPACK__imported__module__$5b$project$5d2f$constants$2f$appConstants$2e$ts__$5b$middleware$2d$edge$5d$__$28$ecmascript$29$__["DEFAULT_PATHS"][role], request.url));
     }
     // Check if the user has access to the requested path

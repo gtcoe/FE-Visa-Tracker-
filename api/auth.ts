@@ -2,7 +2,7 @@ import config from '@component/constants/config';
 import { post } from './httpClient';
 
 // Get the API base URL and endpoints from config
-const { API_BASE_URL, AUTH_TOKEN_KEY, API_ENDPOINTS } = config;
+const { API_BASE_URL, AUTH_TOKEN_KEY, API_ENDPOINTS, USER_ID_KEY, USER_TYPE_KEY, LOGIN_STATUS_KEY } = config;
 
 // Interface for the API response from backend
 interface ApiResponse<T> {
@@ -17,33 +17,35 @@ interface LoginCredentials {
   password: string;
 }
 
-// Interface for login response data
+// Interface for login response data structure
 interface LoginResponseData {
-  token: string;
-  user: {
-    id: number;
-    name: string;
-    email: string;
-    type: number;
-    status: number;
+  status: boolean;
+  message?: string;
+  data?: {
+    token: string;
+    user_id: number;
+    user_type: number;
+    login_status: number;
   };
 }
 
 // Function to log in a user
 export const login = async (credentials: LoginCredentials): Promise<LoginResponseData> => {
   try {
-    const response = await post<LoginResponseData>(API_ENDPOINTS.LOGIN, credentials, {
+    const response = await post<{
+      token: string;
+      user_id: number;
+      user_type: number;
+      login_status: number;
+    }>(API_ENDPOINTS.LOGIN, credentials, {
       requiresAuth: false // Login doesn't require authentication
     });
 
-    if (!response.status || !response.data) {
-      throw new Error(response.message || 'Login failed');
+    if (!response) {
+      throw new Error('Something went wrong. Please try again later.');
     }
 
-    // Store the token in localStorage
-    localStorage.setItem(AUTH_TOKEN_KEY, response.data.token);
-
-    return response.data;
+    return response as LoginResponseData;
   } catch (error) {
     console.error('Error during login:', error);
     throw error;
@@ -62,9 +64,7 @@ export const isLoggedIn = (): boolean => {
 
 // Function to get the current JWT token
 export const getToken = (): string | null => {
-
-  //todo comment below hardcode set
-  localStorage.setItem(AUTH_TOKEN_KEY, "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX2lkIjoxLCJpYXQiOjE3NDIwNTgwODMsImV4cCI6MTc0NDY1MDA4M30.ikKSBctjrifQJ47VIGVRRNq4arYEiivkm1MXeElo3DY");
+  // Remove hardcoded token - use only localStorage
   return localStorage.getItem(AUTH_TOKEN_KEY);
 };
 
