@@ -7,7 +7,7 @@ import Image from "next/image";
 import visaisticLogo from "../../public/visaisticLogo.svg";
 import eyeOff from "../../public/eye-off.svg";
 import eye from "../../public/eye.png";
-import { ToastNotifyError } from "../../utils/ToastNotifyError";
+import { ToastNotifyError } from "../common/Toast";
 
 const SignUpAuthentication = () => {
   const [email, setEmail] = useState("");
