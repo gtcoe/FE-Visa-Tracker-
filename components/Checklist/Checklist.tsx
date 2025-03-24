@@ -122,16 +122,17 @@ const Checklist = () => {
   };
 
   // Handle view checklist item
-  const handleViewItem = async (id: number) => {
-    console.log(`View checklist item with ID: ${id}`);
+  const handleViewItem = async (item: ChecklistItem) => {
+    console.log(`View checklist item with ID: ${item.id}`);
     
     try {
-      // In production, this would get details and open a modal or navigate to detail page
-      // const details = await getChecklistById(id);
-      // console.log('Checklist details:', details);
+      // Build the URL with query parameters for the checklist combination
+      const url = `/visaistic/checklist-details?country=${item.country}&category=${item.category}&nationality=${item.nationality}&state=${item.state}`;
       
-      // For now, just show a message
-      ToastNotifySuccess('Viewing checklist item details (not implemented yet)');
+      // Open the URL in a new tab
+      window.open(url, '_blank');
+      
+      ToastNotifySuccess('Opening checklist details in a new tab');
     } catch (error) {
       console.error('Error viewing checklist item:', error);
       ToastNotifyError('Failed to load checklist details. Please try again.');
@@ -255,7 +256,7 @@ const Checklist = () => {
                       <td className="px-4 py-4 text-sm text-gray-900 border-r border-[#E6EAF2] text-center">{STATE_LABELS[item.state]}</td>
                       <td className="px-4 py-4 text-sm text-gray-900 text-center">
                         <button 
-                          onClick={() => handleViewItem(item.id)}
+                          onClick={() => handleViewItem(item)}
                           className="text-[#0B498B] hover:underline font-medium"
                         >
                           View
