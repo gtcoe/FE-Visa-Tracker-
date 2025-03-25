@@ -1,8 +1,8 @@
 // Configuration constants for the application
 
 // API base URL - different for each environment
-const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8081/api';
-// const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || 'https://be-visa-tracker.vercel.app/api';
+// const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8081/api';
+const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || 'https://be-visa-tracker.vercel.app/api';
 // Authentication token key for localStorage/sessionStorage
 const AUTH_TOKEN_KEY = 'auth_token';
 const USER_ID_KEY = 'user_id';
