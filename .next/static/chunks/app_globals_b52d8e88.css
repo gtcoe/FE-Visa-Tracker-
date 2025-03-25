@@ -1485,6 +1485,10 @@
     color: #6a6a6a;
   }
 
+  .text-\[\#6D6D6D\] {
+    color: #6d6d6d;
+  }
+
   .text-\[\#8A8A8A\] {
     color: #8a8a8a;
   }
@@ -1727,6 +1731,12 @@
   @media (hover: hover) {
     .hover\:text-gray-700:hover {
       color: var(--color-gray-700);
+    }
+  }
+
+  @media (hover: hover) {
+    .hover\:text-red-500:hover {
+      color: var(--color-red-500);
     }
   }
 

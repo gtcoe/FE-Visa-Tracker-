@@ -360,58 +360,106 @@ const FillServiceForm = ({
             
             // Create a new visa request with the data from the previous application
             if (parsedData.visa_requests && parsedData.visa_requests.length > 0) {
-              const sourceRequest = parsedData.visa_requests[0]; // Use first request as template
+              let parsedVisaRequsts = [];
+              for (const sourceRequest of parsedData.visa_requests) {
               
-              // Create a new request based on the source
-              const newRequest = {
-                visaCountry: sourceRequest.visa_country
-                  ? VISA_COUNTRY_LABELS[sourceRequest.visa_country as VISA_COUNTRY] || VISA_COUNTRY_LABELS[VISA_COUNTRY.NETHERLAND]
-                  : VISA_COUNTRY_LABELS[VISA_COUNTRY.NETHERLAND],
-                visaCategory: sourceRequest.visa_category
-                  ? VISA_CATEGORY_LABELS[sourceRequest.visa_category as VISA_CATEGORY] || VISA_CATEGORY_LABELS[VISA_CATEGORY.BUSINESS]
-                  : VISA_CATEGORY_LABELS[VISA_CATEGORY.BUSINESS],
-                nationality: sourceRequest.nationality
-                  ? NATIONALITY_LABELS[sourceRequest.nationality as NATIONALITY] || NATIONALITY_LABELS[NATIONALITY.INDIAN]
-                  : NATIONALITY_LABELS[NATIONALITY.INDIAN],
-                state: sourceRequest.state
-                  ? STATE_LABELS[sourceRequest.state as STATE] || STATE_LABELS[STATE.DELHI]
-                  : STATE_LABELS[STATE.DELHI],
-                entryType: sourceRequest.entry_type
-                  ? ENTRY_TYPE_LABELS[sourceRequest.entry_type as ENTRY_TYPE] || ENTRY_TYPE_LABELS[ENTRY_TYPE.NORMAL]
-                  : ENTRY_TYPE_LABELS[ENTRY_TYPE.NORMAL],
-                remark: '',  // Start with empty remark
-              };
+                // Create a new request based on the source
+                const newRequest = {
+                  visaCountry: sourceRequest.visa_country
+                    ? VISA_COUNTRY_LABELS[sourceRequest.visa_country as VISA_COUNTRY] || VISA_COUNTRY_LABELS[VISA_COUNTRY.NETHERLAND]
+                    : VISA_COUNTRY_LABELS[VISA_COUNTRY.NETHERLAND],
+                  visaCategory: sourceRequest.visa_category
+                    ? VISA_CATEGORY_LABELS[sourceRequest.visa_category as VISA_CATEGORY] || VISA_CATEGORY_LABELS[VISA_CATEGORY.BUSINESS]
+                    : VISA_CATEGORY_LABELS[VISA_CATEGORY.BUSINESS],
+                  nationality: sourceRequest.nationality
+                    ? NATIONALITY_LABELS[sourceRequest.nationality as NATIONALITY] || NATIONALITY_LABELS[NATIONALITY.INDIAN]
+                    : NATIONALITY_LABELS[NATIONALITY.INDIAN],
+                  state: sourceRequest.state
+                    ? STATE_LABELS[sourceRequest.state as STATE] || STATE_LABELS[STATE.DELHI]
+                    : STATE_LABELS[STATE.DELHI],
+                  entryType: sourceRequest.entry_type
+                    ? ENTRY_TYPE_LABELS[sourceRequest.entry_type as ENTRY_TYPE] || ENTRY_TYPE_LABELS[ENTRY_TYPE.NORMAL]
+                    : ENTRY_TYPE_LABELS[ENTRY_TYPE.NORMAL],
+                  remark: '',  // Start with empty remark
+                };
+                parsedVisaRequsts.push(newRequest);
+              }
+              
               
               // Set this as our initial visa request
-              setVisaRequests([newRequest]);
+              setVisaRequests(parsedVisaRequsts);
             }
-            
-            // Generate a new reference number for this application
-            localStorage.removeItem(STORAGE_KEY.SERVICE_REFERENCE_NUMBER);
+
           } else if (!isPrefill) {
+            console.log('Not prefill mode');
             // Regular application data loading (not prefill mode)
             if (parsedData.visa_requests && parsedData.visa_requests.length > 0) {
-              // If not in add-sub-request mode, replace visa requests with saved data
-              if (mode !== FORM_MODE.ADD_SUB_REQUEST) {
-                const mappedRequests = parsedData.visa_requests.map((request: any) => ({
-                  visaCountry: request.visa_country
-                    ? VISA_COUNTRY_LABELS[request.visa_country as VISA_COUNTRY] || VISA_COUNTRY_LABELS[VISA_COUNTRY.NETHERLAND]
-                    : VISA_COUNTRY_LABELS[VISA_COUNTRY.NETHERLAND],
-                  visaCategory: request.visa_category
-                    ? VISA_CATEGORY_LABELS[request.visa_category as VISA_CATEGORY] || VISA_CATEGORY_LABELS[VISA_CATEGORY.BUSINESS]
-                    : VISA_CATEGORY_LABELS[VISA_CATEGORY.BUSINESS],
-                  nationality: request.nationality
-                    ? NATIONALITY_LABELS[request.nationality as NATIONALITY] || NATIONALITY_LABELS[NATIONALITY.INDIAN]
-                    : NATIONALITY_LABELS[NATIONALITY.INDIAN],
-                  state: request.state
-                    ? STATE_LABELS[request.state as STATE] || STATE_LABELS[STATE.DELHI]
-                    : STATE_LABELS[STATE.DELHI],
-                  entryType: request.entry_type
-                    ? ENTRY_TYPE_LABELS[request.entry_type as ENTRY_TYPE] || ENTRY_TYPE_LABELS[ENTRY_TYPE.NORMAL]
-                    : ENTRY_TYPE_LABELS[ENTRY_TYPE.NORMAL],
-                  remark: request.remark || '',
-                }));
-                setVisaRequests(mappedRequests);
+              console.log('Not prefill mode in', parsedData.visa_requests.length, 'visa requests');
+
+              try {
+                // Create a properly mapped array of visa requests with a more explicit approach
+                const parsedVisaRequsts: {
+                  visaCountry: string;
+                  visaCategory: string;
+                  nationality: string;
+                  state: string;
+                  entryType: string;
+                  remark: string;
+                }[] = [];
+                
+                // Log each request as we process it for debugging
+                parsedData.visa_requests.forEach((sourceRequest: any, index: number) => {
+                  console.log(`Processing visa request ${index + 1}:`, sourceRequest);
+                  
+                  const mappedRequest = {
+                    visaCountry: sourceRequest.visa_country
+                      ? VISA_COUNTRY_LABELS[sourceRequest.visa_country as VISA_COUNTRY] || VISA_COUNTRY_LABELS[VISA_COUNTRY.NETHERLAND]
+                      : VISA_COUNTRY_LABELS[VISA_COUNTRY.NETHERLAND],
+                    visaCategory: sourceRequest.visa_category
+                      ? VISA_CATEGORY_LABELS[sourceRequest.visa_category as VISA_CATEGORY] || VISA_CATEGORY_LABELS[VISA_CATEGORY.BUSINESS]
+                      : VISA_CATEGORY_LABELS[VISA_CATEGORY.BUSINESS],
+                    nationality: sourceRequest.nationality
+                      ? NATIONALITY_LABELS[sourceRequest.nationality as NATIONALITY] || NATIONALITY_LABELS[NATIONALITY.INDIAN]
+                      : NATIONALITY_LABELS[NATIONALITY.INDIAN],
+                    state: sourceRequest.state
+                      ? STATE_LABELS[sourceRequest.state as STATE] || STATE_LABELS[STATE.DELHI]
+                      : STATE_LABELS[STATE.DELHI],
+                    entryType: sourceRequest.entry_type
+                      ? ENTRY_TYPE_LABELS[sourceRequest.entry_type as ENTRY_TYPE] || ENTRY_TYPE_LABELS[ENTRY_TYPE.NORMAL]
+                      : ENTRY_TYPE_LABELS[ENTRY_TYPE.NORMAL],
+                    remark: sourceRequest.remark || '',
+                  };
+                  
+                  parsedVisaRequsts.push(mappedRequest);
+                  console.log(`Added visa request ${index + 1}:`, mappedRequest);
+                });
+                
+                console.log('Not prefill mode in 2', parsedVisaRequsts.length, 'visa requests:', parsedVisaRequsts);
+                
+                // If in ADD_SUB_REQUEST mode, add an additional request
+                if (mode === FORM_MODE.ADD_SUB_REQUEST) {
+                  const newRequest = {
+                    visaCountry: VISA_COUNTRY_LABELS[VISA_COUNTRY.NETHERLAND],
+                    visaCategory: VISA_CATEGORY_LABELS[VISA_CATEGORY.BUSINESS],
+                    nationality: NATIONALITY_LABELS[NATIONALITY.INDIAN],
+                    state: STATE_LABELS[STATE.DELHI],
+                    entryType: ENTRY_TYPE_LABELS[ENTRY_TYPE.NORMAL],
+                    remark: ''
+                  };
+                  parsedVisaRequsts.push(newRequest);
+                  console.log('Added additional request for ADD_SUB_REQUEST mode:', newRequest);
+                }
+                
+                console.log('Not prefill mode in 3', parsedVisaRequsts.length, 'visa requests:', parsedVisaRequsts);
+                
+                // Set this as our initial visa request using a new array reference
+                // This direct state update will override any initial state set by the parent
+                if (parsedVisaRequsts.length > 0) {
+                  console.log('Setting visa requests to:', parsedVisaRequsts);
+                  setVisaRequests([...parsedVisaRequsts]); // Force a new array reference
+                }
+              } catch (error) {
+                console.error('Error processing visa requests:', error);
               }
             }
           }
@@ -590,15 +638,15 @@ const FillServiceForm = ({
   const entryTypeMap = useMemo(() => ({
     [ENTRY_TYPE_LABELS[ENTRY_TYPE.NORMAL]]: ENTRY_TYPE.NORMAL
   }), []);
-  
+
   const handleRadioChange = useCallback((value: string) => {
     setSubmissionType(value);
   }, []);
-  
+
   const handleCheckboxChange = useCallback((e: React.ChangeEvent<HTMLInputElement>) => {
     setIsFixed(e.target.checked);
   }, []);
-  
+
   // Modified handleSubmit with API integration
   const handleSubmit = useCallback(async (e: React.FormEvent) => {
     e.preventDefault();
@@ -727,7 +775,7 @@ const FillServiceForm = ({
       console.error('Error in handleUpdateApplicant:', error);
     }
   }, [handleSubmit]);
-  
+
   const handleBack = useCallback(() => {
     router.back();
   }, [router]);
@@ -785,6 +833,35 @@ const FillServiceForm = ({
       label: label
     }))
   ], []);
+
+  // First, add the handleRemoveVisaRequest function to the FillServiceForm component
+  const handleRemoveVisaRequest = useCallback((indexToRemove: number) => {
+    setVisaRequests(prev => prev.filter((_, index) => index !== indexToRemove));
+  }, []);
+
+  // Update the function to ensure it works correctly
+  const handleAddNewVisaRequest = useCallback(() => {
+    console.log('Handle Add New Visa Request called');
+    console.log('Current visaRequests before adding:', visaRequests);
+    
+    // Call the parent's handleAddMore function only
+    if (typeof handleAddMore === 'function') {
+      // We need to call handleAddMore directly without any local state updates
+      // to ensure the parent component handles all state updates consistently
+      handleAddMore();
+      console.log('Parent handleAddMore function called');
+      
+      // Add a delayed check to verify the update (for debugging only)
+      setTimeout(() => {
+        console.log('Delayed check after handleAddMore - visaRequests:', visaRequests);
+      }, 500);
+    } else {
+      console.error('handleAddMore is not a function');
+    }
+  }, [handleAddMore, visaRequests]);
+
+  // Add logging to component render to track visaRequests state on each render
+  console.log('FillServiceForm rendering with visaRequests:', visaRequests.length, visaRequests);
 
   return (
     <div className="space-y-6">
@@ -863,7 +940,7 @@ const FillServiceForm = ({
               disabled={formMode === FORM_MODE.VIEW}
             >
               {processingBranchOptions.map((option) => (
-                <option key={option.value} value={option.value}>
+                <option key={`proc-branch-${option.value || 'empty'}`} value={option.value}>
                   {option.label}
                 </option>
               ))}
@@ -942,11 +1019,11 @@ const FillServiceForm = ({
                 className={`w-full px-3 py-2.5 border border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-[#0B498B] text-[#6A6A6A] appearance-none ${formMode === FORM_MODE.VIEW ? 'bg-gray-100' : 'bg-white'}`}
                 disabled={formMode === FORM_MODE.VIEW}
               >
-                <option value="">Select</option>
-                <option value="0">0</option>
-                <option value="1">1</option>
-                <option value="2">2</option>
-                <option value="3">3+</option>
+                <option key="exp-passport-empty" value="">Select</option>
+                <option key="exp-passport-0" value="0">0</option>
+                <option key="exp-passport-1" value="1">1</option>
+                <option key="exp-passport-2" value="2">2</option>
+                <option key="exp-passport-3" value="3">3+</option>
               </select>
             </div>
             
@@ -1063,9 +1140,21 @@ const FillServiceForm = ({
       
       {/* Visa Requests */}
       {visaRequests.map((request, index) => (
-        <div key={`visa-request-${index}`} className="mx-6 mt-[21px] mb-6 bg-white rounded-2xl border border-[#E6EAF2] shadow-sm overflow-hidden">
-          <div className="bg-[#F6F7F9] py-4 px-6 border-b border-gray-200">
+        <div key={`visa-request-${index}`} className="mx-6 mt-[21px] mb-6 bg-white rounded-2xl border border-[#E6EAF2] shadow-sm overflow-hidden relative">
+          <div className="bg-[#F6F7F9] py-4 px-6 border-b border-gray-200 flex justify-between items-center">
             <p className="text-[15px] font-medium text-[#0B498B]">Visa Request {visaRequests.length > 1 ? index + 1 : ''}</p>
+            {visaRequests.length > 1 && formMode !== FORM_MODE.VIEW && (
+              <button
+                type="button"
+                onClick={() => handleRemoveVisaRequest(index)}
+                className="text-gray-500 hover:text-red-500 transition-colors focus:outline-none"
+                aria-label={`Remove visa request ${index + 1}`}
+              >
+                <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
+                  <path fillRule="evenodd" d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z" clipRule="evenodd" />
+                </svg>
+              </button>
+            )}
           </div>
           
           <div className="p-6">
@@ -1082,7 +1171,7 @@ const FillServiceForm = ({
                   disabled={formMode === FORM_MODE.VIEW}
                 >
                   {Object.entries(VISA_COUNTRY_LABELS).map(([value, label]) => (
-                    <option key={value} value={value}>
+                    <option key={`visa-country-${index}-${value}`} value={value}>
                       {label}
                     </option>
                   ))}
@@ -1101,7 +1190,7 @@ const FillServiceForm = ({
                   disabled={formMode === FORM_MODE.VIEW}
                 >
                   {Object.entries(VISA_CATEGORY_LABELS).map(([value, label]) => (
-                    <option key={value} value={value}>
+                    <option key={`visa-category-${index}-${value}`} value={value}>
                       {label}
                     </option>
                   ))}
@@ -1120,7 +1209,7 @@ const FillServiceForm = ({
                   disabled={formMode === FORM_MODE.VIEW}
                 >
                   {Object.entries(NATIONALITY_LABELS).map(([value, label]) => (
-                    <option key={value} value={value}>
+                    <option key={`nationality-${index}-${value}`} value={value}>
                       {label}
                     </option>
                   ))}
@@ -1139,7 +1228,7 @@ const FillServiceForm = ({
                   disabled={formMode === FORM_MODE.VIEW}
                 >
                   {Object.entries(STATE_LABELS).map(([value, label]) => (
-                    <option key={value} value={value}>
+                    <option key={`visa-state-${index}-${value}`} value={value}>
                       {label}
                     </option>
                   ))}
@@ -1160,7 +1249,7 @@ const FillServiceForm = ({
                   disabled={formMode === FORM_MODE.VIEW}
                 >
                   {Object.entries(ENTRY_TYPE_LABELS).map(([value, label]) => (
-                    <option key={value} value={value}>
+                    <option key={`entry-type-${index}-${value}`} value={value}>
                       {label}
                     </option>
                   ))}
@@ -1186,7 +1275,7 @@ const FillServiceForm = ({
                 {index === visaRequests.length - 1 && formMode !== FORM_MODE.VIEW && (
                   <button
                     type="button"
-                    onClick={handleAddMore}
+                    onClick={handleAddNewVisaRequest}
                     className="bg-[#0B498B] text-white px-6 py-2.5 rounded-md hover:bg-[#083968] transition-colors focus:outline-none focus:ring-1 focus:ring-[#0B498B] font-medium"
                   >
                     Add More
@@ -1248,7 +1337,7 @@ const FillServiceForm = ({
                 disabled={formMode === FORM_MODE.VIEW}
               >
                 {countryOptions.map((option) => (
-                  <option key={option.value} value={option.value}>
+                  <option key={`addr-country-${option.value || 'empty'}`} value={option.value}>
                     {option.label}
                   </option>
                 ))}
@@ -1267,7 +1356,7 @@ const FillServiceForm = ({
                 disabled={formMode === FORM_MODE.VIEW}
               >
                 {indianStateOptions.map((option) => (
-                  <option key={option.value} value={option.value}>
+                  <option key={`addr-state-${option.value || 'empty'}`} value={option.value}>
                     {option.label}
                   </option>
                 ))}
@@ -1287,7 +1376,7 @@ const FillServiceForm = ({
                 className={`w-full px-3 py-2.5 border border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-[#0B498B] text-[#6A6A6A] appearance-none ${formMode === FORM_MODE.VIEW ? 'bg-gray-100' : 'bg-white'}`}
                 disabled={formMode === FORM_MODE.VIEW}
               >
-                <option value="">Select</option>
+                <option key="addr-city-empty" value="">Select</option>
               </select>
             </div>
             
@@ -1340,13 +1429,13 @@ const FillServiceForm = ({
           
           <div className="flex justify-end mt-4">
             {formMode !== FORM_MODE.VIEW && (
-              <button
-                type="button"
-                onClick={handleUpdateApplicant}
-                className="bg-[#0B498B] text-white px-4 py-2 rounded-md hover:bg-[#083968] transition-colors focus:outline-none focus:ring-2 focus:ring-[#0B498B] focus:ring-opacity-50 font-medium"
-              >
-                Update Applicant
-              </button>
+            <button
+              type="button"
+              onClick={handleUpdateApplicant}
+              className="bg-[#0B498B] text-white px-4 py-2 rounded-md hover:bg-[#083968] transition-colors focus:outline-none focus:ring-2 focus:ring-[#0B498B] focus:ring-opacity-50 font-medium"
+            >
+              Update Applicant
+            </button>
             )}
           </div>
         </div>

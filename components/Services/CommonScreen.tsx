@@ -54,18 +54,38 @@ const SearchPax = () => {
   ]);
 
   const handleAddMore = useCallback(() => {
-    setVisaRequests(prev => [
-      ...prev,
-      {
-        visaCountry: VISA_COUNTRY_LABELS[VISA_COUNTRY.NETHERLAND],
-        visaCategory: VISA_CATEGORY_LABELS[VISA_CATEGORY.BUSINESS],
-        nationality: NATIONALITY_LABELS[NATIONALITY.INDIAN],
-        state: STATE_LABELS[STATE.DELHI],
-        entryType: ENTRY_TYPE_LABELS[ENTRY_TYPE.NORMAL],
-        remark: ''
-      }
-    ]);
-  }, []);
+    console.log('Parent handleAddMore called with current visaRequests length:', visaRequests.length);
+    
+    // Create a new visa request object
+    const newVisaRequest = {
+      visaCountry: VISA_COUNTRY_LABELS[VISA_COUNTRY.NETHERLAND],
+      visaCategory: VISA_CATEGORY_LABELS[VISA_CATEGORY.BUSINESS],
+      nationality: NATIONALITY_LABELS[NATIONALITY.INDIAN],
+      state: STATE_LABELS[STATE.DELHI],
+      entryType: ENTRY_TYPE_LABELS[ENTRY_TYPE.NORMAL],
+      remark: ''
+    };
+    
+    // Use functional update to ensure we're working with the latest state
+    setVisaRequests(prevRequests => {
+      console.log('Previous requests in update function:', prevRequests.length);
+      const newRequests = [...prevRequests, newVisaRequest];
+      console.log('New requests after adding:', newRequests.length);
+      return newRequests;
+    });
+    
+    // Check if the update was applied after a short delay
+    setTimeout(() => {
+      console.log('Delayed check after update - visaRequests length:', visaRequests.length);
+    }, 100);
+  }, [
+    visaRequests,
+    VISA_COUNTRY_LABELS, 
+    VISA_CATEGORY_LABELS, 
+    NATIONALITY_LABELS, 
+    STATE_LABELS, 
+    ENTRY_TYPE_LABELS
+  ]);
 
   // Initialize reference number from localStorage or URL query parameter and set active tab
   useEffect(() => {
@@ -209,12 +229,40 @@ const SearchPax = () => {
           />
         )}
         
-        {activeTab === TAB_NAME.FILL && <FillServiceForm handleTabChange={handleTabChange} formMode={formMode} setFormMode={setFormMode} handleAddMore={handleAddMore} visaRequests={visaRequests} setVisaRequests={setVisaRequests}/>}
+        {activeTab === TAB_NAME.FILL && (
+          <FillServiceForm 
+            handleTabChange={handleTabChange} 
+            formMode={formMode} 
+            setFormMode={setFormMode} 
+            handleAddMore={handleAddMore} 
+            visaRequests={visaRequests} 
+            setVisaRequests={setVisaRequests}
+          />
+        )}
         
-        {activeTab === TAB_NAME.SUMMARY && <ServiceRequestSummary handleTabChange={handleTabChange} formMode={formMode} setFormMode={setFormMode} handleAddMore={handleAddMore}/>}
+        {activeTab === TAB_NAME.SUMMARY && (
+          <ServiceRequestSummary 
+            handleTabChange={handleTabChange} 
+            formMode={formMode} 
+            setFormMode={setFormMode} 
+            handleAddMore={handleAddMore}
+          />
+        )}
       </Suspense>
     );
-  }, [activeTab, searchData, handleChange, handleSearch, handleClear, isSearching, formMode]);
+  }, [
+    activeTab, 
+    searchData, 
+    handleChange, 
+    handleSearch, 
+    handleClear, 
+    isSearching, 
+    formMode, 
+    visaRequests, // Add visaRequests to dependencies
+    setVisaRequests, // Add setVisaRequests to dependencies
+    handleAddMore,
+    handleTabChange
+  ]);
 
   // Check URL parameters on component mount
   useEffect(() => {
