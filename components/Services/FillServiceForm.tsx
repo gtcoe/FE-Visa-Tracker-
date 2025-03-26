@@ -14,6 +14,7 @@ import {
 } from '@component/constants/dropdown/geographical';
 import { FORM_MODE, TAB_NAME, STORAGE_KEY } from '@component/constants/formConstants';
 import { ToastNotifyError } from '@component/components/common/Toast';
+import { APPLICATION_STATUS } from '@component/constants/appConstants';
 
 // Define a more flexible type for change events
 type FormChangeEvent = {
@@ -732,6 +733,7 @@ const FillServiceForm = ({
         url.searchParams.delete('referenceNumber');
         // Store the response data in localStorage for use in summary page
         if (response.data && response.data.application_requests) {
+          response.data.application_requests.status = APPLICATION_STATUS.STEP3_DONE;
           localStorage.setItem(STORAGE_KEY.APPLICATION_INFO, JSON.stringify(response.data.application_requests));
         }
         
