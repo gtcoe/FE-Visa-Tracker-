@@ -93,12 +93,6 @@ const SearchPax = () => {
     // Get reference number from localStorage
     const referenceNumber = localStorage.getItem(STORAGE_KEY.SERVICE_REFERENCE_NUMBER);
     console.log('Found serviceReferenceNumber in localStorage:', referenceNumber);
-    if (referenceNumber) {
-      setSearchData(prev => ({
-        ...prev,
-        referenceNo: referenceNumber
-      }));
-    }
     
     // Check for active tab in localStorage
     const storedActiveTab = localStorage.getItem(STORAGE_KEY.ACTIVE_TAB);
@@ -145,15 +139,15 @@ const SearchPax = () => {
     
     try {
       // Validate required fields
-      if (!searchData.passportNo && !searchData.referenceNo) {
-        throw new Error('Either Passport Number or Reference Number is required');
+      if (!searchData.passportNo && !searchData.referenceNo && !searchData.paxName) {
+        throw new Error('Missing Search Criteria.');
       }
       
       // Prepare search parameters for the API
       const searchParams = {
-        passport_number: searchData.passportNo || undefined,
-        name: searchData.paxName || undefined,
-        reference_number: searchData.referenceNo || undefined
+        passport_number: searchData.passportNo || "",
+        pax_name: searchData.paxName || "",
+        reference_number: searchData.referenceNo || ""
       };
       
       console.log('Searching with params:', searchParams);
