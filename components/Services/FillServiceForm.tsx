@@ -732,6 +732,7 @@ const FillServiceForm = ({
         url.searchParams.delete('referenceNumber');
         // Store the response data in localStorage for use in summary page
         if (response.data && response.data.application_requests) {
+          response.data.application_requests.status = APPLICATION_STATUS.STEP3_DONE;
           localStorage.setItem(STORAGE_KEY.APPLICATION_INFO, JSON.stringify(response.data.application_requests));
         }
         
