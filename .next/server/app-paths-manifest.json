@@ -1,6 +1,11 @@
 {
-  "/application-tracker/page": "app/application-tracker/page.js",
+  "/page": "app/page.js",
   "/favicon.ico/route": "app/favicon.ico/route.js",
+  "/manage-users/page": "app/manage-users/page.js",
+  "/application-tracker/page": "app/application-tracker/page.js",
+  "/check-list/page": "app/check-list/page.js",
+  "/checklist-details/page": "app/checklist-details/page.js",
+  "/manage-clients/page": "app/manage-clients/page.js",
   "/services/page": "app/services/page.js",
   "/services/service-request/page": "app/services/service-request/page.js",
   "/services/common/page": "app/services/common/page.js"

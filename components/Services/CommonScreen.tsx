@@ -7,7 +7,7 @@ import { debounce } from 'lodash'; // Add lodash for debouncing
 import { searchPax } from '@component/api/application'; // Import the searchPax API
 import { FORM_MODE, TAB_NAME, STORAGE_KEY } from '@component/constants/formConstants';
 import { 
-  VISA_COUNTRY, VISA_COUNTRY_LABELS, 
+  VISA_COUNTRY_LABELS, COUNTRY,
   VISA_CATEGORY, VISA_CATEGORY_LABELS,
   NATIONALITY, NATIONALITY_LABELS,
   STATE, STATE_LABELS,
@@ -45,7 +45,7 @@ const SearchPax = () => {
   const [formMode, setFormMode] = useState<FORM_MODE>(FORM_MODE.EDIT); // Default mode is edit
   const [visaRequests, setVisaRequests] = useState<any[]>([
     {
-      visaCountry: VISA_COUNTRY_LABELS[VISA_COUNTRY.NETHERLAND],
+      visaCountry: VISA_COUNTRY_LABELS[COUNTRY.NETHERLANDS],
       visaCategory: VISA_CATEGORY_LABELS[VISA_CATEGORY.BUSINESS],
       nationality: NATIONALITY_LABELS[NATIONALITY.INDIAN],
       state: STATE_LABELS[STATE.DELHI],
@@ -59,7 +59,7 @@ const SearchPax = () => {
     
     // Create a new visa request object
     const newVisaRequest = {
-      visaCountry: VISA_COUNTRY_LABELS[VISA_COUNTRY.NETHERLAND],
+      visaCountry: VISA_COUNTRY_LABELS[COUNTRY.NETHERLANDS],
       visaCategory: VISA_CATEGORY_LABELS[VISA_CATEGORY.BUSINESS],
       nationality: NATIONALITY_LABELS[NATIONALITY.INDIAN],
       state: STATE_LABELS[STATE.DELHI],

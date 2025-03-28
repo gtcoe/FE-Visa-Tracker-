@@ -1,12 +1,12 @@
 import { ChecklistDetail } from "@component/components/Checklist/ChecklistDetailView";
-import { VISA_COUNTRY, VISA_CATEGORY, NATIONALITY, STATE } from '@component/constants/dropdown/geographical';
+import { COUNTRY, VISA_CATEGORY, NATIONALITY, STATE } from '@component/constants/dropdown/geographical';
 
 // Sample checklist data for different combinations
 // The key format is '{country}-{category}-{nationality}-{state}'
 export const sampleChecklistData: Record<string, ChecklistDetail> = {
 
   // France Work Visa for Indian nationals - This matches the second image
-  [`${VISA_COUNTRY.FRANCE}-${VISA_CATEGORY.BUSINESS}-${NATIONALITY.INDIAN}-${STATE.DELHI}`]: {
+  [`${COUNTRY.FRANCE}-${VISA_CATEGORY.BUSINESS}-${NATIONALITY.INDIAN}-${STATE.DELHI}`]: {
     notes: ["Important notice about visa processing times", "Current COVID-19 protocol information"],
     requirements: [
       {

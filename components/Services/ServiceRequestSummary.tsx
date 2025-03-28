@@ -10,13 +10,14 @@ import {
 } from '@component/types/applicationTypes';
 import { addApplicationStep4 } from '@component/api/application';
 import { 
-  VISA_COUNTRY, VISA_COUNTRY_LABELS, 
+  COUNTRY, VISA_COUNTRY_LABELS, 
   VISA_CATEGORY, VISA_CATEGORY_LABELS,
   ENTRY_TYPE, ENTRY_TYPE_LABELS
 } from '@component/constants/dropdown/geographical';
 import { FORM_MODE, TAB_NAME, STORAGE_KEY } from '@component/constants/formConstants';
 import { ToastNotifyError } from '@component/components/common/Toast';
 import { APPLICATION_STATUS } from '@component/constants/appConstants';
+import { DELIVERY_METHOD, DELIVERY_METHOD_LABELS } from '@component/constants/dropdown/deliveryMethods';
 
 // Constants for dispatch mediums
 enum DISPATCH_MEDIUM {
@@ -68,7 +69,7 @@ const ServiceRequestSummary: React.FC<{
               name: getFullName(applicationData.personal_info),
               email: applicationData.personal_info.email_id || '',
               // Convert numeric values to labels using the enums
-              visaCountry: VISA_COUNTRY_LABELS[request.visa_country as VISA_COUNTRY] || 'Unknown',
+              visaCountry: VISA_COUNTRY_LABELS[request.visa_country as COUNTRY] || 'Unknown',
               visaCategory: VISA_CATEGORY_LABELS[request.visa_category as VISA_CATEGORY] || 'Unknown',
               entryType: ENTRY_TYPE_LABELS[request.entry_type as ENTRY_TYPE] || 'Unknown',
               remarks: request.remark || ''
@@ -314,9 +315,11 @@ const ServiceRequestSummary: React.FC<{
                     disabled={isSubmitting}
                   >
                     <option value="">Select</option>
-                    <option value="email">Email</option>
-                    <option value="courier">Courier</option>
-                    <option value="hand_delivery">Hand Delivery</option>
+                    {Object.values(DELIVERY_METHOD).map((method) => (
+                      <option key={method} value={method}>
+                        {DELIVERY_METHOD_LABELS[method]}
+                      </option>
+                    ))}
                   </select>
                 </div>
                 

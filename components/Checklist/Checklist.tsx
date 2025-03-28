@@ -3,21 +3,20 @@
 import React, { useState, useEffect } from 'react';
 import CustomDropdown from '../common/CustomDropdown';
 import { 
-  VISA_COUNTRY, VISA_COUNTRY_LABELS, 
+  COUNTRY, COUNTRY_LABELS,
+  VISA_COUNTRY_LABELS, 
   VISA_CATEGORY, VISA_CATEGORY_LABELS,
   NATIONALITY, NATIONALITY_LABELS,
-  STATE, STATE_LABELS,
-  COUNTRY, COUNTRY_LABELS
+  STATE, STATE_LABELS
 } from '@component/constants/dropdown/geographical';
-import { createEnumOptions } from '@component/constants/dropdown/dropdownConstants';
 import { ToastNotifyError, ToastNotifySuccess } from '../common/Toast';
-import { getAllChecklists, searchChecklists, getChecklistById, ChecklistItem, ChecklistSearchParams } from '@component/api/checklist';
+import { ChecklistItem, ChecklistSearchParams } from '@component/api/checklist';
 
 // Dummy data for demonstration (will be replaced with API calls in production)
 const dummyData: ChecklistItem[] = [
   {
     id: 1,
-    country: VISA_COUNTRY.FRANCE,
+    country: COUNTRY.FRANCE,
     category: VISA_CATEGORY.BUSINESS,
     nationality: NATIONALITY.INDIAN,
     state: STATE.DELHI
@@ -25,15 +24,15 @@ const dummyData: ChecklistItem[] = [
   // Add more dummy data as needed
 ];
 
-// Helper function to create dropdown options
-const createOptionsFromEnum = (enumObject: any, enumLabels: Record<number, string>) => {
+// Helper function to create dropdown options - updated to work with Partial Records
+const createOptionsFromEnum = (enumObject: any, enumLabels: Partial<Record<number, string>>) => {
   return [
     { value: '', label: 'Select' },
     ...Object.entries(enumObject)
-      .filter(([key]) => !isNaN(Number(key)))
+      .filter(([key]) => !isNaN(Number(key)) && enumLabels[Number(key)] !== undefined)
       .map(([key, value]) => ({
         value: Number(key),
-        label: enumLabels[Number(key)]
+        label: enumLabels[Number(key)] as string
       }))
   ];
 };
@@ -140,7 +139,7 @@ const Checklist = () => {
   };
 
   // Create dropdown options for each filter
-  const countryOptions = createOptionsFromEnum(VISA_COUNTRY, VISA_COUNTRY_LABELS);
+  const countryOptions = createOptionsFromEnum(COUNTRY, VISA_COUNTRY_LABELS);
   const categoryOptions = createOptionsFromEnum(VISA_CATEGORY, VISA_CATEGORY_LABELS);
   const nationalityOptions = createOptionsFromEnum(NATIONALITY, NATIONALITY_LABELS);
   const stateOptions = createOptionsFromEnum(STATE, STATE_LABELS);
@@ -250,7 +249,9 @@ const Checklist = () => {
                 <tbody>
                   {filteredChecklist.map((item) => (
                     <tr key={item.id} className="hover:bg-gray-50 border-b border-[#E6EAF2] last:border-b-0">
-                      <td className="px-4 py-4 text-sm text-gray-900 border-r border-[#E6EAF2] text-center">{VISA_COUNTRY_LABELS[item.country]}</td>
+                      <td className="px-4 py-4 text-sm text-gray-900 border-r border-[#E6EAF2] text-center">
+                        {VISA_COUNTRY_LABELS[item.country as keyof typeof VISA_COUNTRY_LABELS] || COUNTRY_LABELS[item.country]}
+                      </td>
                       <td className="px-4 py-4 text-sm text-gray-900 border-r border-[#E6EAF2] text-center">{VISA_CATEGORY_LABELS[item.category]}</td>
                       <td className="px-4 py-4 text-sm text-gray-900 border-r border-[#E6EAF2] text-center">{NATIONALITY_LABELS[item.nationality]}</td>
                       <td className="px-4 py-4 text-sm text-gray-900 border-r border-[#E6EAF2] text-center">{STATE_LABELS[item.state]}</td>

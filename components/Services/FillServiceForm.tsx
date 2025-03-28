@@ -6,7 +6,7 @@ import { addApplicationStep3, Step3RequestPayload } from '@component/api/applica
 import { 
   COUNTRY, COUNTRY_LABELS, 
   STATE, STATE_LABELS, 
-  VISA_COUNTRY, VISA_COUNTRY_LABELS, 
+  VISA_COUNTRY_LABELS, 
   VISA_CATEGORY, VISA_CATEGORY_LABELS,
   NATIONALITY, NATIONALITY_LABELS,
   ENTRY_TYPE, ENTRY_TYPE_LABELS,
@@ -295,7 +295,7 @@ const FillServiceForm = ({
       setVisaRequests(prev => [
         ...prev,
         {
-          visaCountry: VISA_COUNTRY_LABELS[VISA_COUNTRY.NETHERLAND],
+          visaCountry: VISA_COUNTRY_LABELS[COUNTRY.NETHERLANDS],
           visaCategory: VISA_CATEGORY_LABELS[VISA_CATEGORY.BUSINESS],
           nationality: NATIONALITY_LABELS[NATIONALITY.INDIAN],
           state: STATE_LABELS[STATE.DELHI],
@@ -367,8 +367,8 @@ const FillServiceForm = ({
                 // Create a new request based on the source
                 const newRequest = {
                   visaCountry: sourceRequest.visa_country
-                    ? VISA_COUNTRY_LABELS[sourceRequest.visa_country as VISA_COUNTRY] || VISA_COUNTRY_LABELS[VISA_COUNTRY.NETHERLAND]
-                    : VISA_COUNTRY_LABELS[VISA_COUNTRY.NETHERLAND],
+                    ? VISA_COUNTRY_LABELS[sourceRequest.visa_country as COUNTRY] || VISA_COUNTRY_LABELS[COUNTRY.NETHERLANDS]
+                    : VISA_COUNTRY_LABELS[COUNTRY.NETHERLANDS],
                   visaCategory: sourceRequest.visa_category
                     ? VISA_CATEGORY_LABELS[sourceRequest.visa_category as VISA_CATEGORY] || VISA_CATEGORY_LABELS[VISA_CATEGORY.BUSINESS]
                     : VISA_CATEGORY_LABELS[VISA_CATEGORY.BUSINESS],
@@ -414,8 +414,8 @@ const FillServiceForm = ({
                   
                   const mappedRequest = {
                     visaCountry: sourceRequest.visa_country
-                      ? VISA_COUNTRY_LABELS[sourceRequest.visa_country as VISA_COUNTRY] || VISA_COUNTRY_LABELS[VISA_COUNTRY.NETHERLAND]
-                      : VISA_COUNTRY_LABELS[VISA_COUNTRY.NETHERLAND],
+                      ? VISA_COUNTRY_LABELS[sourceRequest.visa_country as COUNTRY] || VISA_COUNTRY_LABELS[COUNTRY.NETHERLANDS] || ""
+                      : VISA_COUNTRY_LABELS[COUNTRY.NETHERLANDS] || "",
                     visaCategory: sourceRequest.visa_category
                       ? VISA_CATEGORY_LABELS[sourceRequest.visa_category as VISA_CATEGORY] || VISA_CATEGORY_LABELS[VISA_CATEGORY.BUSINESS]
                       : VISA_CATEGORY_LABELS[VISA_CATEGORY.BUSINESS],
@@ -440,7 +440,7 @@ const FillServiceForm = ({
                 // If in ADD_SUB_REQUEST mode, add an additional request
                 if (mode === FORM_MODE.ADD_SUB_REQUEST) {
                   const newRequest = {
-                    visaCountry: VISA_COUNTRY_LABELS[VISA_COUNTRY.NETHERLAND],
+                    visaCountry: VISA_COUNTRY_LABELS[COUNTRY.NETHERLANDS] || "",
                     visaCategory: VISA_CATEGORY_LABELS[VISA_CATEGORY.BUSINESS],
                     nationality: NATIONALITY_LABELS[NATIONALITY.INDIAN],
                     state: STATE_LABELS[STATE.DELHI],
@@ -625,7 +625,7 @@ const FillServiceForm = ({
   }), []);
   
   const visaCountryMap = useMemo(() => ({
-    [VISA_COUNTRY_LABELS[VISA_COUNTRY.NETHERLAND]]: VISA_COUNTRY.NETHERLAND
+    [VISA_COUNTRY_LABELS[COUNTRY.NETHERLANDS] || ""]: COUNTRY.NETHERLANDS
   }), []);
   
   const visaCategoryMap = useMemo(() => ({
