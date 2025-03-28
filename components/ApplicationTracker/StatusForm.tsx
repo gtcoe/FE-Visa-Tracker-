@@ -2,7 +2,6 @@
 import { useState, useRef, useEffect, useCallback, ChangeEvent } from "react";
 import CustomDropdown from "../common/CustomDropdown";
 import {
-  CUSTOMER_TYPE, CUSTOMER_TYPE_LABELS,
   BRANCH, BRANCH_LABELS,
   QUEUE, QUEUE_LABELS,
   STATUS, STATUS_LABELS,
@@ -11,6 +10,9 @@ import {
 import {
   COUNTRY, COUNTRY_LABELS
 } from '@component/constants/dropdown/geographical';
+import {
+  CLIENT_TYPE, getClientTypeOptions
+} from '@component/constants/clientConstants';
 
 interface StatusFormProps {
   onSearch: (data: any) => void;
@@ -18,8 +20,9 @@ interface StatusFormProps {
 
 interface FormData {
   referenceNo: string;
-  customerType: CUSTOMER_TYPE | '';
-  customer: string;
+  customerType: CLIENT_TYPE | '';
+  customer: string | number;
+  client_user_id: number | null;
   travelersName: string;
   travelersPassportNo: string;
   visaBranch: BRANCH | '';
@@ -35,6 +38,11 @@ interface FormData {
 interface DropdownOption {
   label: string;
   value: string | number;
+}
+
+interface Customer {
+  id: number;
+  name: string;
 }
 
 // Define a more flexible type for change events
@@ -254,10 +262,12 @@ const DateInput: React.FC<DateInputProps> = ({
 
 const StatusForm = ({ onSearch }: StatusFormProps) => {
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [customers, setCustomers] = useState<Customer[]>([]);
   const [formData, setFormData] = useState<FormData>({
     referenceNo: "",
     customerType: "",
     customer: "",
+    client_user_id: null,
     travelersName: "",
     travelersPassportNo: "",
     visaBranch: "",
@@ -270,10 +280,44 @@ const StatusForm = ({ onSearch }: StatusFormProps) => {
     billingToCompany: "",
   });
 
-  // Use our helper function to create options from enums
-  const customerTypeOptions = [
-    { value: '', label: 'Select' },
-    ...createEnumOptions(CUSTOMER_TYPE, CUSTOMER_TYPE_LABELS)
+  // Fetch customers based on customer type
+  useEffect(() => {
+    if (formData.customerType) {
+      // In a real application, replace this with an actual API call
+      fetchCustomers(formData.customerType);
+    } else {
+      setCustomers([]);
+    }
+  }, [formData.customerType]);
+
+  // Function to fetch customers
+  const fetchCustomers = async (customerType: CLIENT_TYPE | string) => {
+    try {
+      // This would be replaced with a real API call
+      // For now, we'll simulate a response with dummy data
+      const dummyCustomers = [
+        { id: 1, name: 'Client A' },
+        { id: 2, name: 'Client B' },
+        { id: 3, name: 'Client C' },
+      ];
+      
+      setCustomers(dummyCustomers);
+    } catch (error) {
+      console.error('Error fetching customers:', error);
+      setCustomers([]);
+    }
+  };
+
+  // Use our client constants to create customer type options
+  const customerTypeOptions = getClientTypeOptions();
+  
+  // Create customer options from fetched customers
+  const customerOptions = [
+    { value: '', label: 'Select Customer' },
+    ...customers.map(customer => ({
+      value: customer.id,
+      label: customer.name
+    }))
   ];
   
   const visaBranchOptions = [
@@ -299,6 +343,15 @@ const StatusForm = ({ onSearch }: StatusFormProps) => {
       ...formData,
       [field]: value,
     });
+
+    // If changing customer, update client_user_id
+    if (field === 'customer' && value) {
+      setFormData(prev => ({
+        ...prev,
+        [field]: value,
+        client_user_id: typeof value === 'number' ? value : null
+      }));
+    }
   };
 
   // Adapter function to convert the DateInput component's onChange handler to work with handleChange
@@ -355,12 +408,14 @@ const StatusForm = ({ onSearch }: StatusFormProps) => {
             <label className="block text-xs text-[#696969] mb-1">
               Customer
             </label>
-            <input
-              type="text"
+            <CustomDropdown
+              options={customerOptions}
               value={formData.customer}
-              onChange={(e) => handleChange("customer", e.target.value)}
-              className="text-[#1C1C1C] w-full h-10 px-3 border border-[#E6EAF2] rounded focus:outline-none focus:ring-1 focus:ring-[#0B498B] text-sm placeholder-[#A0A0A0]"
-              placeholder="Enter customer"
+              onChange={(value) => handleChange("customer", value)}
+              placeholder="Select Customer"
+              className="h-10"
+              name="customer"
+              disabled={!formData.customerType}
             />
           </div>
 

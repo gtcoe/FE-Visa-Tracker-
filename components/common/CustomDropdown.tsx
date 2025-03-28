@@ -7,13 +7,14 @@ interface Option {
   label: string;
 }
 
-interface CustomDropdownProps {
+export interface CustomDropdownProps {
   options: Option[];
   value: string | number;
   onChange: (value: string | number) => void;
   placeholder?: string;
   className?: string;
   name: string;
+  disabled?: boolean;
 }
 
 /**
@@ -27,7 +28,8 @@ const CustomDropdown: React.FC<CustomDropdownProps> = ({
   onChange,
   placeholder = 'Select',
   className = '',
-  name
+  name,
+  disabled = false
 }) => {
   const [isOpen, setIsOpen] = useState(false);
   const dropdownRef = useRef<HTMLDivElement>(null);
@@ -55,8 +57,8 @@ const CustomDropdown: React.FC<CustomDropdownProps> = ({
   return (
     <div className={`relative ${className}`} ref={dropdownRef}>
       <div
-        className="w-full px-3 py-2 border border-[#E6EAF2] rounded-md bg-white flex items-center justify-between cursor-pointer"
-        onClick={() => setIsOpen(!isOpen)}
+        className={`w-full px-3 py-2 border border-[#E6EAF2] rounded-md bg-white flex items-center justify-between ${disabled ? 'opacity-60 cursor-not-allowed' : 'cursor-pointer'}`}
+        onClick={() => !disabled && setIsOpen(!isOpen)}
       >
         <span className={`${!selectedOption ? 'text-[#8A8A8A]' : 'text-gray-900'}`}>
           {selectedOption ? selectedOption.label : placeholder}
