@@ -244,7 +244,7 @@ export const searchPax = async (searchParams: any): Promise<any[]> => {
       throw new Error(response.message || 'Failed to search applicants');
     }
     
-    return response.data?.pax_info || [];
+    return response.data?.passengers_info || [];
   } catch (error) {
     console.error('Error searching applicants:', error);
     throw error;

@@ -13,6 +13,7 @@ import {
   STATE, STATE_LABELS,
   ENTRY_TYPE, ENTRY_TYPE_LABELS
 } from '@component/constants/dropdown/geographical';
+import { PassengerInfo } from './PassengerSearchResults';
 
 // Lazy load all tab components for code splitting
 const FillServiceForm = lazy(() => import('./FillServiceForm'));
@@ -39,7 +40,7 @@ const SearchPax = () => {
   const [isSearching, setIsSearching] = useState(false);
   const [activeTab, setActiveTab] = useState<string>(TAB_NAME.SEARCH);
   const [tabsToPreload, setTabsToPreload] = useState<string[]>([]);
-  const [searchResults, setSearchResults] = useState<any[]>([]);
+  const [searchResults, setSearchResults] = useState<{passengers_info: PassengerInfo[]} | undefined>(undefined);
   const [searchError, setSearchError] = useState<string | null>(null);
   const [formMode, setFormMode] = useState<FORM_MODE>(FORM_MODE.EDIT); // Default mode is edit
   const [visaRequests, setVisaRequests] = useState<any[]>([
@@ -153,25 +154,40 @@ const SearchPax = () => {
       console.log('Searching with params:', searchParams);
       
       // Call the searchPax API
-      const results = await searchPax(searchParams);
+      const apiResponse = await searchPax(searchParams);
       
-      console.log('Search results:', results);
-      setSearchResults(results);
+      console.log('Search API response:', apiResponse);
       
-      // If results found, you can handle navigation or display results
-      if (results.length > 0) {
-        // Store found pax data in localStorage for use in next steps
-        localStorage.setItem('foundPaxData', JSON.stringify(results[0]));
-        
-        // Option: Automatically go to fill form step with the found pax data
-        // setActiveTab('fill');
-      } else {
-        console.log('No results found');
-        // Could display a message to the user
+      // Format the data to match our component's expected structure
+      const formattedResults = {
+        passengers_info: Array.isArray(apiResponse) ? apiResponse.map(pax => ({
+          id: pax.id || 0,
+          first_name: pax.first_name || '',
+          last_name: pax.last_name || '',
+          email: pax.email || '',
+          dob: pax.dob || '',
+          passport_number: pax.passport_number || '',
+          address_line_1: pax.address_line_1 || '',
+          address_line_2: pax.address_line_2 || '',
+          city: Number(pax.city) || 0,
+          state: Number(pax.state) || 0,
+          country: Number(pax.country) || 0,
+          zip: pax.zip || '',
+          occupation: pax.occupation || ''
+        })) : []
+      };
+      
+      setSearchResults(formattedResults);
+      
+      if ((!Array.isArray(apiResponse) || apiResponse.length === 0) && 
+          (!formattedResults.passengers_info || formattedResults.passengers_info.length === 0)) {
+        setSearchError('No results found');
       }
+      
     } catch (error) {
       console.error('Error searching for pax:', error);
       setSearchError(error instanceof Error ? error.message : 'An error occurred while searching');
+      setSearchResults({ passengers_info: [] });
     } finally {
       setIsSearching(false);
     }
@@ -183,7 +199,7 @@ const SearchPax = () => {
       passportNo: '',
       referenceNo: ''
     });
-    setSearchResults([]);
+    setSearchResults(undefined);
     setSearchError(null);
   }, []);
 
@@ -220,6 +236,7 @@ const SearchPax = () => {
             handleSearch={handleSearch}
             handleClear={handleClear}
             isSearching={isSearching}
+            searchResults={searchResults}
           />
         )}
         

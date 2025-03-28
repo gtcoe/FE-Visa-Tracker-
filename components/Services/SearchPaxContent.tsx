@@ -1,6 +1,7 @@
 "use client";
 
 import React, { useEffect, useState } from 'react';
+import PassengerSearchResults, { PassengerInfo } from './PassengerSearchResults';
 
 // Define the types for the SearchPaxContent props
 interface SearchPaxContentProps {
@@ -18,6 +19,9 @@ interface SearchPaxContentProps {
   handleSearch: (e: React.FormEvent) => Promise<void>;
   handleClear: () => void;
   isSearching: boolean;
+  searchResults?: {
+    passengers_info: PassengerInfo[];
+  };
 }
 
 // Component for Search Pax tab
@@ -27,7 +31,8 @@ const SearchPaxContent: React.FC<SearchPaxContentProps> = ({
   handleChange,
   handleSearch,
   handleClear,
-  isSearching
+  isSearching,
+  searchResults
 }) => {
   const [referenceNumber, setReferenceNumber] = useState<string>('');
   
@@ -37,6 +42,19 @@ const SearchPaxContent: React.FC<SearchPaxContentProps> = ({
       setReferenceNumber(localStorage.getItem('referenceNumber') || '');
     }
   }, []);
+
+  // Format date from ISO string to YYYY-MM-DD
+  const formatDate = (dateString: string) => {
+    if (!dateString) return '';
+    const date = new Date(dateString);
+    return date.toISOString().split('T')[0];
+  };
+
+  // Handle using a passenger (will be implemented later)
+  const handleUsePassenger = (passengerId: number) => {
+    console.log(`Using passenger with ID: ${passengerId}`);
+    // Functionality to be added later
+  };
 
   return (
     <>
@@ -119,8 +137,16 @@ const SearchPaxContent: React.FC<SearchPaxContentProps> = ({
           {isSearching ? 'Searching...' : 'Search'}
         </button>
       </div>
+
+      {/* Passenger Search Results */}
+      {searchResults && searchResults.passengers_info && (
+        <PassengerSearchResults 
+          passengers={searchResults.passengers_info} 
+          onUsePassenger={handleUsePassenger} 
+        />
+      )}
     </>
   );
 };
 
-export default React.memo(SearchPaxContent); 
+export default React.memo(SearchPaxContent);

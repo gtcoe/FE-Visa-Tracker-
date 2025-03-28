@@ -274,6 +274,35 @@ export enum STATE {
     [COUNTRY.UAE]: []
   };
 
+// City Options - Common Indian and International cities
+export enum CITY {
+  NEW_DELHI = 1,
+  MUMBAI = 2,
+  BANGALORE = 3,
+  CHENNAI = 4,
+  KOLKATA = 5,
+  HYDERABAD = 6,
+  PUNE = 7,
+  AHMEDABAD = 8,
+  JAIPUR = 9,
+  SURAT = 10,
+  // Add more cities as needed
+}
+
+export const CITY_LABELS: Record<CITY, string> = {
+  [CITY.NEW_DELHI]: 'New Delhi',
+  [CITY.MUMBAI]: 'Mumbai',
+  [CITY.BANGALORE]: 'Bangalore',
+  [CITY.CHENNAI]: 'Chennai',
+  [CITY.KOLKATA]: 'Kolkata',
+  [CITY.HYDERABAD]: 'Hyderabad',
+  [CITY.PUNE]: 'Pune',
+  [CITY.AHMEDABAD]: 'Ahmedabad',
+  [CITY.JAIPUR]: 'Jaipur',
+  [CITY.SURAT]: 'Surat',
+  // Add more cities as needed
+};
+
 
 
 
