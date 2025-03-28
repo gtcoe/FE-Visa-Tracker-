@@ -13,6 +13,7 @@ import {
 import {
   CLIENT_TYPE, getClientTypeOptions
 } from '@component/constants/clientConstants';
+import { getClientsByType } from '@component/api/application';
 
 interface StatusFormProps {
   onSearch: (data: any) => void;
@@ -263,6 +264,8 @@ const DateInput: React.FC<DateInputProps> = ({
 const StatusForm = ({ onSearch }: StatusFormProps) => {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [customers, setCustomers] = useState<Customer[]>([]);
+  const [isLoadingCustomers, setIsLoadingCustomers] = useState(false);
+  const [customerFetchError, setCustomerFetchError] = useState<string | null>(null);
   const [formData, setFormData] = useState<FormData>({
     referenceNo: "",
     customerType: "",
@@ -283,8 +286,19 @@ const StatusForm = ({ onSearch }: StatusFormProps) => {
   // Fetch customers based on customer type
   useEffect(() => {
     if (formData.customerType) {
-      // In a real application, replace this with an actual API call
-      fetchCustomers(formData.customerType);
+      // Reset customer selection when type changes
+      if (formData.customer) {
+        setFormData(prev => ({
+          ...prev,
+          customer: '',
+          client_user_id: null
+        }));
+      }
+      
+      // Fetch customers for the selected type
+      setIsLoadingCustomers(true);
+      fetchCustomers(formData.customerType)
+        .finally(() => setIsLoadingCustomers(false));
     } else {
       setCustomers([]);
     }
@@ -292,19 +306,36 @@ const StatusForm = ({ onSearch }: StatusFormProps) => {
 
   // Function to fetch customers
   const fetchCustomers = async (customerType: CLIENT_TYPE | string) => {
+    // Reset error state
+    setCustomerFetchError(null);
+    
     try {
-      // This would be replaced with a real API call
-      // For now, we'll simulate a response with dummy data
+      // Use the API function from application.ts instead of direct fetch
+      const clientsInfo = await getClientsByType(customerType);
+      
+      // Transform API response to Customer format
+      const fetchedCustomers = clientsInfo.map((client) => ({
+        id: client.user_id, // Using user_id as the ID for the dropdown
+        name: client.name
+      }));
+      
+      setCustomers(fetchedCustomers);
+      
+      // If no customers found, set a friendly message
+      if (fetchedCustomers.length === 0) {
+        setCustomerFetchError('No customers found for this type');
+      }
+    } catch (error) {
+      console.error('Error fetching customers:', error);
+      setCustomerFetchError('Failed to fetch customers. Using default options.');
+      
+      // Fallback to dummy data in case of error
       const dummyCustomers = [
         { id: 1, name: 'Client A' },
         { id: 2, name: 'Client B' },
         { id: 3, name: 'Client C' },
       ];
-      
       setCustomers(dummyCustomers);
-    } catch (error) {
-      console.error('Error fetching customers:', error);
-      setCustomers([]);
     }
   };
 
@@ -313,7 +344,14 @@ const StatusForm = ({ onSearch }: StatusFormProps) => {
   
   // Create customer options from fetched customers
   const customerOptions = [
-    { value: '', label: 'Select Customer' },
+    { 
+      value: '', 
+      label: isLoadingCustomers 
+        ? 'Loading customers...' 
+        : customerFetchError 
+          ? `${customerFetchError}` 
+          : 'Select Customer' 
+    },
     ...customers.map(customer => ({
       value: customer.id,
       label: customer.name
@@ -339,17 +377,23 @@ const StatusForm = ({ onSearch }: StatusFormProps) => {
   ];
 
   const handleChange = (field: string, value: string | number) => {
-    setFormData({
-      ...formData,
-      [field]: value,
-    });
+    // For empty values, use undefined or null as appropriate
+    const processedValue = value === '' 
+      ? (field === 'customer' || field === 'customerType' ? '' : undefined) 
+      : value;
+    
+    // Update the form data
+    setFormData(prev => ({
+      ...prev,
+      [field]: processedValue,
+    }));
 
     // If changing customer, update client_user_id
     if (field === 'customer' && value) {
       setFormData(prev => ({
         ...prev,
         [field]: value,
-        client_user_id: typeof value === 'number' ? value : null
+        client_user_id: typeof value === 'number' ? value : Number(value)
       }));
     }
   };
@@ -363,8 +407,23 @@ const StatusForm = ({ onSearch }: StatusFormProps) => {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setIsSubmitting(true);
+    
     try {
-      await onSearch(formData);
+      // Create the search payload
+      const searchPayload = {
+        ...formData,
+        // Ensure we're sending the client_user_id if customer is selected
+        client_user_id: formData.customer ? formData.client_user_id : null
+      };
+      
+      // Log the search payload for debugging
+      console.log('Submitting search with payload:', searchPayload);
+      
+      // Call the search function provided by the parent component
+      await onSearch(searchPayload);
+    } catch (error) {
+      console.error('Error during search submission:', error);
+      // You could add ToastNotifyError here if you want to show an error message
     } finally {
       setIsSubmitting(false);
     }

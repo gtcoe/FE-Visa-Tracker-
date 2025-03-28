@@ -19,6 +19,7 @@ const API_ENDPOINTS = {
   // Clients
   GET_ALL_CLIENTS: '/client',
   CREATE_CLIENT: '/client/create',
+  GET_CLIENTS_BY_TYPE: '/client/byType',
   
   // Users
   GET_ALL_USERS: '/user',
