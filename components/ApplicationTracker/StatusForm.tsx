@@ -3,8 +3,6 @@ import { useState, useRef, useEffect, useCallback, ChangeEvent } from "react";
 import CustomDropdown from "../common/CustomDropdown";
 import {
   BRANCH, BRANCH_LABELS,
-  QUEUE, QUEUE_LABELS,
-  STATUS, STATUS_LABELS,
   createEnumOptions
 } from '@component/constants/dropdown/dropdownConstants';
 import {
@@ -13,7 +11,15 @@ import {
 import {
   CLIENT_TYPE, getClientTypeOptions
 } from '@component/constants/clientConstants';
+import { 
+  APPLICATION_QUEUES, 
+  APPLICATION_EXTERNAL_STATUS, 
+  QUEUE_DISPLAY_MAP, 
+  STATUS_DISPLAY_MAP,
+  QUEUE_TO_STATUS
+} from '@component/constants/applicationConstants';
 import { getClientsByType } from '@component/api/application';
+import { ToastNotifyError, ToastNotifySuccess } from "../common/Toast";
 
 interface StatusFormProps {
   onSearch: (data: any) => void;
@@ -30,8 +36,8 @@ interface FormData {
   entryGenerationBranch: BRANCH | '';
   fromDate: string;
   toDate: string;
-  queue: QUEUE;
-  status: STATUS;
+  queue: APPLICATION_QUEUES;
+  status: APPLICATION_EXTERNAL_STATUS;
   country: COUNTRY | '';
   billingToCompany: string;
 }
@@ -265,7 +271,6 @@ const StatusForm = ({ onSearch }: StatusFormProps) => {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [customers, setCustomers] = useState<Customer[]>([]);
   const [isLoadingCustomers, setIsLoadingCustomers] = useState(false);
-  const [customerFetchError, setCustomerFetchError] = useState<string | null>(null);
   const [formData, setFormData] = useState<FormData>({
     referenceNo: "",
     customerType: "",
@@ -277,8 +282,8 @@ const StatusForm = ({ onSearch }: StatusFormProps) => {
     entryGenerationBranch: "",
     fromDate: "",
     toDate: "",
-    queue: QUEUE.IN_TRANSIT, // Default value
-    status: STATUS.DOC_RECEIVED, // Default value
+    queue: APPLICATION_QUEUES.IN_TRANSIT, // Default value
+    status: APPLICATION_EXTERNAL_STATUS.DOC_RECIVED, // Default value
     country: "",
     billingToCompany: "",
   });
@@ -304,11 +309,23 @@ const StatusForm = ({ onSearch }: StatusFormProps) => {
     }
   }, [formData.customerType]);
 
+  // Update status when queue changes to ensure compatibility
+  useEffect(() => {
+    // If the current status is not valid for the selected queue, reset it to the first valid status
+    if (formData.queue) {
+      const validStatuses = QUEUE_TO_STATUS[formData.queue];
+      if (!validStatuses.includes(formData.status)) {
+        // Set to the first valid status for this queue
+        setFormData(prev => ({
+          ...prev,
+          status: validStatuses[0]
+        }));
+      }
+    }
+  }, [formData.queue]);
+
   // Function to fetch customers
   const fetchCustomers = async (customerType: CLIENT_TYPE | string) => {
-    // Reset error state
-    setCustomerFetchError(null);
-    
     try {
       // Use the API function from application.ts instead of direct fetch
       const clientsInfo = await getClientsByType(customerType);
@@ -323,20 +340,27 @@ const StatusForm = ({ onSearch }: StatusFormProps) => {
       
       // If no customers found, set a friendly message
       if (fetchedCustomers.length === 0) {
-        setCustomerFetchError('No customers found for this type');
+        ToastNotifySuccess('No customers found for this type');
       }
     } catch (error) {
-      console.error('Error fetching customers:', error);
-      setCustomerFetchError('Failed to fetch customers. Using default options.');
-      
-      // Fallback to dummy data in case of error
-      const dummyCustomers = [
-        { id: 1, name: 'Client A' },
-        { id: 2, name: 'Client B' },
-        { id: 3, name: 'Client C' },
-      ];
-      setCustomers(dummyCustomers);
+      ToastNotifyError('Unable to fetch customers')
     }
+  };
+
+  // Helper function to create options from application enum
+  const createApplicationOptions = <T extends number>(
+    enumObj: Record<string, any>,
+    labelMap: Record<T, string>
+  ): DropdownOption[] => {
+    return Object.keys(enumObj)
+      .filter(key => !isNaN(Number(key))) // Filter only numeric keys
+      .map(key => {
+        const value = Number(key) as T;
+        return {
+          value,
+          label: labelMap[value] || `Unknown (${value})`
+        };
+      });
   };
 
   // Use our client constants to create customer type options
@@ -348,9 +372,7 @@ const StatusForm = ({ onSearch }: StatusFormProps) => {
       value: '', 
       label: isLoadingCustomers 
         ? 'Loading customers...' 
-        : customerFetchError 
-          ? `${customerFetchError}` 
-          : 'Select Customer' 
+        : 'Select Customer'  
     },
     ...customers.map(customer => ({
       value: customer.id,
@@ -368,8 +390,27 @@ const StatusForm = ({ onSearch }: StatusFormProps) => {
     ...createEnumOptions(BRANCH, BRANCH_LABELS)
   ];
   
-  const queueOptions = createEnumOptions(QUEUE, QUEUE_LABELS);
-  const statusOptions = createEnumOptions(STATUS, STATUS_LABELS);
+  // Create options for queue dropdown
+  const queueOptions = createApplicationOptions<APPLICATION_QUEUES>(APPLICATION_QUEUES, QUEUE_DISPLAY_MAP);
+  
+  // Create filtered status options based on selected queue
+  const getFilteredStatusOptions = () => {
+    if (!formData.queue) {
+      // If no queue is selected, show all statuses
+      return createApplicationOptions<APPLICATION_EXTERNAL_STATUS>(APPLICATION_EXTERNAL_STATUS, STATUS_DISPLAY_MAP);
+    }
+    
+    // Get valid statuses for the selected queue
+    const validStatuses = QUEUE_TO_STATUS[formData.queue];
+    
+    // Filter and create options only for valid statuses
+    return validStatuses.map(statusValue => ({
+      value: statusValue,
+      label: STATUS_DISPLAY_MAP[statusValue] || `Unknown (${statusValue})`
+    }));
+  };
+  
+  const statusOptions = getFilteredStatusOptions();
   
   const countryOptions = [
     { value: '', label: 'Select Country' },
@@ -447,7 +488,7 @@ const StatusForm = ({ onSearch }: StatusFormProps) => {
               value={formData.referenceNo}
               onChange={(e) => handleChange("referenceNo", e.target.value)}
               className="text-[#1C1C1C] w-full h-10 px-3 border border-[#E6EAF2] rounded focus:outline-none focus:ring-1 focus:ring-[#0B498B] text-sm placeholder-[#A0A0A0]"
-              placeholder="Enter ref no."
+              placeholder="Enter Reference Number"
             />
           </div>
 
