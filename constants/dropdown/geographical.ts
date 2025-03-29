@@ -1,44 +1,125 @@
 // State Options - Comprehensive list of Indian states and union territories
 // Country Options
 export enum COUNTRY {
-    INDIA = 1,
-    USA = 2,
-    UK = 3,
-    CANADA = 4,
-    AUSTRALIA = 5,
-    GERMANY = 6,
-    FRANCE = 7,
-    JAPAN = 8,
-    CHINA = 9,
-    SINGAPORE = 10,
-    UAE = 11
-  }
-  
-  export const COUNTRY_LABELS: Record<COUNTRY, string> = {
-    [COUNTRY.INDIA]: 'India',
-    [COUNTRY.USA]: 'USA',
-    [COUNTRY.UK]: 'UK',
-    [COUNTRY.CANADA]: 'Canada',
-    [COUNTRY.AUSTRALIA]: 'Australia',
-    [COUNTRY.GERMANY]: 'Germany',
-    [COUNTRY.FRANCE]: 'France',
-    [COUNTRY.JAPAN]: 'Japan',
-    [COUNTRY.CHINA]: 'China',
-    [COUNTRY.SINGAPORE]: 'Singapore',
-    [COUNTRY.UAE]: 'UAE'
-  };
-
-// Added constants for visa-related data
-export enum VISA_COUNTRY {
-  NETHERLAND = 1,
-  FRANCE = 2,
-  USA = 3
+  UNITED_ARAB_EMIRATES = 1,
+  SAUDI_ARABIA = 2,
+  UNITED_STATES = 3,
+  SINGAPORE = 4,
+  THAILAND = 5,
+  QATAR = 6,
+  KUWAIT = 7,
+  UNITED_KINGDOM = 8,
+  MALAYSIA = 9,
+  CANADA = 10,
+  AUSTRALIA = 11,
+  CHINA = 12,
+  NEPAL = 13,
+  SRI_LANKA = 14,
+  OMAN = 15,
+  INDONESIA = 16,
+  BAHRAIN = 17,
+  GERMANY = 18,
+  FRANCE = 19,
+  SOUTH_AFRICA = 20,
+  ITALY = 21,
+  NEW_ZEALAND = 22,
+  SWITZERLAND = 23,
+  JAPAN = 24,
+  SOUTH_KOREA = 25,
+  PHILIPPINES = 26,
+  BANGLADESH = 27,
+  RUSSIA = 28,
+  EGYPT = 29,
+  MAURITIUS = 30,
+  MALDIVES = 31,
+  NETHERLANDS = 32,
+  SPAIN = 33,
+  TURKEY = 34,
+  VIETNAM = 35,
+  GREECE = 36,
+  HONG_KONG = 37,
+  BRAZIL = 38,
+  MEXICO = 39,
+  SWEDEN = 40,
+  NORWAY = 41,
+  DENMARK = 42,
+  BELGIUM = 43,
+  AUSTRIA = 44,
+  FINLAND = 45,
+  IRELAND = 46,
+  POLAND = 47,
+  PORTUGAL = 48,
+  CZECH_REPUBLIC = 49,
+  HUNGARY = 50,
+  INDIA = 51,
 }
 
-export const VISA_COUNTRY_LABELS: Record<VISA_COUNTRY, string> = {
-  [VISA_COUNTRY.NETHERLAND]: 'Netherland',
-  [VISA_COUNTRY.FRANCE]: 'France',
-  [VISA_COUNTRY.USA]: 'United States Of America'
+export const COUNTRY_DISPLAY_NAME: Record<COUNTRY, string> = {
+  [COUNTRY.UNITED_ARAB_EMIRATES]: 'United Arab Emirates',
+  [COUNTRY.SAUDI_ARABIA]: 'Saudi Arabia',
+  [COUNTRY.UNITED_STATES]: 'United States',
+  [COUNTRY.SINGAPORE]: 'Singapore',
+  [COUNTRY.THAILAND]: 'Thailand',
+  [COUNTRY.QATAR]: 'Qatar',
+  [COUNTRY.KUWAIT]: 'Kuwait',
+  [COUNTRY.UNITED_KINGDOM]: 'United Kingdom',
+  [COUNTRY.MALAYSIA]: 'Malaysia',
+  [COUNTRY.CANADA]: 'Canada',
+  [COUNTRY.AUSTRALIA]: 'Australia',
+  [COUNTRY.CHINA]: 'China',
+  [COUNTRY.NEPAL]: 'Nepal',
+  [COUNTRY.SRI_LANKA]: 'Sri Lanka',
+  [COUNTRY.OMAN]: 'Oman',
+  [COUNTRY.INDONESIA]: 'Indonesia',
+  [COUNTRY.BAHRAIN]: 'Bahrain',
+  [COUNTRY.GERMANY]: 'Germany',
+  [COUNTRY.FRANCE]: 'France',
+  [COUNTRY.SOUTH_AFRICA]: 'South Africa',
+  [COUNTRY.ITALY]: 'Italy',
+  [COUNTRY.NEW_ZEALAND]: 'New Zealand',
+  [COUNTRY.SWITZERLAND]: 'Switzerland',
+  [COUNTRY.JAPAN]: 'Japan',
+  [COUNTRY.SOUTH_KOREA]: 'South Korea',
+  [COUNTRY.PHILIPPINES]: 'Philippines',
+  [COUNTRY.BANGLADESH]: 'Bangladesh',
+  [COUNTRY.RUSSIA]: 'Russia',
+  [COUNTRY.EGYPT]: 'Egypt',
+  [COUNTRY.MAURITIUS]: 'Mauritius',
+  [COUNTRY.MALDIVES]: 'Maldives',
+  [COUNTRY.NETHERLANDS]: 'Netherlands',
+  [COUNTRY.SPAIN]: 'Spain',
+  [COUNTRY.TURKEY]: 'Turkey',
+  [COUNTRY.VIETNAM]: 'Vietnam',
+  [COUNTRY.GREECE]: 'Greece',
+  [COUNTRY.HONG_KONG]: 'Hong Kong',
+  [COUNTRY.BRAZIL]: 'Brazil',
+  [COUNTRY.MEXICO]: 'Mexico',
+  [COUNTRY.SWEDEN]: 'Sweden',
+  [COUNTRY.NORWAY]: 'Norway',
+  [COUNTRY.DENMARK]: 'Denmark',
+  [COUNTRY.BELGIUM]: 'Belgium',
+  [COUNTRY.AUSTRIA]: 'Austria',
+  [COUNTRY.FINLAND]: 'Finland',
+  [COUNTRY.IRELAND]: 'Ireland',
+  [COUNTRY.POLAND]: 'Poland',
+  [COUNTRY.PORTUGAL]: 'Portugal',
+  [COUNTRY.CZECH_REPUBLIC]: 'Czech Republic',
+  [COUNTRY.HUNGARY]: 'Hungary',
+  [COUNTRY.INDIA]: 'India',
+};
+
+export const COUNTRY_LABELS: Partial<Record<COUNTRY, string>> = {
+  [COUNTRY.INDIA]: 'India',
+  [COUNTRY.UNITED_STATES]: 'USA',
+  [COUNTRY.UNITED_KINGDOM]: 'UK',
+  [COUNTRY.CANADA]: 'Canada',
+  [COUNTRY.AUSTRALIA]: 'Australia',
+  [COUNTRY.GERMANY]: 'Germany',
+  [COUNTRY.FRANCE]: 'France',
+  [COUNTRY.JAPAN]: 'Japan',
+  [COUNTRY.CHINA]: 'China',
+  [COUNTRY.SINGAPORE]: 'Singapore',
+  [COUNTRY.UNITED_ARAB_EMIRATES]: 'UAE'
 };
 
 export enum VISA_CATEGORY {
@@ -204,7 +285,7 @@ export enum STATE {
   };
   
   // Country to State mapping
-  export const COUNTRY_STATES: Record<COUNTRY, STATE[]> = {
+  export const COUNTRY_STATES: Partial<Record<COUNTRY, STATE[]>> = {
     [COUNTRY.INDIA]: [
       STATE.ANDHRA_PRADESH,
       STATE.ARUNACHAL_PRADESH,
@@ -243,13 +324,13 @@ export enum STATE {
       STATE.LAKSHADWEEP,
       STATE.PUDUCHERRY
     ],
-    [COUNTRY.USA]: [
+    [COUNTRY.UNITED_STATES]: [
       STATE.CALIFORNIA,
       STATE.NEW_YORK,
       STATE.TEXAS,
       STATE.FLORIDA
     ],
-    [COUNTRY.UK]: [
+    [COUNTRY.UNITED_KINGDOM]: [
       STATE.ENGLAND,
       STATE.SCOTLAND,
       STATE.WALES,
@@ -265,13 +346,12 @@ export enum STATE {
       STATE.VICTORIA,
       STATE.QUEENSLAND
     ],
-    // Add default states for the newly added countries
     [COUNTRY.GERMANY]: [],
     [COUNTRY.FRANCE]: [],
     [COUNTRY.JAPAN]: [],
     [COUNTRY.CHINA]: [],
     [COUNTRY.SINGAPORE]: [],
-    [COUNTRY.UAE]: []
+    [COUNTRY.UNITED_ARAB_EMIRATES]: []
   };
 
 // City Options - Common Indian and International cities
@@ -301,6 +381,12 @@ export const CITY_LABELS: Record<CITY, string> = {
   [CITY.JAIPUR]: 'Jaipur',
   [CITY.SURAT]: 'Surat',
   // Add more cities as needed
+};
+
+export const VISA_COUNTRY_LABELS: Partial<Record<COUNTRY, string>> = {
+  [COUNTRY.NETHERLANDS]: COUNTRY_DISPLAY_NAME[COUNTRY.NETHERLANDS],
+  [COUNTRY.FRANCE]: COUNTRY_DISPLAY_NAME[COUNTRY.FRANCE],
+  [COUNTRY.UNITED_STATES]: COUNTRY_DISPLAY_NAME[COUNTRY.UNITED_STATES]
 };
 
 

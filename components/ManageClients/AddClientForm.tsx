@@ -7,6 +7,7 @@ import {
   STATE, STATE_LABELS,
   COUNTRY_STATES 
 } from '@component/constants/dropdown/geographical';
+import { getClientTypeOptions } from '@component/constants/clientConstants';
 
 // Define the Option type locally to match CustomDropdown's interface
 interface Option {
@@ -102,10 +103,7 @@ const AddClientForm = ({ onSubmit }: AddClientFormProps) => {
     }));
   };
 
-  const typeOptions: Option[] = [
-    { value: '1', label: 'Corporate' },
-    { value: '2', label: 'Agent' }
-  ];
+  const typeOptions = getClientTypeOptions(false);
 
   // Generate country options from the COUNTRY_LABELS mapping
   const countryOptions: Option[] = useMemo(() => {

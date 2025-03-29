@@ -194,19 +194,16 @@ export const STATUS_LABELS: Record<STATUS, string> = {
  * Helper function to convert numeric enums to dropdown options
  * Works with TypeScript enums by filtering out the reverse mapping entries
  */
-export function createEnumOptions<T extends number>(enumObject: any, labelsObject: Record<T, string>) {
-  // For numeric enums, we need to filter out the reverse mapping that TypeScript adds
-  const options = Object.keys(enumObject)
-    .filter(key => !isNaN(Number(key))) // Only include numeric keys
-    .map(key => {
-      const enumValue = Number(key) as T;
-      return {
-        value: enumValue,
-        label: labelsObject[enumValue]
-      };
-    });
-  
-  return options;
+export function createEnumOptions<T extends number | string>(
+  enumObj: any,
+  enumLabels: Partial<Record<T, string>>
+) {
+  return Object.entries(enumObj)
+    .filter(([key]) => !isNaN(Number(key)) && enumLabels[Number(key) as T] !== undefined)
+    .map(([key, value]) => ({
+      value: Number(key),
+      label: enumLabels[Number(key) as T] as string,
+    }));
 }
 
 /**

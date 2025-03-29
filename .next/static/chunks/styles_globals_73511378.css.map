@@ -1,7 +1,0 @@
-{
-  "version": 3,
-  "sources": [],
-  "sections": [
-    {"offset": {"line": 1, "column": 0}, "map": {"version":3,"sources":["turbopack:///[project]/styles/globals.css"],"sourcesContent":["@tailwind base;\n@tailwind components;\n@tailwind utilities;\n\n/* Force Poppins font everywhere */\n* {\n  font-family: 'Poppins', sans-serif !important;\n}\n\nhtml, body {\n  font-family: 'Poppins', sans-serif !important;\n  -webkit-font-smoothing: antialiased;\n  -moz-osx-font-smoothing: grayscale;\n}\n\ninput, button, textarea, select, option {\n  font-family: 'Poppins', sans-serif !important;\n}\n\n.font-sans {\n  font-family: 'Poppins', sans-serif !important;\n} "],"names":[],"mappings":"AAAA;;AACA;;AACA;;AAGA;;;;AAIA;;;;;;AAMA;;;;AAIA"}},
-    {"offset": {"line": 24, "column": 0}, "map": {"version":3,"sources":[],"names":[],"mappings":"A"}}]
-}

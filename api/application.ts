@@ -1,5 +1,6 @@
 import config from '@component/constants/config';
 import { get, post, ApiResponse } from './httpClient';
+import { ToastNotifyError } from '@component/components/common/Toast';
 // Comment out the problematic import and use any for now
 // import { ApplicationData } from '@component/types/application-tracker';
 type ApplicationData = any;
@@ -129,6 +130,26 @@ export interface Step3Response {
     status: string;
     [key: string]: any;
   };
+}
+
+/**
+ * Interface for client information
+ */
+export interface ClientInfo {
+  user_id: number;
+  name: string;
+  // Add other client properties as needed
+}
+
+/**
+ * Interface for clients by type response
+ */
+export interface ClientsByTypeResponse {
+  status: boolean;
+  message: string;
+  data: {
+    clients_info: ClientInfo[];
+  } | null;
 }
 
 /**
@@ -277,6 +298,30 @@ export const submitServiceRequest = async (requestData: ServiceRequestPayload): 
     };
   } catch (error) {
     console.error('Error submitting service request:', error);
+    throw error;
+  }
+};
+
+/**
+ * Fetch clients by their type
+ * @param clientType The type of client to fetch
+ * @returns Promise with client information
+ */
+export const getClientsByType = async (clientType: string | number): Promise<ClientInfo[]> => {
+  try {
+    const response = await get<any>(
+      `${API_ENDPOINTS.GET_CLIENTS_BY_TYPE}/${clientType}`, 
+      { requiresAuth: true }
+    );
+    
+    if (!response.status) {
+      ToastNotifyError(response.message || 'Failed to fetch clients by type')
+    }
+    
+    return response.data?.clients_info || [];
+  } catch (error) {
+    ToastNotifyError('Server Error.')
+    console.error('Error fetching clients by type:', error);
     throw error;
   }
 }; 

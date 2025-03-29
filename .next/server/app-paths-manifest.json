@@ -1,7 +1,1 @@
-{
-  "/check-list/page": "app/check-list/page.js",
-  "/checklist-details/page": "app/checklist-details/page.js",
-  "/manage-clients/page": "app/manage-clients/page.js",
-  "/favicon.ico/route": "app/favicon.ico/route.js",
-  "/manage-clients/[id]/page": "app/manage-clients/[id]/page.js"
-}
+{}

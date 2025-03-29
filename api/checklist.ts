@@ -1,10 +1,10 @@
-import { VISA_COUNTRY, VISA_CATEGORY, NATIONALITY, STATE } from '@component/constants/dropdown/geographical';
+import { COUNTRY, VISA_CATEGORY, NATIONALITY, STATE } from '@component/constants/dropdown/geographical';
 import { API_BASE_URL } from './apiConstants';
 
 // Interface for Checklist items
 export interface ChecklistItem {
   id: number;
-  country: VISA_COUNTRY;
+  country: COUNTRY;
   category: VISA_CATEGORY;
   nationality: NATIONALITY;
   state: STATE;
