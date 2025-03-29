@@ -75,7 +75,9 @@ export const createClient = async (client: Client): Promise<boolean> => {
   try {
     const backendClient = mapFrontendClientToBackend(client);
     
-    const response = await post<any>(API_ENDPOINTS.CREATE_CLIENT, backendClient);
+    const response = await post<any>(API_ENDPOINTS.CREATE_CLIENT, backendClient, {
+      requiresAuth: true
+    });
 
     if (!response.status) {
       throw new Error(response.message || 'Failed to create client');
@@ -84,6 +86,28 @@ export const createClient = async (client: Client): Promise<boolean> => {
     return true;
   } catch (error) {
     console.error('Error creating client:', error);
+    throw error;
+  }
+};
+
+// Function to search clients by email
+export const searchClients = async (email: string): Promise<Client[]> => {
+  try {
+    const response = await post<any>(API_ENDPOINTS.SEARCH_CLIENTS, {
+      text: email
+    },
+      {
+      requiresAuth: true
+    });
+
+    if (!response.status || !response.data || !response.data.clients_info) {
+      throw new Error(response.message || 'Failed to search clients');
+    }
+
+    // Map backend data to frontend format
+    return response.data.clients_info.map(mapBackendClientToFrontend);
+  } catch (error) {
+    console.error('Error searching clients:', error);
     throw error;
   }
 }; 
