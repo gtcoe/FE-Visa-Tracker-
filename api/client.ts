@@ -163,14 +163,14 @@ export const getClientById = async (clientId: number): Promise<Client | null> =>
     const response = await get<any>(`${API_ENDPOINTS.GET_CLIENT_BY_ID}/${clientId}`, {
       requiresAuth: true
     });
-
-    if (!response.status || !response.data || !response.data.clients_info || response.data.clients_info.length === 0) {
+    
+    if (!response.status || !response.data || !response.data.client_info || response.data.client_info.length === 0) {
       console.error('No client found for the provided user ID');
       return null;
     }
 
     // Map backend data to frontend format (take the first client if multiple are returned)
-    return mapBackendClientToFrontend(response.data.clients_info[0]);
+    return mapBackendClientToFrontend(response.data.client_info[0]);
   } catch (error) {
     console.error('Error fetching client by user ID:', error);
     return null;
