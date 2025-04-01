@@ -107,9 +107,14 @@ const ChecklistDetailView: React.FC<ChecklistDetailsProps> = ({
       { id, email: client.ownerEmail || 'No email', selected: true }
     ]);
     
-    // Clear search results and query
-    setSearchResults([]);
-    setSearchQuery('');
+    // Don't clear search results or query to allow multiple selections
+    // Mark this client as selected in the UI by adding a visual indicator
+    const updatedSearchResults = searchResults.map(c => 
+      c.clientId === client.clientId 
+        ? { ...c, isSelected: true } 
+        : c
+    );
+    setSearchResults(updatedSearchResults);
   };
 
   // Handle removing a selected client
@@ -173,11 +178,32 @@ const ChecklistDetailView: React.FC<ChecklistDetailsProps> = ({
             <input
               type="text"
               placeholder="Search Contact email id"
-              className="pl-10 pr-4 py-2 w-full border border-gray-300 rounded-md text-gray-500"
+              className="pl-10 pr-10 py-2 w-full border border-gray-300 rounded-md text-gray-500"
               value={searchQuery}
               onChange={handleSearchChange}
             />
+            {searchQuery && (
+              <button 
+                className="absolute inset-y-0 right-0 flex items-center pr-3 text-gray-400 hover:text-gray-600"
+                onClick={() => {
+                  setSearchQuery('');
+                  setSearchResults([]);
+                }}
+                type="button"
+              >
+                <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M6 18L18 6M6 6l12 12"></path>
+                </svg>
+              </button>
+            )}
           </div>
+          
+          {/* Instructional text */}
+          {searchQuery && searchResults.length > 0 && (
+            <div className="text-xs text-gray-500 mb-1">
+              Click on an email to add it to the selected list. You can select multiple contacts.
+            </div>
+          )}
           
           {/* Loading indicator */}
           {isSearching && (
@@ -189,15 +215,29 @@ const ChecklistDetailView: React.FC<ChecklistDetailsProps> = ({
           {/* Search results dropdown */}
           {searchResults.length > 0 && (
             <div className="bg-white border border-gray-200 rounded-md shadow-sm mt-1 mb-4 max-h-40 overflow-y-auto">
-              {searchResults.map(client => (
-                <div 
-                  key={client.clientId} 
-                  className="px-3 py-2 hover:bg-gray-100 cursor-pointer text-sm text-gray-900"
-                  onClick={() => handleSelectClient(client)}
-                >
-                  {client.ownerEmail || 'No email provided'}
-                </div>
-              ))}
+              {searchResults.map(client => {
+                // Check if client is already selected
+                const isAlreadySelected = selectedClients.some(c => c.id === client.clientId);
+                
+                return (
+                  <div 
+                    key={client.clientId} 
+                    className={`px-3 py-2 hover:bg-gray-100 cursor-pointer text-sm flex items-center justify-between ${
+                      isAlreadySelected ? 'bg-blue-50' : ''
+                    }`}
+                    onClick={() => !isAlreadySelected && handleSelectClient(client)}
+                  >
+                    <span className="text-gray-900">{client.ownerEmail || 'No email provided'}</span>
+                    {isAlreadySelected && (
+                      <span className="text-blue-600 ml-2">
+                        <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
+                        </svg>
+                      </span>
+                    )}
+                  </div>
+                );
+              })}
             </div>
           )}
           
@@ -218,30 +258,63 @@ const ChecklistDetailView: React.FC<ChecklistDetailsProps> = ({
           {/* Selected clients */}
           {selectedClients.length > 0 && (
             <div className="mb-4">
-              <p className="text-sm text-gray-500 mb-2">{selectedClients.length} Contact selected</p>
-              {selectedClients.map((client) => (
-                <div key={client.id} className="flex items-center justify-between bg-gray-100 px-2 py-1 rounded mb-1">
-                  <span className="text-sm text-gray-900">{client.email}</span>
-                  <button 
-                    className="text-gray-500 hover:text-gray-700"
-                    onClick={() => handleRemoveClient(client.id)}
-                  >
-                    ×
-                  </button>
-                </div>
-              ))}
+              <div className="flex justify-between items-center mb-2">
+                <h3 className="text-sm font-medium text-gray-700">Selected Contacts</h3>
+                <span className="text-xs bg-[#0B498B] text-white px-2 py-1 rounded-full">
+                  {selectedClients.length} {selectedClients.length === 1 ? 'contact' : 'contacts'}
+                </span>
+              </div>
+              <div className="border border-gray-200 rounded-md p-2 max-h-40 overflow-y-auto">
+                {selectedClients.map((client) => (
+                  <div key={client.id} className="flex items-center justify-between bg-gray-50 px-3 py-2 rounded mb-1 hover:bg-gray-100">
+                    <span className="text-sm text-gray-900">{client.email}</span>
+                    <button 
+                      className="text-gray-500 hover:text-red-500 focus:outline-none"
+                      onClick={() => handleRemoveClient(client.id)}
+                      title="Remove contact"
+                    >
+                      <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+                      </svg>
+                    </button>
+                  </div>
+                ))}
+              </div>
             </div>
           )}
           
           {/* Send Mail button right-aligned */}
-          <div className="flex justify-end mb-6">
-            <button 
-              className="bg-[#0B498B] text-white py-2 px-4 rounded-md font-medium w-32 hover:bg-[#083968] transition-colors disabled:bg-gray-400 disabled:cursor-not-allowed"
-              onClick={handleSendMail}
-              disabled={selectedClients.length === 0 || isSendingEmail}
-            >
-              {isSendingEmail ? 'Sending...' : 'Send Mail'}
-            </button>
+          <div className="flex flex-col mb-6">
+            {selectedClients.length > 0 ? (
+              <>
+                <div className="text-xs text-gray-500 mb-2">
+                  The selected contacts will receive an email with the checklist details.
+                </div>
+                <button 
+                  className="bg-[#0B498B] text-white py-2 px-4 rounded-md font-medium hover:bg-[#083968] transition-colors disabled:bg-gray-400 disabled:cursor-not-allowed flex items-center justify-center"
+                  onClick={handleSendMail}
+                  disabled={isSendingEmail}
+                >
+                  {isSendingEmail ? (
+                    <>
+                      <div className="animate-spin h-4 w-4 border-2 border-white border-t-transparent rounded-full mr-2"></div>
+                      <span>Sending...</span>
+                    </>
+                  ) : (
+                    <>
+                      <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
+                      </svg>
+                      <span>Send Mail</span>
+                    </>
+                  )}
+                </button>
+              </>
+            ) : (
+              <div className="text-sm text-gray-500 italic">
+                Select contacts to send the checklist via email
+              </div>
+            )}
           </div>
           
           {/* Rest of sidebar content would go here */}
