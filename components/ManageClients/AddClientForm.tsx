@@ -159,34 +159,10 @@ const AddClientForm = ({ onSubmit }: AddClientFormProps) => {
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
     
-    // Validate email fields
-    if ((name === 'ownerEmail' || name === 'spokeEmail') && value.trim() !== '') {
-      if (!EMAIL_REGEX.test(value)) {
-        ToastNotifyError(`Invalid email format for ${name === 'ownerEmail' ? 'Owner Email' : 'Spoke Email'}`);
-        // Still update the field so user can correct it
-      }
-    }
-    
-    // Validate phone number fields
-    if ((name === 'ownerPhone' || name === 'spokePhone') && value.trim() !== '') {
-      if (!PHONE_REGEX.test(value)) {
-        ToastNotifyError(`Invalid phone number format for ${name === 'ownerPhone' ? 'Owner Phone' : 'Spoke Phone'}`);
-        // Still update the field so user can correct it
-      }
-    }
-    
-    // Validate GST number
-    if (name === 'gstNo' && value.trim() !== '') {
-      if (!GST_REGEX.test(value)) {
-        ToastNotifyError('Invalid GST number format. It should be in the format: 22AAAAA0000A1Z5');
-        // Still update the field so user can correct it
-      }
-    }
-    
-    setFormData({
-      ...formData,
+    setFormData(prev => ({
+      ...prev,
       [name]: value
-    });
+    }));
   };
 
   const typeOptions = getClientTypeOptions(false);
