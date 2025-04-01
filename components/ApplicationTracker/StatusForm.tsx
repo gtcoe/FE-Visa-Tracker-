@@ -2,11 +2,11 @@
 import { useState, useRef, useEffect, useCallback, ChangeEvent } from "react";
 import CustomDropdown from "../common/CustomDropdown";
 import {
-  BRANCH, BRANCH_LABELS,
   createEnumOptions
 } from '@component/constants/dropdown/dropdownConstants';
 import {
-  COUNTRY, COUNTRY_LABELS
+  COUNTRY, COUNTRY_LABELS, PROCESSING_BRANCH_LABELS,
+  PROCESSING_BRANCH
 } from '@component/constants/dropdown/geographical';
 import {
   CLIENT_TYPE, getClientTypeOptions
@@ -32,8 +32,8 @@ interface FormData {
   client_user_id: number | null;
   travelersName: string;
   travelersPassportNo: string;
-  visaBranch: BRANCH | '';
-  entryGenerationBranch: BRANCH | '';
+  visaBranch: PROCESSING_BRANCH | '';
+  entryGenerationBranch: PROCESSING_BRANCH | '';
   fromDate: string;
   toDate: string;
   queue: APPLICATION_QUEUES;
@@ -382,12 +382,12 @@ const StatusForm = ({ onSearch }: StatusFormProps) => {
   
   const visaBranchOptions = [
     { value: '', label: 'Select' },
-    ...createEnumOptions(BRANCH, BRANCH_LABELS)
+    ...createEnumOptions(PROCESSING_BRANCH, PROCESSING_BRANCH_LABELS)
   ];
   
   const entryGenerationOptions = [
     { value: '', label: 'Select' },
-    ...createEnumOptions(BRANCH, BRANCH_LABELS)
+    ...createEnumOptions(PROCESSING_BRANCH, PROCESSING_BRANCH_LABELS)
   ];
   
   // Create options for queue dropdown
