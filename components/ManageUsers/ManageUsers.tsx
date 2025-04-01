@@ -33,13 +33,29 @@ const ManageUsers = () => {
   }, []);
 
   const fetchUsers = async () => {
-    setLoading(true);
+    if (users.length > 0) {
+      // If we already have users in the context, don't show loading state
+      setLoading(false);
+    } else {
+      setLoading(true);
+    }
+    
     try {
       const userData = await getAllUsers();
-      setUsers(userData || []);
+      
+      // Only update if there are actual changes or no existing users
+      if (userData) {
+        if (users.length === 0 || JSON.stringify(userData) !== JSON.stringify(users)) {
+          setUsers(userData);
+        }
+      }
     } catch (error) {
       console.error('Error fetching users:', error);
-      ToastNotifyError('Failed to load users. Please try again later.');
+      // Only show error if we don't have existing data to display
+      if (users.length === 0) {
+        ToastNotifyError('Failed to load users. Please try again later.');
+        setError('Failed to load users');
+      }
     } finally {
       setLoading(false);
     }
@@ -47,13 +63,30 @@ const ManageUsers = () => {
 
   const handleAddUser = async (newUser: User) => {
     try {
-      // Call API to create user
-      await createUser(newUser);
-      // Refetch users to get the updated list
-      await fetchUsers();
-      // Close the modal
+      // Close the modal right away for better UX
       setIsAddUserModalOpen(false);
-      ToastNotifySuccess("User added successfully");
+      
+      // Call API to create user
+      const success = await createUser(newUser);
+      
+      if (success) {
+        ToastNotifySuccess("User added successfully");
+        
+        // Refetch users to get the updated list, but do it after a small delay
+        // to ensure the cache is invalidated
+        setTimeout(async () => {
+          try {
+            const userData = await getAllUsers();
+            if (userData) {
+              setUsers(userData);
+            }
+          } catch (error) {
+            console.error('Error refreshing users after adding:', error);
+          }
+        }, 300);
+      } else {
+        ToastNotifyError("Failed to add user. Please try again.");
+      }
     } catch (err) {
       console.error('Failed to add user:', err);
       ToastNotifyError("Failed to add user. Please try again.");
@@ -79,6 +112,11 @@ const ManageUsers = () => {
         );
         setUsers(updatedUsers);
         
+        // Store current status in case we need to revert
+        const originalStatus = selectedUser.status === USER_STATUS.ACTIVE 
+          ? USER_STATUS.INACTIVE 
+          : USER_STATUS.ACTIVE;
+        
         // Call API to update status
         await updateUserStatus(selectedUser.id!, selectedUser.status);
         
@@ -88,14 +126,17 @@ const ManageUsers = () => {
         // Refresh users list in background without disrupting UI
         const refreshUsers = async () => {
           try {
-            const userData = await getAllUsers();
-            // Only update if there are actual changes
-            if (userData) {
-              const needsUpdate = JSON.stringify(userData) !== JSON.stringify(users);
-              if (needsUpdate) {
-                setUsers(userData);
+            // Set a small delay to allow the cache to be invalidated
+            setTimeout(async () => {
+              const userData = await getAllUsers();
+              // Only update if there are actual changes
+              if (userData) {
+                const needsUpdate = JSON.stringify(userData) !== JSON.stringify(users);
+                if (needsUpdate) {
+                  setUsers(userData);
+                }
               }
-            }
+            }, 300);
           } catch (error) {
             console.error('Error refreshing users:', error);
             // Don't show error to user as the main action already succeeded

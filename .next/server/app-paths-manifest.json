@@ -6,5 +6,7 @@
   "/manage-users/page": "app/manage-users/page.js",
   "/application-tracker/page": "app/application-tracker/page.js",
   "/check-list/page": "app/check-list/page.js",
-  "/page": "app/page.js"
+  "/page": "app/page.js",
+  "/services/page": "app/services/page.js",
+  "/services/service-request/page": "app/services/service-request/page.js"
 }

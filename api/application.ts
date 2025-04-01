@@ -8,6 +8,23 @@ type ApplicationData = any;
 // Get API endpoints from config
 const { API_ENDPOINTS } = config;
 
+// Helper function to check if code is running in browser
+const isBrowser = typeof window !== 'undefined';
+
+// Cache utilities
+const invalidateApplicationCache = () => {
+  if (!isBrowser) return;
+  
+  // Clear application search caches
+  Object.keys(sessionStorage).forEach(key => {
+    if (key.startsWith('application-search-') || key.startsWith('pax-search-')) {
+      sessionStorage.removeItem(key);
+    }
+  });
+  
+  console.log('Application cache invalidated');
+};
+
 /**
  * Service Request payload interface
  */
@@ -159,13 +176,55 @@ export interface ClientsByTypeResponse {
  */
 export const searchApplications = async (searchParams: any): Promise<ApplicationData[]> => {
   try {
+    // Create a cache key based on the search parameters
+    const cacheKey = `application-search-${JSON.stringify(searchParams)}`;
+    
+    // Check if search results exist in cache and are not expired
+    if (isBrowser) {
+      try {
+        const cachedData = sessionStorage.getItem(cacheKey);
+        if (cachedData) {
+          const { data, timestamp } = JSON.parse(cachedData);
+          const isExpired = Date.now() - timestamp > 3 * 60 * 1000; // 3 minutes expiration
+          
+          if (!isExpired && Array.isArray(data)) {
+            console.log('Using cached application search results');
+            return data;
+          }
+          console.log('Cached application search results expired or invalid');
+        }
+      } catch (cacheError) {
+        console.error('Error reading from application search cache:', cacheError);
+        // Clear the invalid cache
+        sessionStorage.removeItem(cacheKey);
+      }
+    }
+    
+    // If no cache, expired, or error, fetch from API
     const response = await post<any>(API_ENDPOINTS.SEARCH_APPLICATIONS, searchParams, { requiresAuth: true });
     
     if (!response.status) {
       throw new Error(response.message || 'Failed to search applications');
     }
     
-    return response.data?.applications || [];
+    const searchResults = response.data?.applications || [];
+    
+    // Store in cache with timestamp
+    if (isBrowser) {
+      try {
+        sessionStorage.setItem(
+          cacheKey, 
+          JSON.stringify({
+            data: searchResults,
+            timestamp: Date.now()
+          })
+        );
+      } catch (storageError) {
+        console.error('Error saving to application search cache:', storageError);
+      }
+    }
+    
+    return searchResults;
   } catch (error) {
     console.error('Error searching applications:', error);
     throw error;
@@ -184,6 +243,9 @@ export const addApplicationStep1 = async (applicationData: any): Promise<any> =>
     if (!response.status) {
       throw new Error(response.message || 'Failed to add application step 1');
     }
+    
+    // Invalidate application cache after creating a new application
+    invalidateApplicationCache();
     
     return response.data;
   } catch (error) {
@@ -259,13 +321,55 @@ export const addApplicationStep4 = async (applicationData: any): Promise<any> =>
  */
 export const searchPax = async (searchParams: any): Promise<any[]> => {
   try {
+    // Create a cache key based on the search parameters
+    const cacheKey = `pax-search-${JSON.stringify(searchParams)}`;
+    
+    // Check if search results exist in cache and are not expired
+    if (isBrowser) {
+      try {
+        const cachedData = sessionStorage.getItem(cacheKey);
+        if (cachedData) {
+          const { data, timestamp } = JSON.parse(cachedData);
+          const isExpired = Date.now() - timestamp > 3 * 60 * 1000; // 3 minutes expiration
+          
+          if (!isExpired && Array.isArray(data)) {
+            console.log('Using cached passenger search results');
+            return data;
+          }
+          console.log('Cached passenger search results expired or invalid');
+        }
+      } catch (cacheError) {
+        console.error('Error reading from passenger search cache:', cacheError);
+        // Clear the invalid cache
+        sessionStorage.removeItem(cacheKey);
+      }
+    }
+    
+    // If no cache, expired, or error, fetch from API
     const response = await post<any>(API_ENDPOINTS.SEARCH_PAX, searchParams, { requiresAuth: true });
     
     if (!response.status) {
       throw new Error(response.message || 'Failed to search applicants');
     }
     
-    return response.data?.passengers_info || [];
+    const searchResults = response.data?.passengers_info || [];
+    
+    // Store in cache with timestamp
+    if (isBrowser) {
+      try {
+        sessionStorage.setItem(
+          cacheKey, 
+          JSON.stringify({
+            data: searchResults,
+            timestamp: Date.now()
+          })
+        );
+      } catch (storageError) {
+        console.error('Error saving to passenger search cache:', storageError);
+      }
+    }
+    
+    return searchResults;
   } catch (error) {
     console.error('Error searching applicants:', error);
     throw error;
@@ -286,6 +390,10 @@ export const submitServiceRequest = async (requestData: ServiceRequestPayload): 
     if (!response) {
       throw new Error('Failed to submit service request');
     }
+    
+    // Invalidate application cache after submitting a service request
+    // Note: addApplicationStep1 already invalidates the cache, but we're being explicit here
+    invalidateApplicationCache();
     
     // Map the API response to our ServiceRequestResponse interface
     // The API returns { application_id: number, reference_number: string }
@@ -309,6 +417,31 @@ export const submitServiceRequest = async (requestData: ServiceRequestPayload): 
  */
 export const getClientsByType = async (clientType: string | number): Promise<ClientInfo[]> => {
   try {
+    // Create a cache key based on the client type
+    const cacheKey = `clients-by-type-${clientType}`;
+    
+    // Check if client data exists in cache and is not expired
+    if (isBrowser) {
+      try {
+        const cachedData = sessionStorage.getItem(cacheKey);
+        if (cachedData) {
+          const { data, timestamp } = JSON.parse(cachedData);
+          const isExpired = Date.now() - timestamp > 5 * 60 * 1000; // 5 minutes expiration
+          
+          if (!isExpired && Array.isArray(data)) {
+            console.log('Using cached clients by type data for type:', clientType);
+            return data;
+          }
+          console.log('Cached clients by type data expired or invalid');
+        }
+      } catch (cacheError) {
+        console.error('Error reading from clients by type cache:', cacheError);
+        // Clear the invalid cache
+        sessionStorage.removeItem(cacheKey);
+      }
+    }
+    
+    // If no cache, expired, or error, fetch from API
     const response = await get<any>(
       `${API_ENDPOINTS.GET_CLIENTS_BY_TYPE}/${clientType}`, 
       { requiresAuth: true }
@@ -318,7 +451,24 @@ export const getClientsByType = async (clientType: string | number): Promise<Cli
       ToastNotifyError(response.message || 'Failed to fetch clients by type')
     }
     
-    return response.data?.clients_info || [];
+    const clientsData = response.data?.clients_info || [];
+    
+    // Store in cache with timestamp
+    if (isBrowser) {
+      try {
+        sessionStorage.setItem(
+          cacheKey, 
+          JSON.stringify({
+            data: clientsData,
+            timestamp: Date.now()
+          })
+        );
+      } catch (storageError) {
+        console.error('Error saving to clients by type cache:', storageError);
+      }
+    }
+    
+    return clientsData;
   } catch (error) {
     ToastNotifyError('Server Error.')
     console.error('Error fetching clients by type:', error);

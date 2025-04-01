@@ -6,6 +6,9 @@ import { ToastNotifyError } from '@component/components/common/Toast';
 // Get API endpoints from config
 const { API_ENDPOINTS } = config;
 
+// Helper function to check if code is running in browser
+const isBrowser = typeof window !== 'undefined';
+
 // Map backend client data to frontend Client interface
 const mapBackendClientToFrontend = (backendClient: any): Client => {
   return {
@@ -57,6 +60,28 @@ const mapFrontendClientToBackend = (client: Client) => {
 // Function to get all clients
 export const getAllClients = async (): Promise<Client[]> => {
   try {
+    // Check if clients data exists in cache and is not expired
+    if (isBrowser) {
+      try {
+        const cachedData = sessionStorage.getItem('all-clients');
+        if (cachedData) {
+          const { data, timestamp } = JSON.parse(cachedData);
+          const isExpired = Date.now() - timestamp > 5 * 60 * 1000; // 5 minutes expiration
+          
+          if (!isExpired && Array.isArray(data)) {
+            console.log('Using cached clients list');
+            return data;
+          }
+          console.log('Cached clients list expired or invalid');
+        }
+      } catch (cacheError) {
+        console.error('Error reading from cache:', cacheError);
+        // Clear the invalid cache
+        sessionStorage.removeItem('all-clients');
+      }
+    }
+    
+    // If no cache, expired, or error, fetch from API
     const response = await get<any>(API_ENDPOINTS.GET_ALL_CLIENTS, {requiresAuth: true});
 
     if (!response.status || !response.data || !response.data.clients_info) {
@@ -64,11 +89,45 @@ export const getAllClients = async (): Promise<Client[]> => {
     }
 
     // Map backend data to frontend format
-    return response.data.clients_info.map(mapBackendClientToFrontend);
+    const clientsData = response.data.clients_info.map(mapBackendClientToFrontend);
+    
+    // Store in cache with timestamp
+    if (isBrowser) {
+      try {
+        sessionStorage.setItem(
+          'all-clients', 
+          JSON.stringify({
+            data: clientsData,
+            timestamp: Date.now()
+          })
+        );
+      } catch (storageError) {
+        console.error('Error saving to cache:', storageError);
+      }
+    }
+    
+    return clientsData;
   } catch (error) {
     console.error('Error fetching clients:', error);
     throw error;
   }
+};
+
+// Cache utilities
+const invalidateClientCache = () => {
+  if (!isBrowser) return;
+  
+  // Clear the all-clients cache
+  sessionStorage.removeItem('all-clients');
+  
+  // Clear any search caches (all keys starting with 'search-clients-')
+  Object.keys(sessionStorage).forEach(key => {
+    if (key.startsWith('search-clients-')) {
+      sessionStorage.removeItem(key);
+    }
+  });
+  
+  console.log('Client cache invalidated');
 };
 
 // Function to create a new client
@@ -85,6 +144,9 @@ export const createClient = async (client: Client): Promise<boolean> => {
       return false;
     }
 
+    // Invalidate cache after successful creation
+    invalidateClientCache();
+    
     return true;
   } catch (error) {
     console.error('Error creating client:', error);
@@ -95,6 +157,31 @@ export const createClient = async (client: Client): Promise<boolean> => {
 // Function to search clients by email
 export const searchClients = async (email: string): Promise<Client[]> => {
   try {
+    // Create a cache key based on the search query
+    const cacheKey = `search-clients-${email.trim().toLowerCase()}`;
+    
+    // Check if search results exist in cache and are not expired
+    if (isBrowser) {
+      try {
+        const cachedData = sessionStorage.getItem(cacheKey);
+        if (cachedData) {
+          const { data, timestamp } = JSON.parse(cachedData);
+          const isExpired = Date.now() - timestamp > 3 * 60 * 1000; // 3 minutes expiration (shorter for search)
+          
+          if (!isExpired && Array.isArray(data)) {
+            console.log('Using cached search results for:', email);
+            return data;
+          }
+          console.log('Cached search results expired or invalid for:', email);
+        }
+      } catch (cacheError) {
+        console.error('Error reading from search cache:', cacheError);
+        // Clear the invalid cache
+        sessionStorage.removeItem(cacheKey);
+      }
+    }
+    
+    // If no cache, expired, or error, fetch from API
     const response = await post<any>(API_ENDPOINTS.SEARCH_CLIENTS, {
       text: email
     },
@@ -107,7 +194,24 @@ export const searchClients = async (email: string): Promise<Client[]> => {
     }
 
     // Map backend data to frontend format
-    return response.data.clients_info.map(mapBackendClientToFrontend);
+    const searchResults = response.data.clients_info.map(mapBackendClientToFrontend);
+    
+    // Store in cache with timestamp
+    if (isBrowser) {
+      try {
+        sessionStorage.setItem(
+          cacheKey, 
+          JSON.stringify({
+            data: searchResults,
+            timestamp: Date.now()
+          })
+        );
+      } catch (storageError) {
+        console.error('Error saving to search cache:', storageError);
+      }
+    }
+    
+    return searchResults;
   } catch (error) {
     console.error('Error searching clients:', error);
     throw error;
@@ -160,6 +264,28 @@ export const sendEmailToClients = async (emailData: SendEmailPayload): Promise<b
 // Function to get client by user ID
 export const getClientById = async (clientId: number): Promise<Client | null> => {
   try {
+    // Check if the client data exists in cache and is not expired
+    if (isBrowser) {
+      try {
+        const cachedData = sessionStorage.getItem(`client-${clientId}`);
+        if (cachedData) {
+          const { data, timestamp } = JSON.parse(cachedData);
+          const isExpired = Date.now() - timestamp > 5 * 60 * 1000; // 5 minutes expiration
+          
+          if (!isExpired && data) {
+            console.log('Using cached client data for ID:', clientId);
+            return data;
+          }
+          console.log('Cached client data expired or invalid for ID:', clientId);
+        }
+      } catch (cacheError) {
+        console.error('Error reading from client cache:', cacheError);
+        // Clear the invalid cache
+        sessionStorage.removeItem(`client-${clientId}`);
+      }
+    }
+    
+    // If no cache, expired, or error, fetch from API
     const response = await get<any>(`${API_ENDPOINTS.GET_CLIENT_BY_ID}/${clientId}`, {
       requiresAuth: true
     });
@@ -169,8 +295,25 @@ export const getClientById = async (clientId: number): Promise<Client | null> =>
       return null;
     }
 
-    // Map backend data to frontend format (take the first client if multiple are returned)
-    return mapBackendClientToFrontend(response.data.client_info[0]);
+    // Map backend data to frontend format
+    const clientData = mapBackendClientToFrontend(response.data.client_info[0]);
+    
+    // Store in cache with timestamp
+    if (isBrowser) {
+      try {
+        sessionStorage.setItem(
+          `client-${clientId}`, 
+          JSON.stringify({
+            data: clientData,
+            timestamp: Date.now()
+          })
+        );
+      } catch (storageError) {
+        console.error('Error saving to client cache:', storageError);
+      }
+    }
+    
+    return clientData;
   } catch (error) {
     console.error('Error fetching client by user ID:', error);
     return null;
