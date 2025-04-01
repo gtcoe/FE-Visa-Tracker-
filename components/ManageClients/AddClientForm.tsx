@@ -7,9 +7,9 @@ import {
   STATE, STATE_LABELS,
   COUNTRY_STATES 
 } from '@component/constants/dropdown/geographical';
-import { getClientTypeOptions } from '@component/constants/clientConstants';
+import { getClientTypeOptions, CLIENT_TYPE } from '@component/constants/clientConstants';
 import { createClient } from '@component/api/client';
-import { EMAIL_REGEX } from '@component/constants/regex';
+import { EMAIL_REGEX, PHONE_REGEX, GST_REGEX } from '@component/constants/regex';
 
 // Define the Option type locally to match CustomDropdown's interface
 interface Option {
@@ -93,6 +93,12 @@ const AddClientForm = ({ onSubmit }: AddClientFormProps) => {
       return;
     }
     
+    // Validate GST for Corporate clients
+    if (formData.type === CLIENT_TYPE.CORPORATE && !formData.gstNo) {
+      ToastNotifyError('GST Number is mandatory for Corporate clients');
+      return;
+    }
+    
     // Validate email formats
     if (formData.ownerEmail && !EMAIL_REGEX.test(formData.ownerEmail)) {
       ToastNotifyError('Invalid Owner Email');
@@ -101,6 +107,23 @@ const AddClientForm = ({ onSubmit }: AddClientFormProps) => {
     
     if (formData.spokeEmail && !EMAIL_REGEX.test(formData.spokeEmail)) {
       ToastNotifyError('Invalid Spoke Email');
+      return;
+    }
+    
+    // Validate phone number formats
+    if (formData.ownerPhone && !PHONE_REGEX.test(formData.ownerPhone)) {
+      ToastNotifyError('Invalid Owner Phone Number');
+      return;
+    }
+    
+    if (formData.spokePhone && !PHONE_REGEX.test(formData.spokePhone)) {
+      ToastNotifyError('Invalid Spoke Phone Number');
+      return;
+    }
+    
+    // Validate GST number format
+    if (formData.gstNo && !GST_REGEX.test(formData.gstNo)) {
+      ToastNotifyError('Invalid GST Number format');
       return;
     }
     
@@ -135,6 +158,30 @@ const AddClientForm = ({ onSubmit }: AddClientFormProps) => {
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
+    
+    // Validate email fields
+    if ((name === 'ownerEmail' || name === 'spokeEmail') && value.trim() !== '') {
+      if (!EMAIL_REGEX.test(value)) {
+        ToastNotifyError(`Invalid email format for ${name === 'ownerEmail' ? 'Owner Email' : 'Spoke Email'}`);
+        // Still update the field so user can correct it
+      }
+    }
+    
+    // Validate phone number fields
+    if ((name === 'ownerPhone' || name === 'spokePhone') && value.trim() !== '') {
+      if (!PHONE_REGEX.test(value)) {
+        ToastNotifyError(`Invalid phone number format for ${name === 'ownerPhone' ? 'Owner Phone' : 'Spoke Phone'}`);
+        // Still update the field so user can correct it
+      }
+    }
+    
+    // Validate GST number
+    if (name === 'gstNo' && value.trim() !== '') {
+      if (!GST_REGEX.test(value)) {
+        ToastNotifyError('Invalid GST number format. It should be in the format: 22AAAAA0000A1Z5');
+        // Still update the field so user can correct it
+      }
+    }
     
     setFormData({
       ...formData,
@@ -275,14 +322,17 @@ const AddClientForm = ({ onSubmit }: AddClientFormProps) => {
           </div>
 
           <div className="col-span-1">
-            <label className="block text-xs text-[#1C1C1C] mb-2">GST No</label>
+            <label className="block text-xs text-[#1C1C1C] mb-2">
+              GST No{formData.type === CLIENT_TYPE.CORPORATE && <span className="text-red-500 ml-1">*</span>}
+              {formData.type === CLIENT_TYPE.CORPORATE && <span className="text-xs text-gray-500 ml-1">(Required for Corporate)</span>}
+            </label>
             <input
               type="text"
               name="gstNo"
               value={formData.gstNo}
               onChange={handleChange}
               placeholder="Enter GST number"
-              className="w-full px-3 py-2 border border-[#E6EAF2] rounded-[8px] focus:outline-none focus:ring-2 focus:ring-[#0B498B]/20 focus:border-none text-[#1C1C1C] text-sm"
+              className={`w-full px-3 py-2 border border-[#E6EAF2] rounded-[8px] focus:outline-none focus:ring-2 focus:ring-[#0B498B]/20 focus:border-none text-[#1C1C1C] text-sm ${formData.type === CLIENT_TYPE.CORPORATE ? 'border-red-300' : ''}`}
             />
           </div>
 
