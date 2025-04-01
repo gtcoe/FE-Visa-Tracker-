@@ -1,10 +1,10 @@
-import React, { useState, useRef, useEffect } from 'react';
-import { User } from './ManageUsers';
+import React from 'react';
 import { USER_STATUS, USER_TYPE_REVERSE, USER_STATUS_REVERSE } from '../../constants/userConstants';
 import StatusDropdown from '../common/StatusDropdown';
 import './UsersTable.css';
 import { UserContextUser } from '@component/context/UserContext';
 import { formatDate, formatDateWithTime } from '@component/utils/dateUtils';
+import PrefetchLink from '../common/PrefetchLink';
 
 interface UsersTableProps {
   users: UserContextUser[];
@@ -35,7 +35,16 @@ const UsersTable = ({ users, onStatusChange }: UsersTableProps) => {
             <tbody>
               {users.map((user, index) => (
                 <tr key={user.id || index} className="border-b last:border-b-0">
-                  <td className="text-left py-3 text-[#696969] text-xs font-medium px-6 border-r border-[#E6EAF2] w-[20%]">{user.name}</td>
+                  <td className="text-left py-3 text-[#696969] text-xs font-medium px-6 border-r border-[#E6EAF2] w-[20%]">
+                    <PrefetchLink 
+                      href={`/user/${user.id}`} 
+                      prefetchType="user" 
+                      dataId={user.id}
+                      className="text-[#0B498B] hover:underline"
+                    >
+                      {user.name}
+                    </PrefetchLink>
+                  </td>
                   <td className="text-center py-3 text-[#696969] text-xs font-medium border-r border-[#E6EAF2] w-[25%]">{user.email}</td>
                   <td className="text-center py-3 text-[#696969] text-xs font-medium border-r border-[#E6EAF2] w-[12.5%]">{USER_TYPE_REVERSE[user.type]}</td>
                   <td className="text-center py-3 text-[#696969] text-xs font-medium border-r border-[#E6EAF2] w-[15%]">{formatDate(user.created_at)}</td>
