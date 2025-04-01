@@ -71,3 +71,12 @@ export const APPLICATION_STATUS: Record<string, number> = {
   STEP3_DONE: 2,
   STEP4_DONE: 2,
 }
+
+export enum EMAIL_TYPE {
+  WELCOME = 1,
+  PASSWORD_RESET = 2,
+  APPLICATION_STATUS = 3,
+  CREDENTIALS = 4,
+  DOCUMENT_CHECKLIST = 5
+}
+

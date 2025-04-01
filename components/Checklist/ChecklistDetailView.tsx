@@ -8,8 +8,9 @@ import {
   NATIONALITY_LABELS,
   STATE_LABELS 
 } from '@component/constants/dropdown/geographical';
-import { searchClients } from '@component/api/client';
+import { searchClients, sendEmailToClients } from '@component/api/client';
 import { Client } from '@component/components/ManageClients/ManageClients';
+import { EMAIL_TYPE } from '@component/constants/appConstants';
 
 interface ChecklistDetailsProps {
   visaCountry: number;
@@ -56,6 +57,8 @@ const ChecklistDetailView: React.FC<ChecklistDetailsProps> = ({
   const [searchResults, setSearchResults] = useState<Client[]>([]);
   const [selectedClients, setSelectedClients] = useState<SelectedClient[]>([]);
   const [error, setError] = useState<string | null>(null);
+  const [isSendingEmail, setIsSendingEmail] = useState<boolean>(false);
+  const [emailSuccess, setEmailSuccess] = useState<boolean>(false);
 
   // Debounced search function
   // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -115,15 +118,38 @@ const ChecklistDetailView: React.FC<ChecklistDetailsProps> = ({
   };
 
   // Handle sending emails
-  const handleSendMail = () => {
+  const handleSendMail = async () => {
     if (selectedClients.length === 0) {
       setError('Please select at least one client.');
       return;
     }
     
-    console.log('Sending mail to:', selectedClients);
-    // Implement mail sending functionality here
-    alert('Mail sending feature will be implemented soon.');
+    setIsSendingEmail(true);
+    setEmailSuccess(false);
+    setError(null);
+    
+    try {
+      // Format payload according to the SendEmailPayload interface
+      const emailPayload = {
+        emails: selectedClients.map(client => client.email),
+        type: EMAIL_TYPE.DOCUMENT_CHECKLIST,
+        data: {
+          visaCountry,
+          visaCategory,
+          nationality,
+          state
+        }
+      };
+      
+      await sendEmailToClients(emailPayload);
+      setEmailSuccess(true);
+      setSelectedClients([]);
+    } catch (error) {
+      setError('Error sending mail. Please try again.');
+      console.error('Error sending mail:', error);
+    } finally {
+      setIsSendingEmail(false);
+    }
   };
 
   return (
@@ -182,6 +208,13 @@ const ChecklistDetailView: React.FC<ChecklistDetailsProps> = ({
             </div>
           )}
 
+          {/* Success message */}
+          {emailSuccess && (
+            <div className="text-green-500 text-sm mb-2">
+              Emails sent successfully!
+            </div>
+          )}
+
           {/* Selected clients */}
           {selectedClients.length > 0 && (
             <div className="mb-4">
@@ -205,9 +238,9 @@ const ChecklistDetailView: React.FC<ChecklistDetailsProps> = ({
             <button 
               className="bg-[#0B498B] text-white py-2 px-4 rounded-md font-medium w-32 hover:bg-[#083968] transition-colors disabled:bg-gray-400 disabled:cursor-not-allowed"
               onClick={handleSendMail}
-              disabled={selectedClients.length === 0}
+              disabled={selectedClients.length === 0 || isSendingEmail}
             >
-              Send Mail
+              {isSendingEmail ? 'Sending...' : 'Send Mail'}
             </button>
           </div>
           

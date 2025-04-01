@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState, useMemo, useCallback, useRef, useEffect, ChangeEvent } from 'react';
+import React, { useState, useMemo, useCallback, useRef, useEffect, ChangeEvent, FormEvent } from 'react';
 import { useRouter } from 'next/navigation';
 import { addApplicationStep3, Step3RequestPayload } from '@component/api/application';
 import { 
@@ -15,6 +15,7 @@ import {
 import { FORM_MODE, TAB_NAME, STORAGE_KEY } from '@component/constants/formConstants';
 import { ToastNotifyError } from '@component/components/common/Toast';
 import { APPLICATION_STATUS } from '@component/constants/appConstants';
+import { EMAIL_REGEX } from '@component/constants/regex';
 
 // Define a more flexible type for change events
 type FormChangeEvent = {
@@ -713,6 +714,11 @@ const FillServiceForm = ({
         reference_number: localStorage.getItem(STORAGE_KEY.SERVICE_REFERENCE_NUMBER) || '',
         is_sub_request:  0 // Set is_sub_request based on mode
       };
+
+      if (!EMAIL_REGEX.test(personalInfo.emailId)) {
+        ToastNotifyError("Invalid email provided");
+        return;
+      }
 
       const url = new URL(window.location.href);
       const newApplicationParam = url.searchParams.get('newApplication');

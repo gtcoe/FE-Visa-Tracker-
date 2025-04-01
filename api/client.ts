@@ -1,6 +1,7 @@
 import { Client } from '@component/components/ManageClients/ManageClients';
 import config from '@component/constants/config';
 import { get, post } from './httpClient';
+import { ToastNotifyError } from '@component/components/common/Toast';
 
 // Get API endpoints from config
 const { API_ENDPOINTS } = config;
@@ -80,7 +81,8 @@ export const createClient = async (client: Client): Promise<boolean> => {
     });
 
     if (!response.status) {
-      throw new Error(response.message || 'Failed to create client');
+      ToastNotifyError(response.message || 'Failed to create client');
+      return false;
     }
 
     return true;
@@ -108,6 +110,49 @@ export const searchClients = async (email: string): Promise<Client[]> => {
     return response.data.clients_info.map(mapBackendClientToFrontend);
   } catch (error) {
     console.error('Error searching clients:', error);
+    throw error;
+  }
+};
+
+// Interface for email data
+interface SendEmailPayload {
+  emails: string[];
+  type?: number;
+  data?: {
+    visaCountry: number;
+    visaCategory: number;
+    nationality: number;
+    state: number;
+  }
+}
+
+// Interface for email data
+interface SendEmailPayload2 {
+  recipientIds: number[];
+  subject?: string;
+  message?: string;
+  checklist?: {
+    visaCountry: number;
+    visaCategory: number;
+    nationality: number;
+    state: number;
+  }
+}
+
+// Function to send emails to clients
+export const sendEmailToClients = async (emailData: SendEmailPayload): Promise<boolean> => {
+  try {
+    const response = await post<any>(API_ENDPOINTS.SEND_EMAIL, emailData, {
+      requiresAuth: true
+    });
+
+    if (!response.status) {
+      throw new Error(response.message || 'Failed to send emails');
+    }
+
+    return true;
+  } catch (error) {
+    console.error('Error sending emails:', error);
     throw error;
   }
 }; 

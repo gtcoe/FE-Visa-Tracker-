@@ -1,13 +1,15 @@
 import React, { useState, useEffect, useMemo } from 'react';
 import { Client } from './ManageClients';
 import CustomDropdown from '../common/CustomDropdown';
-import { ToastNotifyError } from '../common/Toast';
+import { ToastNotifyError, ToastNotifySuccess } from '../common/Toast/index';
 import { 
   COUNTRY, COUNTRY_LABELS, 
   STATE, STATE_LABELS,
   COUNTRY_STATES 
 } from '@component/constants/dropdown/geographical';
 import { getClientTypeOptions } from '@component/constants/clientConstants';
+import { createClient } from '@component/api/client';
+import { EMAIL_REGEX } from '@component/constants/regex';
 
 // Define the Option type locally to match CustomDropdown's interface
 interface Option {
@@ -50,6 +52,26 @@ const AddClientForm = ({ onSubmit }: AddClientFormProps) => {
   // State to hold available states based on selected country
   const [availableStates, setAvailableStates] = useState<STATE[]>([]);
 
+  // Initial form data
+  const initialFormData: EnhancedClient = {
+    type: 2, // Agent as default
+    name: '',
+    address: '',
+    branches: '',
+    country: COUNTRY.INDIA, // Default to India
+    state: STATE.DELHI, // Default to Delhi
+    city: '',
+    zipCode: '',
+    gstNo: '',
+    billingCycle: '',
+    ownerName: '',
+    ownerPhone: '',
+    ownerEmail: '',
+    spokeName: '',
+    spokePhone: '',
+    spokeEmail: ''
+  };
+
   // Update available states when country changes
   useEffect(() => {
     const statesForCountry = COUNTRY_STATES[formData.country] || [];
@@ -65,24 +87,40 @@ const AddClientForm = ({ onSubmit }: AddClientFormProps) => {
   }, [formData.country]);
 
   const handleSubmit = async () => {
-    // Validation
-    if (!formData.name) {
-      ToastNotifyError("Client name is required");
+    // Validate required fields
+    if (!formData.type || !formData.name) {
+      ToastNotifyError('Please fill in all required fields');
       return;
     }
-    if (!formData.ownerName) {
-      ToastNotifyError("Owner name is required");
+    
+    // Validate email formats
+    if (formData.ownerEmail && !EMAIL_REGEX.test(formData.ownerEmail)) {
+      ToastNotifyError('Invalid Owner Email');
       return;
     }
-    if (!formData.ownerEmail) {
-      ToastNotifyError("Owner email is required");
+    
+    if (formData.spokeEmail && !EMAIL_REGEX.test(formData.spokeEmail)) {
+      ToastNotifyError('Invalid Spoke Email');
       return;
     }
-
-    // Submit form data
+    
     setIsSubmitting(true);
+    
     try {
-      await onSubmit(formData);
+      const clientData: Client = {
+        ...formData,
+        clientId: 0 // This will be assigned by the backend
+      };
+      
+      const isCreated = await createClient(clientData);
+      if (isCreated) {
+        ToastNotifySuccess('Client created successfully');
+        setFormData({...initialFormData});
+      }
+      
+    } catch (error) {
+      console.error('Error creating client:', error);
+      ToastNotifyError('Failed to create client');
     } finally {
       setIsSubmitting(false);
     }
@@ -97,10 +135,11 @@ const AddClientForm = ({ onSubmit }: AddClientFormProps) => {
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
-    setFormData(prev => ({
-      ...prev,
+    
+    setFormData({
+      ...formData,
       [name]: value
-    }));
+    });
   };
 
   const typeOptions = getClientTypeOptions(false);
