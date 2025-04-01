@@ -68,18 +68,55 @@ const ManageUsers = () => {
   const confirmStatusChange = async () => {
     if (selectedUser) {
       try {
+        // Close modal immediately
         setIsStatusModalOpen(false);
-        await updateUserStatus(selectedUser.id!, selectedUser.status);
-
-        // Refetch users to get the updated list
-        await fetchUsers();
         
-        setSelectedUser(null);
+        // Update UI immediately (optimistic update)
+        const updatedUsers = users.map((user: UserContextUser) => 
+          user.id === selectedUser.id 
+            ? { ...user, status: selectedUser.status } 
+            : user
+        );
+        setUsers(updatedUsers);
+        
+        // Call API to update status
+        await updateUserStatus(selectedUser.id!, selectedUser.status);
+        
+        // Show success notification only after API succeeds
         ToastNotifySuccess("Status updated successfully");
+        
+        // Refresh users list in background without disrupting UI
+        const refreshUsers = async () => {
+          try {
+            const userData = await getAllUsers();
+            // Only update if there are actual changes
+            if (userData) {
+              const needsUpdate = JSON.stringify(userData) !== JSON.stringify(users);
+              if (needsUpdate) {
+                setUsers(userData);
+              }
+            }
+          } catch (error) {
+            console.error('Error refreshing users:', error);
+            // Don't show error to user as the main action already succeeded
+          }
+        };
+        
+        refreshUsers();
+        
       } catch (err) {
         console.error('Failed to update status:', err);
         ToastNotifyError("Failed to update status. Please try again.");
-        setIsStatusModalOpen(false);
+        
+        // Revert the optimistic update if API fails
+        const revertedUsers = users.map((user: UserContextUser) => 
+          user.id === selectedUser.id 
+            ? { ...user, status: selectedUser.status === USER_STATUS.ACTIVE ? USER_STATUS.INACTIVE : USER_STATUS.ACTIVE } 
+            : user
+        );
+        setUsers(revertedUsers);
+      } finally {
+        setSelectedUser(null);
       }
     }
   };

@@ -4,5 +4,6 @@
   "/manage-clients/[id]/page": "app/manage-clients/[id]/page.js",
   "/manage-clients/page": "app/manage-clients/page.js",
   "/manage-users/page": "app/manage-users/page.js",
-  "/application-tracker/page": "app/application-tracker/page.js"
+  "/application-tracker/page": "app/application-tracker/page.js",
+  "/check-list/page": "app/check-list/page.js"
 }
