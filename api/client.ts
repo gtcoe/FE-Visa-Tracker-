@@ -155,4 +155,24 @@ export const sendEmailToClients = async (emailData: SendEmailPayload): Promise<b
     console.error('Error sending emails:', error);
     throw error;
   }
+};
+
+// Function to get client by user ID
+export const getClientById = async (clientId: number): Promise<Client | null> => {
+  try {
+    const response = await get<any>(`${API_ENDPOINTS.GET_CLIENT_BY_ID}/${clientId}`, {
+      requiresAuth: true
+    });
+
+    if (!response.status || !response.data || !response.data.clients_info || response.data.clients_info.length === 0) {
+      console.error('No client found for the provided user ID');
+      return null;
+    }
+
+    // Map backend data to frontend format (take the first client if multiple are returned)
+    return mapBackendClientToFrontend(response.data.clients_info[0]);
+  } catch (error) {
+    console.error('Error fetching client by user ID:', error);
+    return null;
+  }
 }; 
