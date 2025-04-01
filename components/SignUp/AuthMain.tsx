@@ -10,11 +10,25 @@ const AuthPage = () => {
     <section className="flex justify-between items-center gap-[30px] bg-[#0B498B] h-[100vh]">
       <div className="w-1/2 h-full flex justify-center items-center ml-20">
         <div className="w-[64%] h-[100vh] absolute left-[1%]">
-          <Image src={SignUpImg} alt="sign-up-bg" fill />
+          <Image 
+            src={SignUpImg} 
+            alt="sign-up-bg" 
+            fill 
+            priority={true}
+            sizes="(max-width: 768px) 100vw, 50vw"
+            quality={90}
+            style={{ objectFit: 'cover' }}
+          />
         </div>
         {/* Visa Approved Stamp */}
         <div className="absolute left-[10%] top-[29%] w-[150px] h-[150px] z-10">
-          <Image src={VisaApprovedStamp} alt="visa-approved-stamp" width={150} height={150} />
+          <Image 
+            src={VisaApprovedStamp} 
+            alt="visa-approved-stamp" 
+            width={150} 
+            height={150}
+            quality={90}
+          />
         </div>
       </div>
       <div className="w-1/2 flex items-center justify-items-start z-[1000]">

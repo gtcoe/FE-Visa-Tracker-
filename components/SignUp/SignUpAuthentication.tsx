@@ -116,6 +116,8 @@ const SignUpAuthentication = () => {
           width={130}
           height={59}
           className="w-[130px] h-[59px]"
+          priority={true}
+          quality={90}
         />
       </div>
       <div className="px-[40px] flex flex-col w-full gap-6">
@@ -166,6 +168,7 @@ const SignUpAuthentication = () => {
                   width={24}
                   height={24}
                   className="size-6"
+                  quality={85}
                 />
               </button>
             </div>

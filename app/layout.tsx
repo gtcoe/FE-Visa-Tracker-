@@ -17,7 +17,6 @@ import "react-toastify/dist/ReactToastify.css";
 import { isLoggedIn } from "@component/api/auth";
 import config from '@component/constants/config';
 import { USER_TYPE } from "@component/constants/userConstants";
-import QueryProvider from "@component/utils/queryProvider";
 
 const { USER_TYPE_KEY } = config;
 
@@ -105,15 +104,13 @@ export default function RootLayout({
         <UserProvider>
           <ClientProvider>
             <ApplicationProvider>
-              <QueryProvider>
-                <div className="min-h-screen flex flex-col">
-                  {userRole && Array.isArray(navItems) && navItems.length > 0 && !isChecklistDetailsPage && !isLoginPage && (
-                    <Navbar items={navItems} userRole={userRole} />
-                  )}
-                  <main className="flex-grow">{children}</main>
-                </div>
-                <ToastContainer />
-              </QueryProvider>
+              <div className="min-h-screen flex flex-col">
+                {userRole && Array.isArray(navItems) && navItems.length > 0 && !isChecklistDetailsPage && !isLoginPage && (
+                  <Navbar items={navItems} userRole={userRole} />
+                )}
+                <main className="flex-grow">{children}</main>
+              </div>
+              <ToastContainer />
             </ApplicationProvider>
           </ClientProvider>
         </UserProvider>

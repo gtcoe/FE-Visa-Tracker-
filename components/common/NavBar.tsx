@@ -34,6 +34,8 @@ export default function Navbar({ items, userRole }: NavbarProps) {
               width={110}
               height={40}
               className="mr-2"
+              priority={true}
+              quality={90}
             />
           </Link>
         </div>

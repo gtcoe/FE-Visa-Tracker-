@@ -1,16 +1,14 @@
 import React from 'react';
 import { Client } from './ManageClients';
+import Link from 'next/link';
 import { useClientContext, ClientContextClient } from '@component/context/ClientContext';
 import { useRouter } from 'next/navigation';
-import PrefetchLink from '@component/components/common/PrefetchLink';
 
 interface ClientsTableProps {
   clients: Client[] | ClientContextClient[];
-  onViewClient?: (client: Client | ClientContextClient) => void;
-  isSearchResults?: boolean;
 }
 
-const ClientsTable = ({ clients, onViewClient, isSearchResults = false }: ClientsTableProps) => {
+const ClientsTable = ({ clients }: ClientsTableProps) => {
   const { setSelectedClient } = useClientContext();
   const router = useRouter();
   
@@ -21,23 +19,12 @@ const ClientsTable = ({ clients, onViewClient, isSearchResults = false }: Client
   const handleClientClick = (client: Client | ClientContextClient) => {
     // Set the selected client in context
     setSelectedClient(client as ClientContextClient);
-    
-    // If onViewClient prop is provided, call it instead of navigating
-    if (onViewClient) {
-      onViewClient(client);
-    } else {
-      // Otherwise navigate to the client details page
-      router.push(`/manage-clients/${client.clientId}`);
-    }
+    // Navigate to the client details page
+    router.push(`/manage-clients/${client.clientId}`);
   };
 
   return (
     <div>
-      {isSearchResults && (
-        <div className="mb-4 text-sm text-gray-600">
-          Found {clients.length} result{clients.length !== 1 ? 's' : ''}
-        </div>
-      )}
       <div className="overflow-x-auto">
         <div className="inline-block min-w-full border border-[#E6EAF2] rounded-[16px] overflow-hidden">
           <table className="min-w-full">
@@ -59,23 +46,12 @@ const ClientsTable = ({ clients, onViewClient, isSearchResults = false }: Client
                     {getClientType(client.type)}
                   </td>
                   <td className="text-center py-4 text-xs font-medium px-6 border-r border-[#E6EAF2]">
-                    {onViewClient ? (
-                      <button 
-                        onClick={() => handleClientClick(client)}
-                        className="text-[#0B498B] hover:underline cursor-pointer"
-                      >
-                        {client.name}
-                      </button>
-                    ) : (
-                      <PrefetchLink
-                        href={`/manage-clients/${client.clientId}`}
-                        prefetchType="client"
-                        dataId={client.clientId}
-                        className="text-[#0B498B] hover:underline cursor-pointer"
-                      >
-                        {client.name}
-                      </PrefetchLink>
-                    )}
+                    <button 
+                      onClick={() => handleClientClick(client)}
+                      className="text-[#0B498B] hover:underline cursor-pointer"
+                    >
+                      {client.name}
+                    </button>
                   </td>
                   <td className="text-center py-4 text-xs font-medium px-6 border-r border-[#E6EAF2] text-[#1C1C1C]">
                     {client.address}
@@ -98,11 +74,6 @@ const ClientsTable = ({ clients, onViewClient, isSearchResults = false }: Client
           </table>
         </div>
       </div>
-      {clients.length === 0 && (
-        <div className="text-center py-8 text-gray-500">
-          No clients found
-        </div>
-      )}
     </div>
   );
 };

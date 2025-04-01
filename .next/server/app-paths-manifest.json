@@ -1,12 +1,9 @@
 {
-  "/checklist-details/page": "app/checklist-details/page.js",
-  "/favicon.ico/route": "app/favicon.ico/route.js",
-  "/manage-clients/[id]/page": "app/manage-clients/[id]/page.js",
   "/manage-clients/page": "app/manage-clients/page.js",
-  "/manage-users/page": "app/manage-users/page.js",
+  "/favicon.ico/route": "app/favicon.ico/route.js",
   "/application-tracker/page": "app/application-tracker/page.js",
+  "/manage-users/page": "app/manage-users/page.js",
   "/check-list/page": "app/check-list/page.js",
-  "/page": "app/page.js",
   "/services/page": "app/services/page.js",
   "/services/service-request/page": "app/services/service-request/page.js"
 }

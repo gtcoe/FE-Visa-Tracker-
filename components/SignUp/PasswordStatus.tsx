@@ -44,6 +44,7 @@ const PasswordStatus: React.FC<PasswordStatusProps> = ({ status, email, setInfoS
               width={20}
               height={20}
               className="size-5"
+              quality={85}
             />
             <span className="text-[#EF4444]">
               Your password has expired. Request a new password to continue.
@@ -69,6 +70,7 @@ const PasswordStatus: React.FC<PasswordStatusProps> = ({ status, email, setInfoS
             className="size-5"
             width={20}
             height={20}
+            quality={85}
           />
           <span className="text-[#10B981]">
             Your password reset request has been sent successfully.
@@ -84,6 +86,7 @@ const PasswordStatus: React.FC<PasswordStatusProps> = ({ status, email, setInfoS
             className="size-5"
             width={20}
             height={20}
+            quality={85}
           />
           <span className="text-[#EF4444]">
             Incorrect password please try again.
@@ -99,6 +102,7 @@ const PasswordStatus: React.FC<PasswordStatusProps> = ({ status, email, setInfoS
             className="size-5"
             width={20}
             height={20}
+            quality={85}
           />
           <span className="text-[#EF4444]">
             Email not found. Please check your email address.
