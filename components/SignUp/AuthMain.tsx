@@ -3,7 +3,7 @@ import React from "react";
 import SignUpAuthentication from "./SignUpAuthentication";
 import Image from "next/image";
 import SignUpImg from "../../public/SignUpImg.svg";
-import VisaApprovedStamp from "../Assets/Images/visaApprovedStamp.svg";
+import VisaApprovedStamp from "../../public/visaApprovedStamp.svg";
 
 const AuthPage = () => {
   return (
