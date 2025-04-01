@@ -17,10 +17,11 @@ const UsersTable = ({ users, onStatusChange }: UsersTableProps) => {
   };
 
   return (
-    <div className="bg-white rounded-lg shadow">
-      <div className="">
-        <h2 className="px-6 text-black text-lg font-medium py-[20px]">Users Details</h2>
-        <div className="overflow-x-auto">
+    <div className="">
+      <div className="overflow-x-auto">
+        {users.length === 0 ? (
+          <div className="text-center py-8 text-gray-500">No users found</div>
+        ) : (
           <table className="min-w-full">
             <thead className="bg-[#F9FAFB] px-6">
               <tr className="border-b border-[#E6EAF2]">
@@ -50,7 +51,7 @@ const UsersTable = ({ users, onStatusChange }: UsersTableProps) => {
               ))}
             </tbody>
           </table>
-        </div>
+        )}
       </div>
     </div>
   );

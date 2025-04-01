@@ -1,13 +1,13 @@
 "use client";
 
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import UsersTable from './UsersTable';
 import AddUserModal from './AddUserModal';
 import StatusChangeModal from './StatusChangeModal';
 import { USER_STATUS, USER_TYPE } from '../../constants/userConstants';
 import { ToastNotifySuccess, ToastNotifyError } from '../common/Toast';
 import { useUserContext, UserContextUser } from '@component/context/UserContext';
-import { getAllUsers, createUser, updateUserStatus } from '@component/api/user';
+import { getAllUsers, createUser, updateUserStatus, searchUsers } from '@component/api/user';
 
 export interface User {
   name: string;
@@ -23,6 +23,9 @@ const ManageUsers = () => {
   const [isStatusModalOpen, setIsStatusModalOpen] = useState(false);
   const [loading, setLoading] = useState<boolean>(false);
   const [error, setError] = useState<string | null>(null);
+  const [searching, setSearching] = useState<boolean>(false);
+  const [searchQuery, setSearchQuery] = useState<string>('');
+  const [searchTimeout, setSearchTimeout] = useState<NodeJS.Timeout | null>(null);
   
   // Use user context
   const { users, setUsers, selectedUser, setSelectedUser } = useUserContext();
@@ -162,10 +165,57 @@ const ManageUsers = () => {
     }
   };
 
+  // Debounced search function
+  const debouncedSearch = useCallback(async (query: string) => {
+    // This check is redundant now since we handle empty queries in handleSearch
+    // but keeping it for safety
+    if (query.trim() === '') {
+      fetchUsers();
+      return;
+    }
+    
+    try {
+      const searchResults = await searchUsers(query);
+      setUsers(searchResults);
+    } catch (error) {
+      console.error('Error searching users:', error);
+      ToastNotifyError('Failed to search users. Please try again.');
+    } finally {
+      setSearching(false);
+    }
+  }, []);
+
+  const handleSearch = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const query = e.target.value;
+    setSearchQuery(query);
+    
+    // Clear previous timeout
+    if (searchTimeout) {
+      clearTimeout(searchTimeout);
+    }
+    
+    // If query is empty, immediately fetch all users without debouncing
+    if (query.trim() === '') {
+      setSearching(false);
+      fetchUsers();
+      return;
+    }
+    
+    // Set searching state immediately for UX feedback
+    setSearching(true);
+    
+    // Set a new timeout for the actual search
+    const timeoutId = setTimeout(() => {
+      debouncedSearch(query);
+    }, 500); // 500ms delay
+    
+    setSearchTimeout(timeoutId);
+  };
+
   return (
     <div className="px-[80px]">
       <div className="flex justify-between items-center pt-[32px] pb-[24px]">
-        <h1 className="text-[#1C1C1C] text-[28px] font-bold  mt-0">Manage Users</h1>
+        <h1 className="text-[#1C1C1C] text-[28px] font-bold mt-0">Manage Users</h1>
         <button
           onClick={() => setIsAddUserModalOpen(true)}
           className="bg-[#0B498B] w-[145px] h-[40px] text-white px-[32px] py-[8px] rounded-[4px] font-medium"
@@ -179,10 +229,56 @@ const ManageUsers = () => {
       ) : error ? (
         <div className="text-center py-4 text-red-500">{error}</div>
       ) : (
-        <UsersTable 
-          users={users} 
-          onStatusChange={handleStatusChange}
-        />
+        <div className="bg-white rounded-lg shadow">
+          <div className="flex justify-between items-center">
+            <h2 className="px-6 text-black text-lg font-medium py-[20px]">Users Details</h2>
+            <div className="px-6 py-[20px] relative">
+              <div className="relative">
+                <div className="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none">
+                  <svg className="w-4 h-4 text-gray-500" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+                  </svg>
+                </div>
+                <input
+                  type="text"
+                  placeholder="Search by email..."
+                  value={searchQuery}
+                  onChange={handleSearch}
+                  className="pl-10 pr-10 border-b border-gray-300 py-2 focus:outline-none focus:border-[#0B498B] w-[250px] text-black placeholder:text-gray-400"
+                />
+                {searchQuery && (
+                  <button 
+                    onClick={() => {
+                      // Clear search query
+                      setSearchQuery('');
+                      
+                      // Clear any pending search timeout
+                      if (searchTimeout) {
+                        clearTimeout(searchTimeout);
+                      }
+                      
+                      // Reset searching state
+                      setSearching(false);
+                      
+                      // Fetch all users
+                      fetchUsers();
+                    }}
+                    className="absolute inset-y-0 right-0 flex items-center pr-3"
+                  >
+                    <svg className="w-4 h-4 text-gray-500 hover:text-gray-700" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+                    </svg>
+                  </button>
+                )}
+              </div>
+              {searching && <span className="ml-2 text-sm text-gray-500">Searching...</span>}
+            </div>
+          </div>
+          <UsersTable 
+            users={users} 
+            onStatusChange={handleStatusChange}
+          />
+        </div>
       )}
 
       {isAddUserModalOpen && (
