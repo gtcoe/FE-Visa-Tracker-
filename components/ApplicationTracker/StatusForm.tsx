@@ -17,7 +17,7 @@ import {
   QUEUE_DISPLAY_MAP, 
   STATUS_DISPLAY_MAP,
   QUEUE_TO_STATUS
-} from '@component/constants/applicationConstants';
+} from '@component/constants/appConstants';
 import { getClientsByType } from '@component/api/application';
 import { ToastNotifyError, ToastNotifySuccess } from "../common/Toast";
 
@@ -404,7 +404,7 @@ const StatusForm = ({ onSearch }: StatusFormProps) => {
     const validStatuses = QUEUE_TO_STATUS[formData.queue];
     
     // Filter and create options only for valid statuses
-    return validStatuses.map(statusValue => ({
+    return validStatuses.map((statusValue: APPLICATION_EXTERNAL_STATUS) => ({
       value: statusValue,
       label: STATUS_DISPLAY_MAP[statusValue] || `Unknown (${statusValue})`
     }));
