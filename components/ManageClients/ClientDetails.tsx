@@ -4,6 +4,7 @@ import React from 'react';
 import { useRouter } from 'next/navigation';
 import { Client } from './ManageClients';
 import { ClientContextClient } from '@component/context/ClientContext';
+import { COUNTRY_LABELS, STATE_LABELS, COUNTRY, STATE } from '@component/constants/dropdown/geographical';
 
 interface ClientDetailsProps {
   client: Client | ClientContextClient;
@@ -66,14 +67,14 @@ const ClientDetails: React.FC<ClientDetailsProps> = ({ client }) => {
 
             <div>
               <h3 className="text-sm font-medium text-[#1C1C1C]">
-                {displayValue(client.country?.toString())}
+                {displayValue(COUNTRY_LABELS[(client.country as unknown) as COUNTRY])}
               </h3>
               <p className="text-xs text-[#696969] mt-1">Country</p>
             </div>
 
             <div>
               <h3 className="text-sm font-medium text-[#1C1C1C]">
-                {displayValue(client.state?.toString())}
+                {displayValue(STATE_LABELS[(client.state as unknown) as STATE])}
               </h3>
               <p className="text-xs text-[#696969] mt-1">State</p>
             </div>

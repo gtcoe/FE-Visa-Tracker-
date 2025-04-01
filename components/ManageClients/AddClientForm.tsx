@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useMemo } from 'react';
+import React, { useState, useEffect, useMemo, useRef } from 'react';
 import { Client } from './ManageClients';
 import CustomDropdown from '../common/CustomDropdown';
 import { ToastNotifyError, ToastNotifySuccess } from '../common/Toast/index';
@@ -23,13 +23,14 @@ interface AddClientFormProps {
 
 // Ensure Client interface has the right property types
 interface EnhancedClient extends Client {
+  typeOfClient: number;
   country: COUNTRY;
   state: STATE;
 }
 
 const AddClientForm = ({ onSubmit }: AddClientFormProps) => {
   const [formData, setFormData] = useState<EnhancedClient>({
-    type: 2, // Agent as default
+    typeOfClient: 2, // Agent as default
     name: '',
     address: '',
     branches: '',
@@ -44,7 +45,8 @@ const AddClientForm = ({ onSubmit }: AddClientFormProps) => {
     billingCycle: '',
     spokeName: '',
     spokePhone: '',
-    spokeEmail: ''
+    spokeEmail: '',
+    type: 2 // Agent as default
   });
 
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -54,7 +56,7 @@ const AddClientForm = ({ onSubmit }: AddClientFormProps) => {
 
   // Initial form data
   const initialFormData: EnhancedClient = {
-    type: 2, // Agent as default
+    typeOfClient: 2, // Agent as default
     name: '',
     address: '',
     branches: '',
@@ -69,7 +71,8 @@ const AddClientForm = ({ onSubmit }: AddClientFormProps) => {
     ownerEmail: '',
     spokeName: '',
     spokePhone: '',
-    spokeEmail: ''
+    spokeEmail: '',
+    type: 2 // Agent as default
   };
 
   // Update available states when country changes
@@ -88,13 +91,13 @@ const AddClientForm = ({ onSubmit }: AddClientFormProps) => {
 
   const handleSubmit = async () => {
     // Validate required fields
-    if (!formData.type || !formData.name) {
+    if (!formData.typeOfClient || !formData.name) {
       ToastNotifyError('Please fill in all required fields');
       return;
     }
     
     // Validate GST for Corporate clients
-    if (formData.type === CLIENT_TYPE.CORPORATE && !formData.gstNo) {
+    if (formData.typeOfClient === CLIENT_TYPE.CORPORATE && !formData.gstNo) {
       ToastNotifyError('GST Number is mandatory for Corporate clients');
       return;
     }
@@ -132,6 +135,7 @@ const AddClientForm = ({ onSubmit }: AddClientFormProps) => {
     try {
       const clientData: Client = {
         ...formData,
+        type: formData.typeOfClient,
         clientId: 0 // This will be assigned by the backend
       };
       
@@ -150,10 +154,18 @@ const AddClientForm = ({ onSubmit }: AddClientFormProps) => {
   };
 
   const handleDropdownChange = (name: string) => (value: string | number) => {
-    setFormData(prev => ({
-      ...prev,
-      [name]: Number(value)
-    }));
+    const numericValue = typeof value === 'string' ? parseInt(value, 10) : value;
+    
+    console.log(`Dropdown changing: ${name} = ${numericValue} (original: ${value}, type: ${typeof value})`);
+    
+    setFormData(prev => {
+      const updated = {
+        ...prev,
+        [name]: numericValue
+      };
+      
+      return updated;
+    });
   };
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -165,7 +177,15 @@ const AddClientForm = ({ onSubmit }: AddClientFormProps) => {
     }));
   };
 
+  // Additional debugging for type options
   const typeOptions = getClientTypeOptions(false);
+  console.log('Type options raw:', typeOptions);
+  // Convert to an array properly formatted for the dropdown
+  const formattedTypeOptions = typeOptions.map(option => ({
+    value: option.value.toString(), // Ensure value is a string
+    label: option.label
+  }));
+  console.log('Formatted type options:', formattedTypeOptions);
 
   // Generate country options from the COUNTRY_LABELS mapping
   const countryOptions: Option[] = useMemo(() => {
@@ -204,15 +224,14 @@ const AddClientForm = ({ onSubmit }: AddClientFormProps) => {
           <div className="col-span-1">
             <label className="block text-xs text-[#1C1C1C] mb-2">Type</label>
             <CustomDropdown
-              name="type"
-              value={formData.type.toString()}
-              onChange={handleDropdownChange('type')}
-              options={typeOptions}
+              name="typeOfClient"
+              value={formData.typeOfClient.toString()}
+              onChange={(value) => setFormData(prev => ({ ...prev, typeOfClient: Number(value) }))}
+              options={formattedTypeOptions}
               className="w-full"
               placeholder="Select Type"
             />
           </div>
-          
           <div className="col-span-1">
             <label className="block text-xs text-[#1C1C1C] mb-2">Client Name</label>
             <input
@@ -224,7 +243,6 @@ const AddClientForm = ({ onSubmit }: AddClientFormProps) => {
               className="w-full px-3 py-2 border border-[#E6EAF2] rounded-[8px] focus:outline-none focus:ring-2 focus:ring-[#0B498B]/20 focus:border-none text-[#1C1C1C] text-sm"
             />
           </div>
-          
           <div className="col-span-3">
             <label className="block text-xs text-[#1C1C1C] mb-2">Address</label>
             <input
@@ -236,7 +254,6 @@ const AddClientForm = ({ onSubmit }: AddClientFormProps) => {
               className="w-full px-3 py-2 border border-[#E6EAF2] rounded-[8px] focus:outline-none focus:ring-2 focus:ring-[#0B498B]/20 focus:border-none text-[#1C1C1C] text-sm"
             />
           </div>
-          
           <div className="col-span-1">
             <label className="block text-xs text-[#1C1C1C] mb-2 ">Branches</label>
             <input
@@ -248,13 +265,12 @@ const AddClientForm = ({ onSubmit }: AddClientFormProps) => {
               className="w-full px-3 py-2 border border-[#E6EAF2] rounded-[8px] focus:outline-none focus:ring-2 focus:ring-[#0B498B]/20 focus:border-none text-[#1C1C1C] text-sm"
             />
           </div>
-
           <div className="col-span-1">
             <label className="block text-xs text-[#1C1C1C] mb-2">Country</label>
             <CustomDropdown
               name="country"
               value={formData.country.toString()}
-              onChange={handleDropdownChange('country')}
+              onChange={(value) => setFormData(prev => ({ ...prev, country: Number(value) }))}
               options={countryOptions}
               className="w-full"
               placeholder="Select Country"
@@ -266,7 +282,7 @@ const AddClientForm = ({ onSubmit }: AddClientFormProps) => {
             <CustomDropdown
               name="state"
               value={formData.state.toString()}
-              onChange={handleDropdownChange('state')}
+              onChange={(value) => setFormData(prev => ({ ...prev, state: Number(value) }))}
               options={stateOptions}
               className="w-full"
               placeholder="Select State"
@@ -299,8 +315,8 @@ const AddClientForm = ({ onSubmit }: AddClientFormProps) => {
 
           <div className="col-span-1">
             <label className="block text-xs text-[#1C1C1C] mb-2">
-              GST No{formData.type === CLIENT_TYPE.CORPORATE && <span className="text-red-500 ml-1">*</span>}
-              {formData.type === CLIENT_TYPE.CORPORATE && <span className="text-xs text-gray-500 ml-1">(Required for Corporate)</span>}
+              GST No{formData.typeOfClient === CLIENT_TYPE.CORPORATE && <span className="text-red-500 ml-1">*</span>}
+              {formData.typeOfClient === CLIENT_TYPE.CORPORATE && <span className="text-xs text-gray-500 ml-1">(Required for Corporate)</span>}
             </label>
             <input
               type="text"
@@ -308,7 +324,7 @@ const AddClientForm = ({ onSubmit }: AddClientFormProps) => {
               value={formData.gstNo}
               onChange={handleChange}
               placeholder="Enter GST number"
-              className={`w-full px-3 py-2 border border-[#E6EAF2] rounded-[8px] focus:outline-none focus:ring-2 focus:ring-[#0B498B]/20 focus:border-none text-[#1C1C1C] text-sm ${formData.type === CLIENT_TYPE.CORPORATE ? 'border-red-300' : ''}`}
+              className={`w-full px-3 py-2 border border-[#E6EAF2] rounded-[8px] focus:outline-none focus:ring-2 focus:ring-[#0B498B]/20 focus:border-none text-[#1C1C1C] text-sm `}
             />
           </div>
 

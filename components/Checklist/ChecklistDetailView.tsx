@@ -157,12 +157,12 @@ const ChecklistDetailView: React.FC<ChecklistDetailsProps> = ({
       <div className="flex flex-grow">
         {/* Left Sidebar */}
         <div className="w-80 bg-white border-r border-gray-200 p-4 flex flex-col">
-          <div className="mb-6">
+          {/* <div className="mb-6">
             <h3 className="text-red-600 font-medium py-1">Diplomatic Representation</h3>
             <h3 className="text-red-600 font-medium py-1">Outsourced Visa Application Centres</h3>
             <h3 className="text-red-600 font-medium py-1">Holiday List</h3>
             <h3 className="text-red-600 font-medium py-1">Visa Country Info</h3>
-          </div>
+          </div> */}
           
           <div className="relative mb-2">
             <span className="absolute inset-y-0 left-0 flex items-center pl-3">
