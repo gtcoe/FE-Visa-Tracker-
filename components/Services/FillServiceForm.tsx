@@ -670,6 +670,8 @@ const FillServiceForm = ({
     setIsSubmitting(true);
     
     try {
+
+      console.log("=====>visaRequests", visaRequests);
       // Prepare payload according to API requirements
       const payload: Step3RequestPayload = {
         personal_info: {
