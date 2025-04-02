@@ -15,7 +15,7 @@ const mapBackendClientToFrontend = (backendClient: any): Client => {
     clientId: backendClient.id,
     userId: backendClient.user_id,
     type: backendClient.type,
-    name: backendClient.owner_name,
+    name: backendClient.name,
     address: backendClient.address || '',
     branches: backendClient.branches || '',
     ownerName: backendClient.owner_name || '',
