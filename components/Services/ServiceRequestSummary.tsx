@@ -15,7 +15,7 @@ import {
   ENTRY_TYPE, ENTRY_TYPE_LABELS
 } from '@component/constants/dropdown/geographical';
 import { FORM_MODE, TAB_NAME, STORAGE_KEY } from '@component/constants/formConstants';
-import { ToastNotifyError } from '@component/components/common/Toast';
+import { ToastNotifyError, ToastNotifySuccess } from '@component/components/common/Toast';
 import { APPLICATION_STATUS } from '@component/constants/appConstants';
 import { DELIVERY_METHOD, DELIVERY_METHOD_LABELS } from '@component/constants/dropdown/deliveryMethods';
 
@@ -155,8 +155,7 @@ const ServiceRequestSummary: React.FC<{
       console.log('=====>Step 4 response:', response);
       
       if (response && response.status) {
-        // Success handling
-        console.log('Step 4 data submitted successfully:', response);
+        ToastNotifySuccess("Service request submitted successfully");
         
         // Clear localStorage data that's no longer needed
         localStorage.removeItem(STORAGE_KEY.APPLICATION_INFO);

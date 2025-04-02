@@ -9,6 +9,7 @@ const options: ToastOptions = {
   autoClose: 3000,
   draggable: false,
   style: { color: 'white' },
+  icon: false,
 };
 
 const optionsInfo: ToastOptions = {

@@ -1,12 +1,29 @@
+/* Hide toast icons */
+.Toastify .Toastify__toast-icon {
+  display: none !important;
+}
+
 .Toastify .Toastify__close-button {
-    display: none;
-  }
-  .Toastify .Toastify__toast-container {
-    text-align: center;
-  }
-  .Toastify .Toastify__toast {
-    color: white;
-  }
+  display: none;
+}
+.Toastify .Toastify__toast-container {
+  text-align: center;
+}
+.Toastify .Toastify__toast {
+  color: white;
+  display: flex !important;
+  justify-content: center !important;
+  align-items: center !important;
+  padding-left: 15px !important;
+  padding-right: 15px !important;
+}
+/* Override default toast body styles for better centering */
+.Toastify .Toastify__toast-body {
+  margin: 0 auto !important;
+  padding: 0 !important;
+  text-align: center !important;
+  width: 100% !important;
+}
   /* Style for the toast icon */
   .Toastify .Toastify__toast-icon {
     background-color: white;
