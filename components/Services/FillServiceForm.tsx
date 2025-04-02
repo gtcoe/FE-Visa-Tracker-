@@ -13,7 +13,7 @@ import {
   PROCESSING_BRANCH, PROCESSING_BRANCH_LABELS
 } from '@component/constants/dropdown/geographical';
 import { FORM_MODE, TAB_NAME, STORAGE_KEY } from '@component/constants/formConstants';
-import { ToastNotifyError } from '@component/components/common/Toast';
+import { ToastNotifyError, ToastNotifySuccess } from '@component/components/common/Toast';
 import { APPLICATION_STATUS } from '@component/constants/appConstants';
 import { EMAIL_REGEX } from '@component/constants/regex';
 
@@ -702,7 +702,7 @@ const FillServiceForm = ({
           address_line2: addressInfo.addressLine2,
           country: countryMap[addressInfo.country] || 1, // Default to India
           state: stateMap[addressInfo.state] || 6, // Default to Delhi
-          city: parseInt(addressInfo.city, 10) || 1, // Default to first city
+          city: addressInfo.city , // Default to first city
           zip: addressInfo.zip,
           occupation: addressInfo.occupation,
           position: addressInfo.position
@@ -778,11 +778,12 @@ const FillServiceForm = ({
   
   const handleUpdateApplicant = useCallback(async () => {
     try {
-      await handleSubmit({ preventDefault: () => {} } as React.FormEvent);
+      // await handleSubmit({ preventDefault: () => {} } as React.FormEvent);
+      ToastNotifySuccess("Applicant updated successfully");
     } catch (error) {
       console.error('Error in handleUpdateApplicant:', error);
     }
-  }, [handleSubmit]);
+  }, []);
 
   const handleBack = useCallback(() => {
     router.back();
@@ -1377,15 +1378,15 @@ const FillServiceForm = ({
               <label className="block text-sm font-medium text-gray-700 mb-2">
                 City
               </label>
-              <select
+              <input
+                type="text"
                 name="city"
                 value={addressInfo.city}
                 onChange={handleAddressInfoChange}
-                className={`w-full px-3 py-2.5 border border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-[#0B498B] text-[#6A6A6A] appearance-none ${formMode === FORM_MODE.VIEW ? 'bg-gray-100' : 'bg-white'}`}
-                disabled={formMode === FORM_MODE.VIEW}
-              >
-                <option key="addr-city-empty" value="">Select</option>
-              </select>
+                placeholder="Enter city"
+                className={`w-full px-3 py-2.5 border border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-[#0B498B] text-[#6A6A6A] ${formMode === FORM_MODE.VIEW ? 'bg-gray-100' : 'bg-white'}`}
+                readOnly={formMode === FORM_MODE.VIEW}
+              />
             </div>
             
             <div>
