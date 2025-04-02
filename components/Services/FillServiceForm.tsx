@@ -10,7 +10,12 @@ import {
   VISA_CATEGORY, VISA_CATEGORY_LABELS,
   NATIONALITY, NATIONALITY_LABELS,
   ENTRY_TYPE, ENTRY_TYPE_LABELS,
-  PROCESSING_BRANCH, PROCESSING_BRANCH_LABELS
+  PROCESSING_BRANCH, PROCESSING_BRANCH_LABELS,
+  DISPLAY_NAME_TO_COUNTRY,
+  STATE_NAME_TO_STATE,
+  NATIONALITY_NAME_TO_NATIONALITY,
+  VISA_CATEGORY_NAME_TO_VISA_CATEGORY,
+  ENTRY_TYPE_NAME_TO_ENTRY_TYPE
 } from '@component/constants/dropdown/geographical';
 import { FORM_MODE, TAB_NAME, STORAGE_KEY } from '@component/constants/formConstants';
 import { ToastNotifyError, ToastNotifySuccess } from '@component/components/common/Toast';
@@ -690,12 +695,12 @@ const FillServiceForm = ({
           priority_submission: isFixed ? 1 : 0
         },
         visa_requests: visaRequests.map(request => ({
-          visa_country: visaCountryMap[request.visaCountry] || 1,
-          visa_category: visaCategoryMap[request.visaCategory] || 1,
-          nationality: nationalityMap[request.nationality] || 1,
-          state: stateMap[request.state] || 6, // Default to Delhi
-          entry_type: entryTypeMap[request.entryType] || 1,
-          remark: request.remark || '' // Ensure remark is always a string, never undefined
+          visa_country: DISPLAY_NAME_TO_COUNTRY[request.visaCountry] || 0,
+          visa_category:  VISA_CATEGORY_NAME_TO_VISA_CATEGORY[request.visaCategory] || 0,
+          nationality: NATIONALITY_NAME_TO_NATIONALITY[request.nationality] || 0,
+          state: STATE_NAME_TO_STATE[request.state] || 0, 
+          entry_type: ENTRY_TYPE_NAME_TO_ENTRY_TYPE[request.entryType] || 0,
+          remark: request.remark || '' 
         })),
         address_info: {
           address_line1: addressInfo.addressLine1,

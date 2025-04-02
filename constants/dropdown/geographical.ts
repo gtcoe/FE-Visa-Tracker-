@@ -389,6 +389,43 @@ export const VISA_COUNTRY_LABELS: Partial<Record<COUNTRY, string>> = {
   [COUNTRY.UNITED_STATES]: COUNTRY_DISPLAY_NAME[COUNTRY.UNITED_STATES]
 };
 
+// Create reverse mappings for easier lookups by name
+
+// Reverse mapping of COUNTRY_DISPLAY_NAME (maps from display name to enum value)
+export const DISPLAY_NAME_TO_COUNTRY: Record<string, COUNTRY> = Object.entries(COUNTRY_DISPLAY_NAME)
+  .reduce((acc, [key, value]) => {
+    acc[value] = Number(key) as COUNTRY;
+    return acc;
+  }, {} as Record<string, COUNTRY>);
+
+// Reverse mapping of STATE_LABELS (maps from state name to enum value)
+export const STATE_NAME_TO_STATE: Record<string, STATE> = Object.entries(STATE_LABELS)
+  .reduce((acc, [key, value]) => {
+    acc[value] = Number(key) as STATE;
+    return acc;
+  }, {} as Record<string, STATE>);
+
+// Reverse mapping of NATIONALITY_LABELS (maps from nationality name to enum value)
+export const NATIONALITY_NAME_TO_NATIONALITY: Record<string, NATIONALITY> = Object.entries(NATIONALITY_LABELS)
+  .reduce((acc, [key, value]) => {
+    acc[value] = Number(key) as NATIONALITY;
+    return acc;
+  }, {} as Record<string, NATIONALITY>);
+
+// Reverse mapping of ENTRY_TYPE_LABELS (maps from entry type name to enum value)
+export const ENTRY_TYPE_NAME_TO_ENTRY_TYPE: Record<string, ENTRY_TYPE> = Object.entries(ENTRY_TYPE_LABELS)
+  .reduce((acc, [key, value]) => {
+    acc[value] = Number(key) as ENTRY_TYPE;
+    return acc;
+  }, {} as Record<string, ENTRY_TYPE>);
+
+// Reverse mapping of VISA_CATEGORY_LABELS (maps from visa category name to enum value)
+export const VISA_CATEGORY_NAME_TO_VISA_CATEGORY: Record<string, VISA_CATEGORY> = Object.entries(VISA_CATEGORY_LABELS)
+  .reduce((acc, [key, value]) => {
+    acc[value] = Number(key) as VISA_CATEGORY;
+    return acc;
+  }, {} as Record<string, VISA_CATEGORY>);
+
 
 
 
