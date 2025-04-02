@@ -17,7 +17,14 @@ export interface PassengerInfo {
   last_name: string;
   email: string;
   dob: string;
+  phone: string;
+  processing_branch: string;
   passport_number: string;
+  passport_date_of_issue: string;
+  passport_date_of_expiry: string;
+  passport_issue_at: string;
+  count_of_expired_passport: string;
+  expired_passport_number: string;
   address_line_1: string;
   address_line_2: string;
   city: number;
@@ -25,6 +32,8 @@ export interface PassengerInfo {
   country: number;
   zip: string;
   occupation: string;
+  position: string;
+  last_updated_by: string;
 }
 
 // Define props for the component

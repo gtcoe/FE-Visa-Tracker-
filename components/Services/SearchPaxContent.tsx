@@ -2,6 +2,7 @@
 
 import React, { useEffect, useState } from 'react';
 import PassengerSearchResults, { PassengerInfo } from './PassengerSearchResults';
+import { STORAGE_KEY, TAB_NAME } from '@component/constants/formConstants';
 
 // Define the types for the SearchPaxContent props
 interface SearchPaxContentProps {
@@ -22,6 +23,7 @@ interface SearchPaxContentProps {
   searchResults?: {
     passengers_info: PassengerInfo[];
   };
+  handleTabChange: (tab: string) => void;
 }
 
 // Component for Search Pax tab
@@ -32,14 +34,16 @@ const SearchPaxContent: React.FC<SearchPaxContentProps> = ({
   handleSearch,
   handleClear,
   isSearching,
-  searchResults
+  searchResults,
+  handleTabChange
 }) => {
   const [referenceNumber, setReferenceNumber] = useState<string>('');
   
   // Only access localStorage on the client side
   useEffect(() => {
     if (typeof window !== 'undefined') {
-      setReferenceNumber(localStorage.getItem('referenceNumber') || '');
+      const storedRefNumber = localStorage.getItem('referenceNumber') || '';
+      setReferenceNumber(storedRefNumber);
     }
   }, []);
 
@@ -50,10 +54,80 @@ const SearchPaxContent: React.FC<SearchPaxContentProps> = ({
     return date.toISOString().split('T')[0];
   };
 
-  // Handle using a passenger (will be implemented later)
+  // Handle using a passenger
   const handleUsePassenger = (passengerId: number) => {
-    console.log(`Using passenger with ID: ${passengerId}`);
-    // Functionality to be added later
+    // Find the selected passenger from search results
+    const selectedPassenger = searchResults?.passengers_info.find(
+      passenger => passenger.id === passengerId
+    );
+    
+    if (!selectedPassenger) {
+      console.error(`Passenger with ID ${passengerId} not found`);
+      return;
+    }
+    
+    console.log('Using passenger data:', selectedPassenger);
+    
+    // Format the passenger data for the application form
+    const applicationData = {
+      personal_info: {
+        first_name: selectedPassenger.first_name,
+        last_name: selectedPassenger.last_name,
+        email_id: selectedPassenger.email,
+        date_of_birth: selectedPassenger.dob,
+        phone: selectedPassenger.phone || '',
+        processing_branch: selectedPassenger.processing_branch || 1
+      },
+      passport_info: {
+        passport_number: selectedPassenger.passport_number,
+        date_of_issue: selectedPassenger.passport_date_of_issue || '',
+        date_of_expiry: selectedPassenger.passport_date_of_expiry || '',
+        issue_at: selectedPassenger.passport_issue_at || '',
+        no_of_expired_passport: selectedPassenger.count_of_expired_passport || 0,
+        expired_passport_number: selectedPassenger.expired_passport_number || ''
+      },
+      address_info: {
+        address_line1: selectedPassenger.address_line_1,
+        address_line2: selectedPassenger.address_line_2 || '',
+        country: selectedPassenger.country,
+        state: selectedPassenger.state,
+        city: selectedPassenger.city,
+        zip: selectedPassenger.zip,
+        occupation: selectedPassenger.occupation || '',
+        position: selectedPassenger.position || ''
+      },
+      // Set one default visa request
+      visa_requests: [{
+        visa_country: 1, // Default Netherlands
+        visa_category: 1, // Default Business
+        nationality: 1, // Default Indian
+        state: 6, // Default Delhi
+        entry_type: 1, // Default Normal
+        remark: ''
+      }],
+      // Used to store the reference number across app
+      reference_number: referenceNumber || '',
+      // Add other required fields with default values
+      travel_info: {
+        travel_date: '',
+        interview_date: '',
+        file_no: '',
+        is_travel_date_tentative: 0,
+        priority_submission: 0
+      },
+      mi_fields: {
+        olvt_number: ''
+      },
+      application_id: 0, // New application
+      status: 0,
+      last_updated_by: selectedPassenger.last_updated_by || 0
+    };
+    
+    // Store the application data in localStorage
+    localStorage.setItem(STORAGE_KEY.APPLICATION_INFO, JSON.stringify(applicationData));
+    
+    // Switch to the Fill Service Form tab
+    handleTabChange(TAB_NAME.FILL);
   };
 
   return (

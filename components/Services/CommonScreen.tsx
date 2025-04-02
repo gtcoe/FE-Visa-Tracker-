@@ -166,14 +166,23 @@ const SearchPax = () => {
           last_name: pax.last_name || '',
           email: pax.email || '',
           dob: pax.dob || '',
+          phone: pax.phone || '',
+          processing_branch: pax.processing_branch || '',
           passport_number: pax.passport_number || '',
+          passport_date_of_issue: pax.passport_date_of_issue || '',
+          passport_date_of_expiry: pax.passport_date_of_expiry || '',
+          passport_issue_at: pax.passport_issue_at || '',
+          count_of_expired_passport: pax.count_of_expired_passport || '',
+          expired_passport_number: pax.expired_passport_number || '',
           address_line_1: pax.address_line_1 || '',
           address_line_2: pax.address_line_2 || '',
           city: Number(pax.city) || 0,
           state: Number(pax.state) || 0,
           country: Number(pax.country) || 0,
           zip: pax.zip || '',
-          occupation: pax.occupation || ''
+          occupation: pax.occupation || '',
+          position: pax.position || '',
+          last_updated_by: pax.last_updated_by || ''
         })) : []
       };
       
@@ -237,6 +246,7 @@ const SearchPax = () => {
             handleClear={handleClear}
             isSearching={isSearching}
             searchResults={searchResults}
+            handleTabChange={handleTabChange}
           />
         )}
         
