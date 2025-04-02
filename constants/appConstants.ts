@@ -68,8 +68,8 @@ export const SIGN_IN_STATUS_MESSAGE: Record<number, string> = {
 export const APPLICATION_STATUS: Record<string, number> = {
   STEP1_DONE: 1,
   STEP2_DONE: 2,
-  STEP3_DONE: 2,
-  STEP4_DONE: 2,
+  STEP3_DONE: 3,
+  STEP4_DONE: 4,
 }
 
 export enum EMAIL_TYPE {
