@@ -36,8 +36,8 @@ interface FormData {
   entryGenerationBranch: PROCESSING_BRANCH | '';
   fromDate: string;
   toDate: string;
-  queue: APPLICATION_QUEUES;
-  status: APPLICATION_EXTERNAL_STATUS;
+  queue: APPLICATION_QUEUES | '';
+  status: APPLICATION_EXTERNAL_STATUS | '';
   country: COUNTRY | '';
   billingToCompany: string;
 }
@@ -282,8 +282,8 @@ const StatusForm = ({ onSearch }: StatusFormProps) => {
     entryGenerationBranch: "",
     fromDate: "",
     toDate: "",
-    queue: APPLICATION_QUEUES.IN_TRANSIT, // Default value
-    status: APPLICATION_EXTERNAL_STATUS.DOC_RECIVED, // Default value
+    queue: "",
+    status: "",
     country: "",
     billingToCompany: "",
   });
@@ -311,16 +311,19 @@ const StatusForm = ({ onSearch }: StatusFormProps) => {
 
   // Update status when queue changes to ensure compatibility
   useEffect(() => {
+    // Skip validation if queue is empty
+    if (!formData.queue) {
+      return;
+    }
+    
     // If the current status is not valid for the selected queue, reset it to the first valid status
-    if (formData.queue) {
-      const validStatuses = QUEUE_TO_STATUS[formData.queue];
-      if (!validStatuses.includes(formData.status)) {
-        // Set to the first valid status for this queue
-        setFormData(prev => ({
-          ...prev,
-          status: validStatuses[0]
-        }));
-      }
+    const validStatuses = QUEUE_TO_STATUS[formData.queue];
+    if (!validStatuses.includes(formData.status as APPLICATION_EXTERNAL_STATUS)) {
+      // Set to the first valid status for this queue
+      setFormData(prev => ({
+        ...prev,
+        status: validStatuses[0]
+      }));
     }
   }, [formData.queue]);
 
@@ -391,23 +394,32 @@ const StatusForm = ({ onSearch }: StatusFormProps) => {
   ];
   
   // Create options for queue dropdown
-  const queueOptions = createApplicationOptions<APPLICATION_QUEUES>(APPLICATION_QUEUES, QUEUE_DISPLAY_MAP);
+  const queueOptions = [
+    { value: '', label: 'Select Queue' },
+    ...createApplicationOptions<APPLICATION_QUEUES>(APPLICATION_QUEUES, QUEUE_DISPLAY_MAP)
+  ];
   
   // Create filtered status options based on selected queue
   const getFilteredStatusOptions = () => {
     if (!formData.queue) {
-      // If no queue is selected, show all statuses
-      return createApplicationOptions<APPLICATION_EXTERNAL_STATUS>(APPLICATION_EXTERNAL_STATUS, STATUS_DISPLAY_MAP);
+      // If no queue is selected, show an empty option and all statuses
+      return [
+        { value: '', label: 'Select Status' },
+        ...createApplicationOptions<APPLICATION_EXTERNAL_STATUS>(APPLICATION_EXTERNAL_STATUS, STATUS_DISPLAY_MAP)
+      ];
     }
     
     // Get valid statuses for the selected queue
     const validStatuses = QUEUE_TO_STATUS[formData.queue];
     
-    // Filter and create options only for valid statuses
-    return validStatuses.map((statusValue: APPLICATION_EXTERNAL_STATUS) => ({
-      value: statusValue,
-      label: STATUS_DISPLAY_MAP[statusValue] || `Unknown (${statusValue})`
-    }));
+    // Filter and create options only for valid statuses, including empty option
+    return [
+      { value: '', label: 'Select Status' },
+      ...validStatuses.map((statusValue: APPLICATION_EXTERNAL_STATUS) => ({
+        value: statusValue,
+        label: STATUS_DISPLAY_MAP[statusValue] || `Unknown (${statusValue})`
+      }))
+    ];
   };
   
   const statusOptions = getFilteredStatusOptions();

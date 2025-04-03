@@ -1,6 +1,6 @@
 {
   "pages": {
-    "/check-list/page": [
+    "/application-tracker/page": [
       "static/chunks/node_modules_next_dist_1a6ee436._.js",
       "static/chunks/app_favicon_ico_mjs_5c70e8e5._.js",
       "static/chunks/[turbopack]_browser_dev_hmr-client_hmr-client_ts_72559575._.js",
@@ -8,30 +8,9 @@
       "static/chunks/_7ec0f2d9._.js",
       "static/chunks/_2147ae0f._.css",
       "static/chunks/app_layout_tsx_aaf7d535._.js",
-      "static/chunks/_2058f361._.js",
+      "static/chunks/_f42eb37d._.js",
       "static/chunks/components_common_Toast_toast_c683d797.css",
-      "static/chunks/app_check-list_page_tsx_0e3fa9ac._.js",
-      "static/chunks/[turbopack]_browser_dev_hmr-client_hmr-client_ts_fff34f97._.js",
-      "static/chunks/node_modules_next_dist_compiled_react-dom_1f56dc06._.js",
-      "static/chunks/node_modules_next_dist_compiled_38d265cf._.js",
-      "static/chunks/node_modules_next_dist_client_c24f7707._.js",
-      "static/chunks/node_modules_next_dist_3bfaed20._.js",
-      "static/chunks/node_modules_@swc_helpers_cjs_00636ac3._.js",
-      "static/chunks/_e69f0d32._.js",
-      "static/chunks/_22b2a517._.js"
-    ],
-    "/checklist-details/page": [
-      "static/chunks/node_modules_next_dist_1a6ee436._.js",
-      "static/chunks/app_favicon_ico_mjs_5c70e8e5._.js",
-      "static/chunks/[turbopack]_browser_dev_hmr-client_hmr-client_ts_72559575._.js",
-      "static/chunks/node_modules_5c7790de._.js",
-      "static/chunks/_7ec0f2d9._.js",
-      "static/chunks/_2147ae0f._.css",
-      "static/chunks/app_layout_tsx_aaf7d535._.js",
-      "static/chunks/_e381ab5c._.js",
-      "static/chunks/node_modules_lodash_6b0ce4b3._.js",
-      "static/chunks/components_common_Toast_toast_c683d797.css",
-      "static/chunks/app_checklist-details_page_tsx_0e3fa9ac._.js",
+      "static/chunks/app_application-tracker_page_tsx_0e3fa9ac._.js",
       "static/chunks/[turbopack]_browser_dev_hmr-client_hmr-client_ts_fff34f97._.js",
       "static/chunks/node_modules_next_dist_compiled_react-dom_1f56dc06._.js",
       "static/chunks/node_modules_next_dist_compiled_38d265cf._.js",

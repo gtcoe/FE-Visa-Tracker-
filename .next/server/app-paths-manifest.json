@@ -1,5 +1,4 @@
 {
-  "/check-list/page": "app/check-list/page.js",
-  "/favicon.ico/route": "app/favicon.ico/route.js",
-  "/checklist-details/page": "app/checklist-details/page.js"
+  "/application-tracker/page": "app/application-tracker/page.js",
+  "/favicon.ico/route": "app/favicon.ico/route.js"
 }
