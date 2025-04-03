@@ -1,6 +1,5 @@
 import React from 'react';
 import { ApplicationData } from '@component/types/application-tracker';
-import { formatDate } from '@component/utils/dateUtils';
 import { APPLICATION_EXTERNAL_STATUS, STATUS_DISPLAY_MAP } from '@component/constants/appConstants';
 import { COUNTRY, VISA_CATEGORY } from '@component/constants/dropdown/geographical';
 

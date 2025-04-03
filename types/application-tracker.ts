@@ -84,6 +84,7 @@ export interface ApplicationData {
   visa_category: number;
   nationality: number;
   entry_type: number;
+  updated_by_email: string;
   
   // For backward compatibility with UI - can be computed properties
   refNo?: string;

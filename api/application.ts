@@ -1,5 +1,5 @@
 import config from '@component/constants/config';
-import { get, post, ApiResponse } from './httpClient';
+import { get, post, ApiResponse, put } from './httpClient';
 import { ToastNotifyError } from '@component/components/common/Toast';
 // Comment out the problematic import and use any for now
 // import { ApplicationData } from '@component/types/application-tracker';
@@ -472,6 +472,30 @@ export const getClientsByType = async (clientType: string | number): Promise<Cli
   } catch (error) {
     ToastNotifyError('Server Error.')
     console.error('Error fetching clients by type:', error);
+    throw error;
+  }
+};
+
+// Function to update an application
+export const updateApplication = async (applicationData: any) => {
+  try {
+    const { id, ...updateData } = applicationData;
+    
+    // Use the put function from httpClient
+    const response = await put<any>(`${API_ENDPOINTS.APPLICATIONS}/${id}`, updateData, { 
+      requiresAuth: true 
+    });
+    
+    if (!response.status) {
+      throw new Error(response.message || 'Failed to update application');
+    }
+    
+    // Invalidate cache after updating
+    invalidateApplicationCache();
+    
+    return response;
+  } catch (error) {
+    console.error('Error updating application:', error);
     throw error;
   }
 }; 

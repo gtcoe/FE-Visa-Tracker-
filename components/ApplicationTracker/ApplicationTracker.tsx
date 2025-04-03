@@ -130,6 +130,14 @@ const ApplicationTracker = () => {
     // In a real implementation, you might want to fetch a specific page from the API
   };
 
+  // Function to refresh applications data
+  const refreshApplications = async () => {
+    if (!searchParams) return;
+    
+    // Simply reuse the handleSearchForm function with the current searchParams
+    await handleSearchForm(searchParams);
+  };
+
   return (
     <div className="px-[80px]">
       <div className="flex items-center pt-[32px] pb-[24px]">
@@ -152,6 +160,7 @@ const ApplicationTracker = () => {
             totalPages={totalPages}
             onPageChange={handlePageChange}
             userType={userType}
+            onApplicationUpdated={refreshApplications}
           />
         </div>
       )}

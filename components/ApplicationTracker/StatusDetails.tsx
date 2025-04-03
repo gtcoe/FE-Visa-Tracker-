@@ -5,6 +5,9 @@ import { COUNTRY, VISA_CATEGORY } from "@component/constants/dropdown/geographic
 import { formatDate } from "@component/utils/dateUtils";
 import { USER_TYPE } from "@component/constants/userConstants";
 import ApplicationStatusModal from './ApplicationStatusModal';
+import EditApplicationModal from './EditApplicationModal';
+import { updateApplication } from '@component/api/application';
+import { ToastNotifyError, ToastNotifySuccess } from '@component/components/common/Toast';
 
 // Mapping functions for display values
 const getCountryName = (countryId: number) => {
@@ -23,6 +26,7 @@ const getStatusDisplay = (statusId: number) => {
 
 interface ExtendedStatusDetailsProps extends StatusDetailsProps {
   userType?: number;
+  onApplicationUpdated?: () => Promise<void>;
 }
 
 const StatusDetails = ({
@@ -33,9 +37,12 @@ const StatusDetails = ({
   totalPages,
   onPageChange,
   userType = USER_TYPE.CLIENT, // Default to CLIENT if not provided
+  onApplicationUpdated,
 }: ExtendedStatusDetailsProps) => {
   const [selectedApplication, setSelectedApplication] = useState<ApplicationData | null>(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const [isEditModalOpen, setIsEditModalOpen] = useState(false);
+  const [applicationToEdit, setApplicationToEdit] = useState<ApplicationData | null>(null);
   
   const handleReferenceClick = (application: ApplicationData) => {
     setSelectedApplication(application);
@@ -44,6 +51,48 @@ const StatusDetails = ({
   
   const closeModal = () => {
     setIsModalOpen(false);
+  };
+
+  const handleEditClick = (application: ApplicationData, e: React.MouseEvent) => {
+    e.preventDefault(); // Prevent default anchor behavior
+    setApplicationToEdit(application);
+    setIsEditModalOpen(true);
+  };
+  
+  const closeEditModal = () => {
+    setIsEditModalOpen(false);
+    setApplicationToEdit(null);
+  };
+
+  const handleSaveApplication = async (updatedApplication: any) => {
+    try {
+      await updateApplication(updatedApplication);
+      
+      // Call the refresh callback if provided
+      if (onApplicationUpdated) {
+        await onApplicationUpdated();
+      } else {
+        // Update the local state to reflect changes (fallback if no callback)
+        const updatedApplications = applications.map(app => 
+          app.id === updatedApplication.id 
+            ? { 
+                ...app, 
+                queue: updatedApplication.queue,
+                external_status: updatedApplication.external_status,
+                team_remarks: updatedApplication.team_remarks,
+                client_remarks: updatedApplication.client_remarks,
+                billing_remarks: updatedApplication.billing_remarks
+              } 
+            : app
+        );
+      }
+      
+      ToastNotifySuccess('Application updated successfully');
+    } catch (error) {
+      console.error('Error saving application:', error);
+      ToastNotifyError(error instanceof Error ? error.message : 'Failed to update application');
+      throw error; // Re-throw to let the modal handle the error
+    }
   };
 
   // Check if user is admin or manager
@@ -159,7 +208,16 @@ const StatusDetails = ({
                   {app.remarks}
                 </td>
                 <td className="px-4 py-4 text-sm text-[#0B498B] font-medium text-center">
-                  {isAdminOrManager ? <a href={`/application-details/${app.id}`} className="hover:underline">EDIT</a> : ''}
+                  {isAdminOrManager ? 
+                    <a 
+                      href={`/application-details/${app.id}`} 
+                      className="hover:underline"
+                      onClick={(e) => handleEditClick(app, e)}
+                    >
+                      EDIT
+                    </a> 
+                    : ''
+                  }
                 </td>
               </tr>
             ))}
@@ -237,6 +295,14 @@ const StatusDetails = ({
         application={selectedApplication}
         isOpen={isModalOpen}
         onClose={closeModal}
+      />
+      
+      {/* Edit Application Modal */}
+      <EditApplicationModal
+        application={applicationToEdit}
+        isOpen={isEditModalOpen}
+        onClose={closeEditModal}
+        onSave={handleSaveApplication}
       />
     </div>
   );
