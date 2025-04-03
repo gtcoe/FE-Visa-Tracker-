@@ -222,7 +222,7 @@ const DateInput: React.FC<DateInputProps> = ({
           value={inputValue}
           onChange={handleInputChange}
           placeholder={placeholder}
-          className="w-full h-10 px-3 border border-[#E6EAF2] rounded focus:outline-none focus:ring-1 focus:ring-[#0B498B] text-sm placeholder-[#A0A0A0] pr-10"
+          className="w-full h-10 px-3 border border-[#E6EAF2] rounded focus:outline-none focus:ring-1 focus:ring-[#0B498B] text-sm placeholder-[#A0A0A0] pr-10 text-black"
           aria-label={`${label} in format DD/MM/YYYY`}
         />
         <button
