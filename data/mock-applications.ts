@@ -1,4 +1,5 @@
 import { ApplicationData } from "@component/types/application-tracker";
+import { COUNTRY } from "@component/constants/dropdown/geographical";
 
 export const mockApplications: ApplicationData[] = [
   {
@@ -8,7 +9,7 @@ export const mockApplications: ApplicationData[] = [
     agentCorporate: "Travel Experts",
     billingToCompany: "ABC Corp",
     referrer: "John Smith",
-    country: "United States",
+    country: COUNTRY.UNITED_STATES,
     visaType: "Tourist",
     status: "In Process"
   },
@@ -19,7 +20,7 @@ export const mockApplications: ApplicationData[] = [
     agentCorporate: "Global Travels",
     billingToCompany: "XYZ Ltd",
     referrer: "Sarah Johnson",
-    country: "United Kingdom",
+    country: COUNTRY.UNITED_KINGDOM,
     visaType: "Business",
     status: "Approved"
   },
@@ -30,7 +31,7 @@ export const mockApplications: ApplicationData[] = [
     agentCorporate: "Visa Services Inc",
     billingToCompany: "Tech Solutions",
     referrer: "Michael Brown",
-    country: "Canada",
+    country: COUNTRY.CANADA,
     visaType: "Student",
     status: "Submitted"
   },
@@ -41,7 +42,7 @@ export const mockApplications: ApplicationData[] = [
     agentCorporate: "Easy Visa",
     billingToCompany: "Global Corp",
     referrer: "Lisa Davis",
-    country: "Australia",
+    country: COUNTRY.AUSTRALIA,
     visaType: "Work",
     status: "Doc Received"
   },
@@ -52,7 +53,7 @@ export const mockApplications: ApplicationData[] = [
     agentCorporate: "Travel Masters",
     billingToCompany: "Innovative Tech",
     referrer: "James Wilson",
-    country: "Germany",
+    country: COUNTRY.GERMANY,
     visaType: "Tourist",
     status: "Ready for Collection"
   },
@@ -63,7 +64,7 @@ export const mockApplications: ApplicationData[] = [
     agentCorporate: "Visa Pro",
     billingToCompany: "Smart Solutions",
     referrer: "David Miller",
-    country: "France",
+    country: COUNTRY.FRANCE,
     visaType: "Business",
     status: "In Process"
   },
@@ -74,7 +75,7 @@ export const mockApplications: ApplicationData[] = [
     agentCorporate: "GlobeWide",
     billingToCompany: "Future Tech",
     referrer: "Elizabeth Taylor",
-    country: "Spain",
+    country: COUNTRY.SPAIN,
     visaType: "Tourist",
     status: "Submitted"
   },
@@ -85,7 +86,7 @@ export const mockApplications: ApplicationData[] = [
     agentCorporate: "Travel Services",
     billingToCompany: "Global Solutions",
     referrer: "Robert Johnson",
-    country: "Italy",
+    country: COUNTRY.ITALY,
     visaType: "Student",
     status: "Doc Received"
   },
@@ -96,7 +97,7 @@ export const mockApplications: ApplicationData[] = [
     agentCorporate: "Visa Experts",
     billingToCompany: "Digital Corp",
     referrer: "Patricia Lewis",
-    country: "Japan",
+    country: COUNTRY.JAPAN,
     visaType: "Work",
     status: "Approved"
   },
@@ -107,7 +108,7 @@ export const mockApplications: ApplicationData[] = [
     agentCorporate: "Global Travels",
     billingToCompany: "Modern Tech",
     referrer: "Thomas Williams",
-    country: "United States",
+    country: COUNTRY.UNITED_STATES,
     visaType: "Tourist",
     status: "Ready for Collection"
   }
