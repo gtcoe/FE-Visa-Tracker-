@@ -1,18 +1,19 @@
 "use client";
 
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import StatusForm from "./StatusForm";
 import StatusDetails from "./StatusDetails";
 import { useApplicationContext } from "@component/context/ApplicationContext";
 import { searchApplications } from "@component/api/application";
 import { ToastNotifyError } from "@component/components/common/Toast";
-import { ApplicationData } from "@component/types/application-tracker";
+import { ApplicationData, StatusFormData } from "@component/types/application-tracker";
 import { 
   PROCESSING_BRANCH_LABELS, 
   VISA_CATEGORY_LABELS, 
   PROCESSING_BRANCH, 
   VISA_CATEGORY 
 } from "@component/constants/dropdown/geographical";
+import config from '@component/constants/config';
 
 // Define the response type here since we don't have direct access to the API implementation
 interface ApiResponse {
@@ -24,20 +25,37 @@ interface ApiResponse {
 }
 
 const ApplicationTracker = () => {
+  const { USER_TYPE_KEY } = config;
   const {
-    applications,
-    setApplications,
     searchParams,
     setSearchParams,
-    isLoading,
-    setIsLoading,
+    applications,
     error,
-    setError,
+    isLoading,
     currentPage,
-    setCurrentPage,
     totalPages,
+    setCurrentPage,
+    setApplications,
+    setError,
+    setIsLoading,
     setTotalPages
   } = useApplicationContext();
+
+  const [userType, setUserType] = useState<number>(() => {
+    // Get user type from localStorage if available
+    if (typeof window !== 'undefined') {
+      const userTypeStr = localStorage.getItem(USER_TYPE_KEY);
+      if (userTypeStr) {
+        try {
+          const userTypeNum = Number(userTypeStr);
+          return userTypeNum || 3; // Default to CLIENT (3) if not found
+        } catch (e) {
+          return 3; // Default to CLIENT if parsing fails
+        }
+      }
+    }
+    return 3; // Default to CLIENT if no user found
+  });
 
   // Map API response to UI display format
   const mapApplicationToDisplayFormat = (application: any): ApplicationData => {
@@ -55,7 +73,7 @@ const ApplicationTracker = () => {
   };
 
   // Handle search form submission
-  const handleSearch = async (formData: any) => {
+  const handleSearchForm = async (formData: any) => {
     setIsLoading(true);
     setSearchParams(formData);
     
@@ -121,7 +139,7 @@ const ApplicationTracker = () => {
       </div>
 
       <div className="bg-white rounded-2xl border border-[#E6EAF2] shadow-sm mb-6 overflow-hidden">
-        <StatusForm onSearch={handleSearch} />
+        <StatusForm onSearch={handleSearchForm} />
       </div>
 
       {searchParams && (
@@ -133,6 +151,7 @@ const ApplicationTracker = () => {
             currentPage={currentPage}
             totalPages={totalPages}
             onPageChange={handlePageChange}
+            userType={userType}
           />
         </div>
       )}

@@ -1,7 +1,10 @@
-import { StatusDetailsProps } from "@component/types/application-tracker";
+import { useState } from 'react';
+import { StatusDetailsProps, ApplicationData } from "@component/types/application-tracker";
 import { APPLICATION_EXTERNAL_STATUS, STATUS_DISPLAY_MAP } from "@component/constants/appConstants";
 import { COUNTRY, VISA_CATEGORY } from "@component/constants/dropdown/geographical";
 import { formatDate } from "@component/utils/dateUtils";
+import { USER_TYPE } from "@component/constants/userConstants";
+import ApplicationStatusModal from './ApplicationStatusModal';
 
 // Mapping functions for display values
 const getCountryName = (countryId: number) => {
@@ -18,6 +21,10 @@ const getStatusDisplay = (statusId: number) => {
   return STATUS_DISPLAY_MAP[statusEnum] || 'Unknown';
 };
 
+interface ExtendedStatusDetailsProps extends StatusDetailsProps {
+  userType?: number;
+}
+
 const StatusDetails = ({
   applications,
   isLoading,
@@ -25,7 +32,23 @@ const StatusDetails = ({
   currentPage,
   totalPages,
   onPageChange,
-}: StatusDetailsProps) => {
+  userType = USER_TYPE.CLIENT, // Default to CLIENT if not provided
+}: ExtendedStatusDetailsProps) => {
+  const [selectedApplication, setSelectedApplication] = useState<ApplicationData | null>(null);
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  
+  const handleReferenceClick = (application: ApplicationData) => {
+    setSelectedApplication(application);
+    setIsModalOpen(true);
+  };
+  
+  const closeModal = () => {
+    setIsModalOpen(false);
+  };
+
+  // Check if user is admin or manager
+  const isAdminOrManager = userType === USER_TYPE.ADMIN || userType === USER_TYPE.MANAGER;
+
   if (isLoading) {
     return (
       <div className="flex justify-center items-center py-12">
@@ -103,7 +126,12 @@ const StatusDetails = ({
             {currentItems.map((app, index) => (
               <tr key={`${app.id}-${index}`} className="border-b border-[#E6EAF2]">
                 <td className="px-4 py-4 text-sm text-[#0B498B] font-medium border-r border-[#E6EAF2] text-center">
-                  {app.reference_number}
+                  <button 
+                    className="text-[#0B498B] font-medium hover:underline cursor-pointer"
+                    onClick={() => handleReferenceClick(app)}
+                  >
+                    {app.reference_number}
+                  </button>
                 </td>
                 <td className="px-4 py-4 text-sm text-[#1C1C1C] border-r border-[#E6EAF2] text-center">
                   {app.first_name} {app.last_name}
@@ -131,7 +159,7 @@ const StatusDetails = ({
                   {app.remarks}
                 </td>
                 <td className="px-4 py-4 text-sm text-[#0B498B] font-medium text-center">
-                  <a href={`/application-details/${app.id}`} className="hover:underline">VIEW</a>
+                  {isAdminOrManager ? <a href={`/application-details/${app.id}`} className="hover:underline">EDIT</a> : ''}
                 </td>
               </tr>
             ))}
@@ -203,6 +231,13 @@ const StatusDetails = ({
           </div>
         </div>
       )}
+      
+      {/* Application Status Modal */}
+      <ApplicationStatusModal 
+        application={selectedApplication}
+        isOpen={isModalOpen}
+        onClose={closeModal}
+      />
     </div>
   );
 };
