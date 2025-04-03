@@ -34,6 +34,7 @@ const API_ENDPOINTS = {
   GET_ALL_APPLICATIONS: '/application',
   CREATE_APPLICATION: '/application/create',
   UPDATE_APPLICATION: '/application/update',
+  UPDATE_APPLICATION_BY_ID: '/application/',
   
   // Application Tracker
   SEARCH_APPLICATIONS: '/application/search',

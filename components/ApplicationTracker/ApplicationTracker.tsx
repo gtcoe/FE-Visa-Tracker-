@@ -161,6 +161,7 @@ const ApplicationTracker = () => {
             onPageChange={handlePageChange}
             userType={userType}
             onApplicationUpdated={refreshApplications}
+            setApplications={setApplications}
           />
         </div>
       )}

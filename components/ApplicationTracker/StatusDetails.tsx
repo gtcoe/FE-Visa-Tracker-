@@ -27,6 +27,7 @@ const getStatusDisplay = (statusId: number) => {
 interface ExtendedStatusDetailsProps extends StatusDetailsProps {
   userType?: number;
   onApplicationUpdated?: () => Promise<void>;
+  setApplications: (applications: ApplicationData[]) => void;
 }
 
 const StatusDetails = ({
@@ -38,6 +39,7 @@ const StatusDetails = ({
   onPageChange,
   userType = USER_TYPE.CLIENT, // Default to CLIENT if not provided
   onApplicationUpdated,
+  setApplications
 }: ExtendedStatusDetailsProps) => {
   const [selectedApplication, setSelectedApplication] = useState<ApplicationData | null>(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -66,27 +68,9 @@ const StatusDetails = ({
 
   const handleSaveApplication = async (updatedApplication: any) => {
     try {
+      console.log("updatedApplication", updatedApplication);
       await updateApplication(updatedApplication);
-      
-      // Call the refresh callback if provided
-      if (onApplicationUpdated) {
-        await onApplicationUpdated();
-      } else {
-        // Update the local state to reflect changes (fallback if no callback)
-        const updatedApplications = applications.map(app => 
-          app.id === updatedApplication.id 
-            ? { 
-                ...app, 
-                queue: updatedApplication.queue,
-                external_status: updatedApplication.external_status,
-                team_remarks: updatedApplication.team_remarks,
-                client_remarks: updatedApplication.client_remarks,
-                billing_remarks: updatedApplication.billing_remarks
-              } 
-            : app
-        );
-      }
-      
+      setApplications([]);
       ToastNotifySuccess('Application updated successfully');
     } catch (error) {
       console.error('Error saving application:', error);
@@ -210,7 +194,7 @@ const StatusDetails = ({
                 <td className="px-4 py-4 text-sm text-[#0B498B] font-medium text-center">
                   {isAdminOrManager ? 
                     <a 
-                      href={`/application-details/${app.id}`} 
+                      href={`/application-details/${app.application_id}`} 
                       className="hover:underline"
                       onClick={(e) => handleEditClick(app, e)}
                     >

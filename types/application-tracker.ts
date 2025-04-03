@@ -19,6 +19,7 @@ export interface StatusFormData {
 // Application data from API response
 export interface ApplicationData {
   id: number;
+  application_id: number;
   reference_number: string;
   pax_type: number;
   country_of_residence: number;
