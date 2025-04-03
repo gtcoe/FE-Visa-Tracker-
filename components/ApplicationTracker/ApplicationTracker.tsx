@@ -6,6 +6,22 @@ import StatusDetails from "./StatusDetails";
 import { useApplicationContext } from "@component/context/ApplicationContext";
 import { searchApplications } from "@component/api/application";
 import { ToastNotifyError } from "@component/components/common/Toast";
+import { ApplicationData } from "@component/types/application-tracker";
+import { 
+  PROCESSING_BRANCH_LABELS, 
+  VISA_CATEGORY_LABELS, 
+  PROCESSING_BRANCH, 
+  VISA_CATEGORY 
+} from "@component/constants/dropdown/geographical";
+
+// Define the response type here since we don't have direct access to the API implementation
+interface ApiResponse {
+  status: boolean;
+  statusCode: number;
+  data: {
+    applications: any[]; // Using any[] since we don't know the exact type returned by the API
+  };
+}
 
 const ApplicationTracker = () => {
   const {
@@ -23,6 +39,21 @@ const ApplicationTracker = () => {
     setTotalPages
   } = useApplicationContext();
 
+  // Map API response to UI display format
+  const mapApplicationToDisplayFormat = (application: any): ApplicationData => {
+    return {
+      ...application,
+      // Map fields needed for UI display
+      refNo: application.reference_number,
+      handlingBranch: PROCESSING_BRANCH_LABELS[application.processing_branch as PROCESSING_BRANCH] || '', // This would need to be mapped from processing_branch
+      entryGenerationBranch: PROCESSING_BRANCH_LABELS[application.processing_branch as PROCESSING_BRANCH] || '', // This would need to be mapped from a field
+      agentCorporate: application.name,
+      billingToCompany: application.owner_name,
+      // Map visa_country and visa_category to readable values in the future
+      visaType: VISA_CATEGORY_LABELS[application.visa_category as VISA_CATEGORY] || ''
+    } as ApplicationData;
+  };
+
   // Handle search form submission
   const handleSearch = async (formData: any) => {
     setIsLoading(true);
@@ -30,10 +61,10 @@ const ApplicationTracker = () => {
     
     try {
       // Call the API service to search applications
-      const results = await searchApplications({
+      const result = await searchApplications({
         reference_number: formData.referenceNo || '',
-        customer_type: formData.customerType ,
-        client_user_id: formData.client_user_id ,
+        customer_type: formData.customerType,
+        client_user_id: formData.client_user_id,
         name: formData.travelersName || '',
         passport_number: formData.travelersPassportNo || '',
         visa_branch: formData.visaBranch,
@@ -41,19 +72,33 @@ const ApplicationTracker = () => {
         from_date: formData.fromDate || '',
         to_date: formData.toDate || '',
         queue: formData.queue,
-        status: formData.status ,
+        status: formData.status,
         country: formData.country,
         billing_to_company: formData.billingToCompany || '',
       });
       
-      setApplications(results);
-      setTotalPages(Math.ceil(results.length / 10)); // Assuming 10 items per page
-      setCurrentPage(1);
+      // Safely cast the result to the expected structure
+      // const response = result as unknown as ApiResponse;
+      
+      if (Array.isArray(result)) {
+        // Map each application to the display format
+        const mappedApplications = result.map(mapApplicationToDisplayFormat);
+        setApplications(mappedApplications);
+        setTotalPages(Math.ceil(mappedApplications.length / 10)); // Assuming 10 items per page
+        setCurrentPage(1);
+      } else {
+        // Handle unexpected response format
+        setApplications([]);
+        setError('Received an invalid response format from the server');
+      }
     } catch (error) {
       console.error('Error during search:', error);
+      setApplications([]);
       if (error instanceof Error) {
+        setError(error.message);
         ToastNotifyError(error.message);
       } else {
+        setError('An error occurred during search');
         ToastNotifyError('An error occurred during search');
       }
     } finally {
@@ -91,6 +136,11 @@ const ApplicationTracker = () => {
           />
         </div>
       )}
+      
+      {/* Developer credit footer */}
+      <div className="text-center py-6 text-gray-500 text-sm">
+        Developed by <a href="https://techkatalyst.com" className="text-[#0B498B] hover:underline">Tech Katalyst</a>
+      </div>
     </div>
   );
 };

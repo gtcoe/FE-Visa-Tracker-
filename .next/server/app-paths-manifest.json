@@ -1,5 +1,5 @@
 {
   "/application-tracker/page": "app/application-tracker/page.js",
   "/favicon.ico/route": "app/favicon.ico/route.js",
-  "/checklist-details/page": "app/checklist-details/page.js"
+  "/_not-found/page": "app/_not-found/page.js"
 }

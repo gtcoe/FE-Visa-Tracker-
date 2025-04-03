@@ -1,4 +1,22 @@
 import { StatusDetailsProps } from "@component/types/application-tracker";
+import { APPLICATION_EXTERNAL_STATUS, STATUS_DISPLAY_MAP } from "@component/constants/appConstants";
+import { COUNTRY, VISA_CATEGORY } from "@component/constants/dropdown/geographical";
+import { formatDate } from "@component/utils/dateUtils";
+
+// Mapping functions for display values
+const getCountryName = (countryId: number) => {
+  return COUNTRY[countryId] || 'Unknown';
+};
+
+const getVisaCategory = (categoryId: number) => {
+  return VISA_CATEGORY[categoryId] || 'Unknown';
+};
+
+const getStatusDisplay = (statusId: number) => {
+  // Cast the numeric status ID to the enum type to use as an index in the map
+  const statusEnum = statusId as unknown as APPLICATION_EXTERNAL_STATUS;
+  return STATUS_DISPLAY_MAP[statusEnum] || 'Unknown';
+};
 
 const StatusDetails = ({
   applications,
@@ -51,6 +69,12 @@ const StatusDetails = ({
     );
   }
 
+  // Calculate pagination data
+  const itemsPerPage = 10;
+  const startIndex = (currentPage - 1) * itemsPerPage;
+  const endIndex = Math.min(startIndex + itemsPerPage, applications.length);
+  const currentItems = applications.slice(startIndex, endIndex);
+
   return (
     <div className="pb-6 rounded-2xl overflow-hidden">
       <div className="px-6 pb-4 pt-5">
@@ -64,42 +88,50 @@ const StatusDetails = ({
           <thead>
             <tr className="bg-[#F9FAFB] border-t border-b border-[#E6EAF2]">
               <th className="py-4 px-4 text-center text-xs font-medium text-[#696969] uppercase border-r border-[#E6EAF2]">Ref No</th>
-              <th className="py-4 px-4 text-center text-xs font-medium text-[#696969] uppercase border-r border-[#E6EAF2]">Handling Branch</th>
-              <th className="py-4 px-4 text-center text-xs font-medium text-[#696969] uppercase whitespace-nowrap border-r border-[#E6EAF2]">
-                Entry Generation Branch
-              </th>
-              <th className="py-4 px-4 text-center text-xs font-medium text-[#696969] uppercase border-r border-[#E6EAF2]">Agent/ Corporate</th>
-              <th className="py-4 px-4 text-center text-xs font-medium text-[#696969] uppercase border-r border-[#E6EAF2]">Billin to Company</th>
+              <th className="py-4 px-4 text-center text-xs font-medium text-[#696969] uppercase border-r border-[#E6EAF2]">Name</th>
+              <th className="py-4 px-4 text-center text-xs font-medium text-[#696969] uppercase border-r border-[#E6EAF2]">Client Name</th>
               <th className="py-4 px-4 text-center text-xs font-medium text-[#696969] uppercase border-r border-[#E6EAF2]">Referrer</th>
               <th className="py-4 px-4 text-center text-xs font-medium text-[#696969] uppercase border-r border-[#E6EAF2]">Country</th>
               <th className="py-4 px-4 text-center text-xs font-medium text-[#696969] uppercase border-r border-[#E6EAF2]">Visa Type</th>
+              <th className="py-4 px-4 text-center text-xs font-medium text-[#696969] uppercase border-r border-[#E6EAF2]">Travel Date</th>
               <th className="py-4 px-4 text-center text-xs font-medium text-[#696969] uppercase border-r border-[#E6EAF2]">Status</th>
+              <th className="py-4 px-4 text-center text-xs font-medium text-[#696969] uppercase border-r border-[#E6EAF2]">Remarks</th>
               <th className="py-4 px-4 text-center text-xs font-medium text-[#696969] uppercase">Action</th>
             </tr>
           </thead>
           <tbody>
-            {applications.map((app, index) => (
-              <tr key={`${app.refNo}-${index}`} className="border-b border-[#E6EAF2]">
+            {currentItems.map((app, index) => (
+              <tr key={`${app.id}-${index}`} className="border-b border-[#E6EAF2]">
                 <td className="px-4 py-4 text-sm text-[#0B498B] font-medium border-r border-[#E6EAF2] text-center">
-                  {/* Display refNo with specific format matching Figma design */}
-                  {app.refNo}
-                </td>
-                <td className="px-4 py-4 text-sm text-[#1C1C1C] border-r border-[#E6EAF2] text-center">Visaistic Delhi</td>
-                <td className="px-4 py-4 text-sm text-[#1C1C1C] border-r border-[#E6EAF2] text-center">Visaistic Delhi</td>
-                <td className="px-4 py-4 text-sm text-[#1C1C1C] border-r border-[#E6EAF2] text-center">
-                  Visaistic India<br />Private Limited
+                  {app.reference_number}
                 </td>
                 <td className="px-4 py-4 text-sm text-[#1C1C1C] border-r border-[#E6EAF2] text-center">
-                  Fractal Analytics<br />Limited - Ggn
+                  {app.first_name} {app.last_name}
                 </td>
-                <td className="px-4 py-4 text-sm text-[#1C1C1C] border-r border-[#E6EAF2] text-center">Sona</td>
-                <td className="px-4 py-4 text-sm text-[#1C1C1C] border-r border-[#E6EAF2] text-center">Spain</td>
-                <td className="px-4 py-4 text-sm text-[#1C1C1C] border-r border-[#E6EAF2] text-center">Business</td>
                 <td className="px-4 py-4 text-sm text-[#1C1C1C] border-r border-[#E6EAF2] text-center">
-                  Dox<br />Received
+                  {app.name}
+                </td>
+                <td className="px-4 py-4 text-sm text-[#1C1C1C] border-r border-[#E6EAF2] text-center">
+                  {app.referrer}
+                </td>
+                <td className="px-4 py-4 text-sm text-[#1C1C1C] border-r border-[#E6EAF2] text-center">
+                  {getCountryName(app.visa_country)}
+                </td>
+                <td className="px-4 py-4 text-sm text-[#1C1C1C] border-r border-[#E6EAF2] text-center">
+                  {getVisaCategory(app.visa_category)}
+                </td>
+                <td className="px-4 py-4 text-sm text-[#1C1C1C] border-r border-[#E6EAF2] text-center">
+                  {formatDate(app.travel_date)}
+                  {app.is_travel_date_tentative === 1 && <span className="text-xs text-[#696969] block">(Tentative)</span>}
+                </td>
+                <td className="px-4 py-4 text-sm text-[#1C1C1C] border-r border-[#E6EAF2] text-center">
+                  {getStatusDisplay(app.external_status)}
+                </td>
+                <td className="px-4 py-4 text-sm text-[#1C1C1C] border-r border-[#E6EAF2] text-center">
+                  {app.remarks}
                 </td>
                 <td className="px-4 py-4 text-sm text-[#0B498B] font-medium text-center">
-                  EDIT
+                  <a href={`/application-details/${app.id}`} className="hover:underline">VIEW</a>
                 </td>
               </tr>
             ))}
@@ -107,118 +139,70 @@ const StatusDetails = ({
         </table>
       </div>
 
-      {/* Pagination - Exact match to Figma design */}
-      <div className="flex items-center justify-center mt-8">
-        <div className="inline-flex items-center">
-          <button
-            onClick={() => onPageChange(currentPage - 1)}
-            disabled={currentPage === 1}
-            className="flex items-center px-4 py-2 text-sm text-[#1C1C1C] border border-[#E6EAF2] rounded-md mr-2 disabled:opacity-50 disabled:cursor-not-allowed"
-          >
-            <svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg" className="mr-1">
-              <path d="M10 12L6 8L10 4" stroke="#1C1C1C" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
-            </svg>
-            Prev
-          </button>
+      {/* Pagination - Only show if we have multiple pages */}
+      {totalPages > 1 && (
+        <div className="flex items-center justify-center mt-8">
+          <div className="inline-flex items-center">
+            <button
+              onClick={() => onPageChange(currentPage - 1)}
+              disabled={currentPage === 1}
+              className="flex items-center px-4 py-2 text-sm text-[#1C1C1C] border border-[#E6EAF2] rounded-md mr-2 disabled:opacity-50 disabled:cursor-not-allowed"
+            >
+              <svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg" className="mr-1">
+                <path d="M10 12L6 8L10 4" stroke="#1C1C1C" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
+              </svg>
+              Prev
+            </button>
 
-          <div className="flex space-x-1">
+            <div className="flex space-x-1">
+              {/* Generate page buttons dynamically */}
+              {Array.from({ length: Math.min(totalPages, 7) }).map((_, i) => (
+                <button
+                  key={i}
+                  onClick={() => onPageChange(i + 1)}
+                  className={`w-8 h-8 flex items-center justify-center text-sm border rounded-md ${
+                    (i + 1) === currentPage
+                      ? "bg-[#0B498B] text-white border-[#0B498B]"
+                      : "bg-white text-[#1C1C1C] border-[#E6EAF2]"
+                  }`}
+                >
+                  {i + 1}
+                </button>
+              ))}
+              
+              {/* Show ellipsis if there are more pages */}
+              {totalPages > 7 && (
+                <>
+                  <span className="w-8 h-8 flex items-center justify-center text-sm">
+                    ..
+                  </span>
+                  <button
+                    onClick={() => onPageChange(totalPages)}
+                    className={`w-8 h-8 flex items-center justify-center text-sm border rounded-md ${
+                      totalPages === currentPage
+                        ? "bg-[#0B498B] text-white border-[#0B498B]"
+                        : "bg-white text-[#1C1C1C] border-[#E6EAF2]"
+                    }`}
+                  >
+                    {totalPages}
+                  </button>
+                </>
+              )}
+            </div>
+
             <button
-              onClick={() => onPageChange(1)}
-              className={`w-8 h-8 flex items-center justify-center text-sm border rounded-md ${
-                1 === currentPage
-                  ? "bg-[#0B498B] text-white border-[#0B498B]"
-                  : "bg-white text-[#1C1C1C] border-[#E6EAF2]"
-              }`}
+              onClick={() => onPageChange(currentPage + 1)}
+              disabled={currentPage === totalPages}
+              className="flex items-center px-4 py-2 text-sm text-[#1C1C1C] border border-[#E6EAF2] rounded-md ml-2 disabled:opacity-50 disabled:cursor-not-allowed"
             >
-              1
-            </button>
-            <button
-              onClick={() => onPageChange(2)}
-              className={`w-8 h-8 flex items-center justify-center text-sm border rounded-md ${
-                2 === currentPage
-                  ? "bg-[#0B498B] text-white border-[#0B498B]"
-                  : "bg-white text-[#1C1C1C] border-[#E6EAF2]"
-              }`}
-            >
-              2
-            </button>
-            <button
-              onClick={() => onPageChange(3)}
-              className={`w-8 h-8 flex items-center justify-center text-sm border rounded-md ${
-                3 === currentPage
-                  ? "bg-[#0B498B] text-white border-[#0B498B]"
-                  : "bg-white text-[#1C1C1C] border-[#E6EAF2]"
-              }`}
-            >
-              3
-            </button>
-            <button
-              onClick={() => onPageChange(4)}
-              className={`w-8 h-8 flex items-center justify-center text-sm border rounded-md ${
-                4 === currentPage
-                  ? "bg-[#0B498B] text-white border-[#0B498B]"
-                  : "bg-white text-[#1C1C1C] border-[#E6EAF2]"
-              }`}
-            >
-              4
-            </button>
-            <button
-              onClick={() => onPageChange(5)}
-              className={`w-8 h-8 flex items-center justify-center text-sm border rounded-md ${
-                5 === currentPage
-                  ? "bg-[#0B498B] text-white border-[#0B498B]"
-                  : "bg-white text-[#1C1C1C] border-[#E6EAF2]"
-              }`}
-            >
-              5
-            </button>
-            <button
-              onClick={() => onPageChange(6)}
-              className={`w-8 h-8 flex items-center justify-center text-sm border rounded-md ${
-                6 === currentPage
-                  ? "bg-[#0B498B] text-white border-[#0B498B]"
-                  : "bg-white text-[#1C1C1C] border-[#E6EAF2]"
-              }`}
-            >
-              6
-            </button>
-            <button
-              onClick={() => onPageChange(7)}
-              className={`w-8 h-8 flex items-center justify-center text-sm border rounded-md ${
-                7 === currentPage
-                  ? "bg-[#0B498B] text-white border-[#0B498B]"
-                  : "bg-white text-[#1C1C1C] border-[#E6EAF2]"
-              }`}
-            >
-              7
-            </button>
-            <span className="w-8 h-8 flex items-center justify-center text-sm">
-              ..
-            </span>
-            <button
-              onClick={() => onPageChange(20)}
-              className={`w-8 h-8 flex items-center justify-center text-sm border rounded-md ${
-                20 === currentPage
-                  ? "bg-[#0B498B] text-white border-[#0B498B]"
-                  : "bg-white text-[#1C1C1C] border-[#E6EAF2]"
-              }`}
-            >
-              20
+              Next
+              <svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg" className="ml-1">
+                <path d="M6 4L10 8L6 12" stroke="#1C1C1C" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
+              </svg>
             </button>
           </div>
-
-          <button
-            onClick={() => onPageChange(currentPage + 1)}
-            disabled={currentPage === totalPages}
-            className="flex items-center px-4 py-2 text-sm text-[#1C1C1C] border border-[#E6EAF2] rounded-md ml-2 disabled:opacity-50 disabled:cursor-not-allowed"
-          >
-            Next
-            <svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg" className="ml-1">
-              <path d="M6 4L10 8L6 12" stroke="#1C1C1C" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
-            </svg>
-          </button>
         </div>
-      </div>
+      )}
     </div>
   );
 };
