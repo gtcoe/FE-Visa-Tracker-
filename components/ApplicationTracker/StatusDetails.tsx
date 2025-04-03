@@ -82,7 +82,7 @@ const StatusDetails = ({
               <tr key={`${app.refNo}-${index}`} className="border-b border-[#E6EAF2]">
                 <td className="px-4 py-4 text-sm text-[#0B498B] font-medium border-r border-[#E6EAF2] text-center">
                   {/* Display refNo with specific format matching Figma design */}
-                  {app.refNo.replace(/VIS(\d+)/, "DEL250097")}
+                  {app.refNo}
                 </td>
                 <td className="px-4 py-4 text-sm text-[#1C1C1C] border-r border-[#E6EAF2] text-center">Visaistic Delhi</td>
                 <td className="px-4 py-4 text-sm text-[#1C1C1C] border-r border-[#E6EAF2] text-center">Visaistic Delhi</td>

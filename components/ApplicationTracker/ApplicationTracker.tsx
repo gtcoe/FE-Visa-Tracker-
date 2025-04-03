@@ -31,17 +31,19 @@ const ApplicationTracker = () => {
     try {
       // Call the API service to search applications
       const results = await searchApplications({
-        reference_number: formData.refNo || '',
-        branch: formData.branch || '',
-        agent: formData.agent || '',
-        bill_to: formData.billTo || '',
-        referrer: formData.referer || '',
-        applicant: formData.applicant || '',
-        country: formData.country || '',
-        visa_type: formData.visaType || '',
-        status: formData.status || '',
-        from_date: formData.dateFrom || '',
-        to_date: formData.dateTo || ''
+        reference_number: formData.referenceNo || '',
+        customer_type: formData.customerType ,
+        client_user_id: formData.client_user_id ,
+        name: formData.travelersName || '',
+        passport_number: formData.travelersPassportNo || '',
+        visa_branch: formData.visaBranch,
+        entry_generation_branch: formData.entryGenerationBranch,
+        from_date: formData.fromDate || '',
+        to_date: formData.toDate || '',
+        queue: formData.queue,
+        status: formData.status ,
+        country: formData.country,
+        billing_to_company: formData.billingToCompany || '',
       });
       
       setApplications(results);

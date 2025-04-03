@@ -9,7 +9,7 @@ import {
   PROCESSING_BRANCH
 } from '@component/constants/dropdown/geographical';
 import {
-  CLIENT_TYPE, getClientTypeOptions
+  CLIENT_TYPE, ClientType, getClientTypeOptions
 } from '@component/constants/clientConstants';
 import { 
   APPLICATION_QUEUES, 
@@ -27,18 +27,18 @@ interface StatusFormProps {
 
 interface FormData {
   referenceNo: string;
-  customerType: CLIENT_TYPE | '';
-  customer: string | number;
+  customerType: ClientType | 0;
+  customer: number;
   client_user_id: number | null;
   travelersName: string;
   travelersPassportNo: string;
-  visaBranch: PROCESSING_BRANCH | '';
-  entryGenerationBranch: PROCESSING_BRANCH | '';
+  visaBranch: PROCESSING_BRANCH | 0;
+  entryGenerationBranch: PROCESSING_BRANCH | 0;
   fromDate: string;
   toDate: string;
-  queue: APPLICATION_QUEUES | '';
-  status: APPLICATION_EXTERNAL_STATUS | '';
-  country: COUNTRY | '';
+  queue: APPLICATION_QUEUES | 0;
+  status: APPLICATION_EXTERNAL_STATUS | 0;
+  country: COUNTRY | 0;
   billingToCompany: string;
 }
 
@@ -273,18 +273,18 @@ const StatusForm = ({ onSearch }: StatusFormProps) => {
   const [isLoadingCustomers, setIsLoadingCustomers] = useState(false);
   const [formData, setFormData] = useState<FormData>({
     referenceNo: "",
-    customerType: "",
-    customer: "",
-    client_user_id: null,
+    customerType: 0,
+    customer: 0,
+    client_user_id: 0,
     travelersName: "",
     travelersPassportNo: "",
-    visaBranch: "",
-    entryGenerationBranch: "",
+    visaBranch: 0,
+    entryGenerationBranch: 0,
     fromDate: "",
     toDate: "",
-    queue: "",
-    status: "",
-    country: "",
+    queue: 0,
+    status: 0,
+    country: 0,
     billingToCompany: "",
   });
 
@@ -295,8 +295,8 @@ const StatusForm = ({ onSearch }: StatusFormProps) => {
       if (formData.customer) {
         setFormData(prev => ({
           ...prev,
-          customer: '',
-          client_user_id: null
+          customer: 0,
+          client_user_id: 0
         }));
       }
       
@@ -384,18 +384,18 @@ const StatusForm = ({ onSearch }: StatusFormProps) => {
   ];
   
   const visaBranchOptions = [
-    { value: '', label: 'Select' },
+    { value: 0, label: 'Select' },
     ...createEnumOptions(PROCESSING_BRANCH, PROCESSING_BRANCH_LABELS)
   ];
   
   const entryGenerationOptions = [
-    { value: '', label: 'Select' },
+    { value: 0, label: 'Select' },
     ...createEnumOptions(PROCESSING_BRANCH, PROCESSING_BRANCH_LABELS)
   ];
   
   // Create options for queue dropdown
   const queueOptions = [
-    { value: '', label: 'Select Queue' },
+    { value: 0, label: 'Select Queue' },
     ...createApplicationOptions<APPLICATION_QUEUES>(APPLICATION_QUEUES, QUEUE_DISPLAY_MAP)
   ];
   
@@ -404,7 +404,7 @@ const StatusForm = ({ onSearch }: StatusFormProps) => {
     if (!formData.queue) {
       // If no queue is selected, show an empty option and all statuses
       return [
-        { value: '', label: 'Select Status' },
+        { value: 0, label: 'Select Status' },
         ...createApplicationOptions<APPLICATION_EXTERNAL_STATUS>(APPLICATION_EXTERNAL_STATUS, STATUS_DISPLAY_MAP)
       ];
     }
@@ -414,7 +414,7 @@ const StatusForm = ({ onSearch }: StatusFormProps) => {
     
     // Filter and create options only for valid statuses, including empty option
     return [
-      { value: '', label: 'Select Status' },
+      { value: 0, label: 'Select Status' },
       ...validStatuses.map((statusValue: APPLICATION_EXTERNAL_STATUS) => ({
         value: statusValue,
         label: STATUS_DISPLAY_MAP[statusValue] || `Unknown (${statusValue})`
@@ -425,28 +425,32 @@ const StatusForm = ({ onSearch }: StatusFormProps) => {
   const statusOptions = getFilteredStatusOptions();
   
   const countryOptions = [
-    { value: '', label: 'Select Country' },
+    { value: 0, label: 'Select Country' },
     ...createEnumOptions(COUNTRY, COUNTRY_LABELS)
   ];
 
   const handleChange = (field: string, value: string | number) => {
+    
+    console.log('handleChange', field, value);
+    console.log('formData', formData);
     // For empty values, use undefined or null as appropriate
-    const processedValue = value === '' 
-      ? (field === 'customer' || field === 'customerType' ? '' : undefined) 
+    const processedValue = value === 0 
+      ? (field === 'customer' || field === 'customerType' ? 0 : undefined) 
       : value;
     
-    // Update the form data
-    setFormData(prev => ({
-      ...prev,
-      [field]: processedValue,
-    }));
-
-    // If changing customer, update client_user_id
-    if (field === 'customer' && value) {
+    // If field is customer, ensure it's a number
+    if (field === 'customer') {
+      const numericValue = typeof value === 'number' ? value : Number(value);
       setFormData(prev => ({
         ...prev,
-        [field]: value,
-        client_user_id: typeof value === 'number' ? value : Number(value)
+        customer: numericValue,
+        client_user_id: numericValue
+      }));
+    } else {
+      // Update the form data for other fields
+      setFormData(prev => ({
+        ...prev,
+        [field]: processedValue,
       }));
     }
   };
