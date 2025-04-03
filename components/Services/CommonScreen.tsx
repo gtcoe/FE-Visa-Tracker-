@@ -31,7 +31,6 @@ const LoadingFallback = () => (
 );
 
 const SearchPax = () => {
-  const router = useRouter();
   const [searchData, setSearchData] = useState({
     paxName: '',
     passportNo: '',
@@ -45,11 +44,11 @@ const SearchPax = () => {
   const [formMode, setFormMode] = useState<FORM_MODE>(FORM_MODE.EDIT); // Default mode is edit
   const [visaRequests, setVisaRequests] = useState<any[]>([
     {
-      visaCountry: VISA_COUNTRY_LABELS[COUNTRY.NETHERLANDS],
-      visaCategory: VISA_CATEGORY_LABELS[VISA_CATEGORY.BUSINESS],
-      nationality: NATIONALITY_LABELS[NATIONALITY.INDIAN],
-      state: STATE_LABELS[STATE.DELHI],
-      entryType: ENTRY_TYPE_LABELS[ENTRY_TYPE.NORMAL],
+      visaCountry: COUNTRY.NETHERLANDS,
+      visaCategory: VISA_CATEGORY.BUSINESS,
+      nationality: NATIONALITY.INDIAN,
+      state: STATE.DELHI,
+      entryType: ENTRY_TYPE.NORMAL,
       remark: '',
     }
   ]);
@@ -59,11 +58,11 @@ const SearchPax = () => {
     
     // Create a new visa request object
     const newVisaRequest = {
-      visaCountry: VISA_COUNTRY_LABELS[COUNTRY.NETHERLANDS],
-      visaCategory: VISA_CATEGORY_LABELS[VISA_CATEGORY.BUSINESS],
-      nationality: NATIONALITY_LABELS[NATIONALITY.INDIAN],
-      state: STATE_LABELS[STATE.DELHI],
-      entryType: ENTRY_TYPE_LABELS[ENTRY_TYPE.NORMAL],
+      visaCountry: COUNTRY.NETHERLANDS,
+      visaCategory: VISA_CATEGORY.BUSINESS,
+      nationality: NATIONALITY.INDIAN,
+      state: STATE.DELHI,
+      entryType: ENTRY_TYPE.NORMAL,
       remark: ''
     };
     
@@ -94,7 +93,13 @@ const SearchPax = () => {
     // Get reference number from localStorage
     const referenceNumber = localStorage.getItem(STORAGE_KEY.SERVICE_REFERENCE_NUMBER);
     console.log('Found serviceReferenceNumber in localStorage:', referenceNumber);
-    
+    if (referenceNumber === "") {
+      const url = new URL(window.location.href);
+      const referenceNumber = url.searchParams.get('reference');
+      if (referenceNumber) {
+        localStorage.setItem(STORAGE_KEY.SERVICE_REFERENCE_NUMBER, referenceNumber);
+      }
+    }
     // Check for active tab in localStorage
     const storedActiveTab = localStorage.getItem(STORAGE_KEY.ACTIVE_TAB);
     console.log('Found activeTab in localStorage:', storedActiveTab);

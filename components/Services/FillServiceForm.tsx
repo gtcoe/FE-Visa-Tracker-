@@ -11,13 +11,8 @@ import {
   NATIONALITY, NATIONALITY_LABELS,
   ENTRY_TYPE, ENTRY_TYPE_LABELS,
   PROCESSING_BRANCH, PROCESSING_BRANCH_LABELS,
-  DISPLAY_NAME_TO_COUNTRY,
-  STATE_NAME_TO_STATE,
-  NATIONALITY_NAME_TO_NATIONALITY,
-  VISA_CATEGORY_NAME_TO_VISA_CATEGORY,
-  ENTRY_TYPE_NAME_TO_ENTRY_TYPE
 } from '@component/constants/dropdown/geographical';
-import { FORM_MODE, TAB_NAME, STORAGE_KEY } from '@component/constants/formConstants';
+import { FORM_MODE, TAB_NAME, STORAGE_KEY, APPEND_VISA_REQUEST_TYPES } from '@component/constants/formConstants';
 import { ToastNotifyError, ToastNotifySuccess } from '@component/components/common/Toast';
 import { APPLICATION_STATUS } from '@component/constants/appConstants';
 import { EMAIL_REGEX } from '@component/constants/regex';
@@ -287,6 +282,9 @@ const FillServiceForm = ({
     // Get form mode from localStorage or set based on prefill parameter
     const mode = localStorage.getItem(STORAGE_KEY.FORM_MODE);
     console.log('Found formMode in localStorage:', mode);
+    const appendVisaRequest = localStorage.getItem(STORAGE_KEY.APPEND_VISA_REQUEST);
+    console.log('Found APPEND_VISA_REQUEST in localStorage:', appendVisaRequest);
+
     if (mode === FORM_MODE.VIEW || mode === FORM_MODE.EDIT || mode === FORM_MODE.ADD_SUB_REQUEST) {
       setFormMode(mode as FORM_MODE);
       console.log('Set formMode state to:', mode);
@@ -296,16 +294,16 @@ const FillServiceForm = ({
     }
     
     // If add-sub-request mode, add a new visa request
-    if (mode === FORM_MODE.ADD_SUB_REQUEST) {
-      console.log('Adding new visa request for add-sub-request mode');
+    if (appendVisaRequest === APPEND_VISA_REQUEST_TYPES.TRUE) {
+      console.log('Adding new visa request for request appendVisaRequest mode');
       setVisaRequests(prev => [
         ...prev,
         {
-          visaCountry: VISA_COUNTRY_LABELS[COUNTRY.NETHERLANDS],
-          visaCategory: VISA_CATEGORY_LABELS[VISA_CATEGORY.BUSINESS],
-          nationality: NATIONALITY_LABELS[NATIONALITY.INDIAN],
-          state: STATE_LABELS[STATE.DELHI],
-          entryType: ENTRY_TYPE_LABELS[ENTRY_TYPE.NORMAL],
+          visaCountry: COUNTRY.NETHERLANDS,
+          visaCategory: VISA_CATEGORY.BUSINESS,
+          nationality: NATIONALITY.INDIAN,
+          state: STATE.DELHI,
+          entryType: ENTRY_TYPE.NORMAL,
           remark: ''
         }
       ]);
@@ -322,7 +320,7 @@ const FillServiceForm = ({
           console.log('Application data loaded from localStorage:', parsedData);
           const url = new URL(window.location.href);
 
-          const referenceNumber = url.searchParams.get('referenceNumber');
+          const referenceNumber = url.searchParams.get('reference');
           localStorage.setItem(STORAGE_KEY.SERVICE_REFERENCE_NUMBER, referenceNumber || '');
           setReferenceNumber(referenceNumber || '');
           // Populate form fields with saved data for both regular and prefill modes
@@ -367,94 +365,54 @@ const FillServiceForm = ({
             
             // Create a new visa request with the data from the previous application
             if (parsedData.visa_requests && parsedData.visa_requests.length > 0) {
-              let parsedVisaRequsts = [];
-              for (const sourceRequest of parsedData.visa_requests) {
-              
-                // Create a new request based on the source
-                const newRequest = {
-                  visaCountry: sourceRequest.visa_country
-                    ? VISA_COUNTRY_LABELS[sourceRequest.visa_country as COUNTRY] || VISA_COUNTRY_LABELS[COUNTRY.NETHERLANDS]
-                    : VISA_COUNTRY_LABELS[COUNTRY.NETHERLANDS],
-                  visaCategory: sourceRequest.visa_category
-                    ? VISA_CATEGORY_LABELS[sourceRequest.visa_category as VISA_CATEGORY] || VISA_CATEGORY_LABELS[VISA_CATEGORY.BUSINESS]
-                    : VISA_CATEGORY_LABELS[VISA_CATEGORY.BUSINESS],
-                  nationality: sourceRequest.nationality
-                    ? NATIONALITY_LABELS[sourceRequest.nationality as NATIONALITY] || NATIONALITY_LABELS[NATIONALITY.INDIAN]
-                    : NATIONALITY_LABELS[NATIONALITY.INDIAN],
-                  state: sourceRequest.state
-                    ? STATE_LABELS[sourceRequest.state as STATE] || STATE_LABELS[STATE.DELHI]
-                    : STATE_LABELS[STATE.DELHI],
-                  entryType: sourceRequest.entry_type
-                    ? ENTRY_TYPE_LABELS[sourceRequest.entry_type as ENTRY_TYPE] || ENTRY_TYPE_LABELS[ENTRY_TYPE.NORMAL]
-                    : ENTRY_TYPE_LABELS[ENTRY_TYPE.NORMAL],
-                  remark: '',  // Start with empty remark
-                };
-                parsedVisaRequsts.push(newRequest);
-              }
-              
-              
-              // Set this as our initial visa request
-              setVisaRequests(parsedVisaRequsts);
+              setVisaRequests(parsedData.visa_requests.map((request: any) => ({
+                visaCountry: Number(request.visa_country),
+                visaCategory:  Number(request.visa_category),
+                nationality: Number(request.nationality),
+                state: Number(request.state), 
+                entryType: Number(request.entry_type),
+                remark: request.remark || '' 
+              })))
             }
 
           } else if (!isPrefill) {
             console.log('Not prefill mode');
             // Regular application data loading (not prefill mode)
             if (parsedData.visa_requests && parsedData.visa_requests.length > 0) {
-              console.log('Not prefill mode in', parsedData.visa_requests.length, 'visa requests');
+              console.log('Not prefill mode in', parsedData.visa_requests, 'visa requests');
 
               try {
                 // Create a properly mapped array of visa requests with a more explicit approach
                 const parsedVisaRequsts: {
-                  visaCountry: string;
-                  visaCategory: string;
-                  nationality: string;
-                  state: string;
-                  entryType: string;
+                  visaCountry: number;
+                  visaCategory: number;
+                  nationality: number;
+                  state: number;
+                  entryType: number;
                   remark: string;
-                }[] = [];
-                
-                // Log each request as we process it for debugging
-                parsedData.visa_requests.forEach((sourceRequest: any, index: number) => {
-                  console.log(`Processing visa request ${index + 1}:`, sourceRequest);
-                  
-                  const mappedRequest = {
-                    visaCountry: sourceRequest.visa_country
-                      ? VISA_COUNTRY_LABELS[sourceRequest.visa_country as COUNTRY] || VISA_COUNTRY_LABELS[COUNTRY.NETHERLANDS] || ""
-                      : VISA_COUNTRY_LABELS[COUNTRY.NETHERLANDS] || "",
-                    visaCategory: sourceRequest.visa_category
-                      ? VISA_CATEGORY_LABELS[sourceRequest.visa_category as VISA_CATEGORY] || VISA_CATEGORY_LABELS[VISA_CATEGORY.BUSINESS]
-                      : VISA_CATEGORY_LABELS[VISA_CATEGORY.BUSINESS],
-                    nationality: sourceRequest.nationality
-                      ? NATIONALITY_LABELS[sourceRequest.nationality as NATIONALITY] || NATIONALITY_LABELS[NATIONALITY.INDIAN]
-                      : NATIONALITY_LABELS[NATIONALITY.INDIAN],
-                    state: sourceRequest.state
-                      ? STATE_LABELS[sourceRequest.state as STATE] || STATE_LABELS[STATE.DELHI]
-                      : STATE_LABELS[STATE.DELHI],
-                    entryType: sourceRequest.entry_type
-                      ? ENTRY_TYPE_LABELS[sourceRequest.entry_type as ENTRY_TYPE] || ENTRY_TYPE_LABELS[ENTRY_TYPE.NORMAL]
-                      : ENTRY_TYPE_LABELS[ENTRY_TYPE.NORMAL],
-                    remark: sourceRequest.remark || '',
-                  };
-                  
-                  parsedVisaRequsts.push(mappedRequest);
-                  console.log(`Added visa request ${index + 1}:`, mappedRequest);
-                });
+                }[] = parsedData.visa_requests.map((request: any) => ({
+                  visaCountry: Number(request.visa_country),
+                  visaCategory:  Number(request.visa_category),
+                  nationality: Number(request.nationality),
+                  state: Number(request.state), 
+                  entryType: Number(request.entry_type),
+                  remark: request.remark || '' 
+                }));
                 
                 console.log('Not prefill mode in 2', parsedVisaRequsts.length, 'visa requests:', parsedVisaRequsts);
                 
                 // If in ADD_SUB_REQUEST mode, add an additional request
-                if (mode === FORM_MODE.ADD_SUB_REQUEST) {
+                if (appendVisaRequest === APPEND_VISA_REQUEST_TYPES.TRUE) {
                   const newRequest = {
-                    visaCountry: VISA_COUNTRY_LABELS[COUNTRY.NETHERLANDS] || "",
-                    visaCategory: VISA_CATEGORY_LABELS[VISA_CATEGORY.BUSINESS],
-                    nationality: NATIONALITY_LABELS[NATIONALITY.INDIAN],
-                    state: STATE_LABELS[STATE.DELHI],
-                    entryType: ENTRY_TYPE_LABELS[ENTRY_TYPE.NORMAL],
+                    visaCountry: COUNTRY.NETHERLANDS,
+                    visaCategory: VISA_CATEGORY.BUSINESS,
+                    nationality: NATIONALITY.INDIAN,
+                    state: STATE.DELHI,
+                    entryType: ENTRY_TYPE.NORMAL,
                     remark: ''
                   };
                   parsedVisaRequsts.push(newRequest);
-                  console.log('Added additional request for ADD_SUB_REQUEST mode:', newRequest);
+                  console.log('Added additional request for request appendVisaRequest mode:', newRequest);
                 }
                 
                 console.log('Not prefill mode in 3', parsedVisaRequsts.length, 'visa requests:', parsedVisaRequsts);
@@ -550,11 +508,11 @@ const FillServiceForm = ({
   const [referNumber, setReferenceNumber] = useState('');
 
   // Memoized derived values
-  const isFormValid = useMemo(() => {
-    return personalInfo.firstName && 
-           passportInfo.passportNumber && 
-           visaRequests.every(request => request.visaCountry);
-  }, [personalInfo.firstName, passportInfo.passportNumber, visaRequests]);
+  // const isFormValid = useMemo(() => {
+  //   return personalInfo.firstName && 
+  //          passportInfo.passportNumber && 
+  //          visaRequests.every(request => request.visaCountry);
+  // }, [personalInfo.firstName, passportInfo.passportNumber, visaRequests]);
 
   // Optimized change handlers with useCallback
   const handlePersonalInfoChange = useCallback((e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
@@ -589,8 +547,9 @@ const FillServiceForm = ({
       // Create a new object reference to ensure React detects the change
       newRequests[index] = {
         ...newRequests[index],
-        [name]: value
+        [name]: name === 'remark' ? value : Number(value)
       };
+      console.log('handleVisaInfoChange.newRequests', newRequests);
       return newRequests;
     });
   }, [setVisaRequests]);
@@ -628,22 +587,6 @@ const FillServiceForm = ({
   
   const processingBranchMap = useMemo(() => ({
     [PROCESSING_BRANCH_LABELS[PROCESSING_BRANCH.VISAISTIC_DELHI]]: PROCESSING_BRANCH.VISAISTIC_DELHI
-  }), []);
-  
-  const visaCountryMap = useMemo(() => ({
-    [VISA_COUNTRY_LABELS[COUNTRY.NETHERLANDS] || ""]: COUNTRY.NETHERLANDS
-  }), []);
-  
-  const visaCategoryMap = useMemo(() => ({
-    [VISA_CATEGORY_LABELS[VISA_CATEGORY.BUSINESS]]: VISA_CATEGORY.BUSINESS
-  }), []);
-  
-  const nationalityMap = useMemo(() => ({
-    [NATIONALITY_LABELS[NATIONALITY.INDIAN]]: NATIONALITY.INDIAN
-  }), []);
-  
-  const entryTypeMap = useMemo(() => ({
-    [ENTRY_TYPE_LABELS[ENTRY_TYPE.NORMAL]]: ENTRY_TYPE.NORMAL
   }), []);
 
   const handleRadioChange = useCallback((value: string) => {
@@ -697,11 +640,11 @@ const FillServiceForm = ({
           priority_submission: isFixed ? 1 : 0
         },
         visa_requests: visaRequests.map(request => ({
-          visa_country: DISPLAY_NAME_TO_COUNTRY[request.visaCountry] || 0,
-          visa_category:  VISA_CATEGORY_NAME_TO_VISA_CATEGORY[request.visaCategory] || 0,
-          nationality: NATIONALITY_NAME_TO_NATIONALITY[request.nationality] || 0,
-          state: STATE_NAME_TO_STATE[request.state] || 0, 
-          entry_type: ENTRY_TYPE_NAME_TO_ENTRY_TYPE[request.entryType] || 0,
+          visa_country: Number(request.visaCountry),
+          visa_category:  Number(request.visaCategory),
+          nationality: Number(request.nationality),
+          state: Number(request.state), 
+          entry_type: Number(request.entryType),
           remark: request.remark || '' 
         })),
         address_info: {
@@ -729,13 +672,13 @@ const FillServiceForm = ({
 
       const url = new URL(window.location.href);
       const newApplicationParam = url.searchParams.get('newApplication');
-      const referenceNumber = url.searchParams.get('referenceNumber');
+      const referenceNumber = url.searchParams.get('reference');
       if (newApplicationParam === 'true') {
         payload.application_id = 0;
         payload.is_sub_request = 1;
         payload.reference_number = referenceNumber || '';
       }
-      
+      localStorage.removeItem(STORAGE_KEY.APPEND_VISA_REQUEST);
       // Submit to API
       const response = await addApplicationStep3(payload);
       
@@ -743,7 +686,7 @@ const FillServiceForm = ({
         // Success handling - proceed to next step
         console.log('Step 3 data submitted successfully:', response.data);
         url.searchParams.delete('newApplication');
-        url.searchParams.delete('referenceNumber');
+        url.searchParams.delete('reference');
         // Store the response data in localStorage for use in summary page
         if (response.data && response.data.application_requests) {
           response.data.application_requests.status = APPLICATION_STATUS.STEP3_DONE;
@@ -776,10 +719,6 @@ const FillServiceForm = ({
     countryMap,
     stateMap,
     processingBranchMap,
-    visaCountryMap,
-    visaCategoryMap,
-    nationalityMap,
-    entryTypeMap,
     handleTabChange
   ]);
   
@@ -1496,7 +1435,7 @@ const FillServiceForm = ({
           type="button"
           onClick={handleUpdateAndContinue}
           className="bg-[#0B498B] text-white px-8 py-2.5 rounded-md hover:bg-[#083968] transition-colors focus:outline-none focus:ring-1 focus:ring-[#0B498B] font-medium"
-          disabled={(formMode !== FORM_MODE.VIEW && !isFormValid) || isSubmitting}
+          disabled={isSubmitting}
         >
           {isSubmitting ? 'Submitting...' : formMode === FORM_MODE.VIEW ? 'Next' : 'Update & Continue'}
         </button>

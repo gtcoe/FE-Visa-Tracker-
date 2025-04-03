@@ -42,7 +42,14 @@ const SearchPaxContent: React.FC<SearchPaxContentProps> = ({
   // Only access localStorage on the client side
   useEffect(() => {
     if (typeof window !== 'undefined') {
-      const storedRefNumber = localStorage.getItem('referenceNumber') || '';
+      let storedRefNumber = localStorage.getItem(STORAGE_KEY.SERVICE_REFERENCE_NUMBER) || '';
+      if (storedRefNumber === "") {
+        const url = new URL(window.location.href);
+        storedRefNumber = url.searchParams.get('reference') || '';
+        if (storedRefNumber) {
+          localStorage.setItem(STORAGE_KEY.SERVICE_REFERENCE_NUMBER, storedRefNumber);
+        }
+      }
       setReferenceNumber(storedRefNumber);
     }
   }, []);

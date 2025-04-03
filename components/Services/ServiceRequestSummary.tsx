@@ -14,7 +14,7 @@ import {
   VISA_CATEGORY, VISA_CATEGORY_LABELS,
   ENTRY_TYPE, ENTRY_TYPE_LABELS
 } from '@component/constants/dropdown/geographical';
-import { FORM_MODE, TAB_NAME, STORAGE_KEY } from '@component/constants/formConstants';
+import { FORM_MODE, TAB_NAME, STORAGE_KEY, APPEND_VISA_REQUEST_TYPES } from '@component/constants/formConstants';
 import { ToastNotifyError, ToastNotifySuccess } from '@component/components/common/Toast';
 import { APPLICATION_STATUS } from '@component/constants/appConstants';
 import { DELIVERY_METHOD, DELIVERY_METHOD_LABELS } from '@component/constants/dropdown/deliveryMethods';
@@ -60,6 +60,13 @@ const ServiceRequestSummary: React.FC<{
       try {
         // Get application data from localStorage
         const applicationData = getApplicationInfo();
+        if (localStorage.getItem(STORAGE_KEY.SERVICE_REFERENCE_NUMBER) === "") {
+          const url = new URL(window.location.href);
+          const referenceNumber = url.searchParams.get('reference');
+          if (referenceNumber) {
+            localStorage.setItem(STORAGE_KEY.SERVICE_REFERENCE_NUMBER, referenceNumber);
+          }
+        }
         
         if (applicationData) {
           // Transform the application data to match our VisaApplicationRow structure
@@ -183,7 +190,7 @@ const ServiceRequestSummary: React.FC<{
     serviceUrl.searchParams.append('prefill', 'true');
     serviceUrl.searchParams.append('newApplication', 'true');
     serviceUrl.searchParams.append('activeTab', TAB_NAME.FILL);
-    serviceUrl.searchParams.append('referenceNumber', localStorage.getItem(STORAGE_KEY.SERVICE_REFERENCE_NUMBER) || '');
+    serviceUrl.searchParams.append('reference', localStorage.getItem(STORAGE_KEY.SERVICE_REFERENCE_NUMBER) || '');
     
     // Open in new tab
     window.open(serviceUrl.toString(), '_blank');
@@ -202,7 +209,7 @@ const ServiceRequestSummary: React.FC<{
   };
 
   const handleAddSubRequest = (id: string) => {
-    handleAddMore()
+    localStorage.setItem(STORAGE_KEY.APPEND_VISA_REQUEST, APPEND_VISA_REQUEST_TYPES.TRUE);
     handleTabChange?.(TAB_NAME.FILL);
     setFormMode?.(FORM_MODE.EDIT);
   };
@@ -253,8 +260,8 @@ const ServiceRequestSummary: React.FC<{
                     </tr>
                   </thead>
                   <tbody>
-                    {visaApplications.map((row) => (
-                      <tr key={row.id} className="hover:bg-gray-50 border-b border-[#E6EAF2] last:border-b-0">
+                    {visaApplications.map((row, index) => (
+                      <tr key={index} className="hover:bg-gray-50 border-b border-[#E6EAF2] last:border-b-0">
                         <td className="px-4 py-4 text-sm font-medium text-gray-900 text-center">{row.name}</td>
                         <td className="px-4 py-4 text-sm text-gray-500 text-center">{row.email || '-'}</td>
                         <td className="px-4 py-4 text-sm text-gray-500 text-center">{row.visaCountry}</td>

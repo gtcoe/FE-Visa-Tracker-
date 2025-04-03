@@ -15,9 +15,15 @@ export enum TAB_NAME {
 // LocalStorage keys
 export enum STORAGE_KEY {
   FORM_MODE = 'formMode',
+  APPEND_VISA_REQUEST = 'appendVisaRequest',
   APPLICATION_ID = 'applicationId',
   ACTIVE_TAB = 'activeTab',
   SERVICE_REFERENCE_NUMBER = 'referenceNumber',
   APPLICATION_INFO = 'applicationInfo',
   USER_ID = 'userId'
 } 
+
+export const APPEND_VISA_REQUEST_TYPES = {
+  TRUE: 'true',
+  FALSE: 'false'
+}
