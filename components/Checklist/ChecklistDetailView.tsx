@@ -157,6 +157,33 @@ const ChecklistDetailView: React.FC<ChecklistDetailsProps> = ({
     }
   };
 
+  // Handle adding a custom email
+  const handleAddCustomEmail = (email: string) => {
+    // Skip if email is empty or already exists
+    if (!email || email.trim().length < 1 || selectedClients.some(c => c.email === email)) {
+      return;
+    }
+    
+    // Basic email validation
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!emailRegex.test(email)) {
+      setError('Please enter a valid email address.');
+      return;
+    }
+    
+    // Add custom email with a negative ID to distinguish from API clients
+    const randomId = -Math.floor(Math.random() * 10000);
+    setSelectedClients(prev => [
+      ...prev,
+      { id: randomId, email, selected: true }
+    ]);
+    
+    // Clear search query and results
+    setSearchQuery('');
+    setSearchResults([]);
+    setError(null);
+  };
+
   return (
     <div className="flex min-h-screen flex-col">
       <div className="flex flex-grow">
@@ -213,31 +240,50 @@ const ChecklistDetailView: React.FC<ChecklistDetailsProps> = ({
           )}
           
           {/* Search results dropdown */}
-          {searchResults.length > 0 && (
+          {searchQuery && (
             <div className="bg-white border border-gray-200 rounded-md shadow-sm mt-1 mb-4 max-h-40 overflow-y-auto">
-              {searchResults.map(client => {
-                // Check if client is already selected
-                const isAlreadySelected = selectedClients.some(c => c.id === client.clientId);
-                
-                return (
+              {searchResults.length > 0 ? (
+                <>
+                  {searchResults.map(client => {
+                    // Check if client is already selected
+                    const isAlreadySelected = selectedClients.some(c => c.id === client.clientId);
+                    
+                    return (
+                      <div 
+                        key={client.clientId} 
+                        className={`px-3 py-2 hover:bg-gray-100 cursor-pointer text-sm flex items-center justify-between ${
+                          isAlreadySelected ? 'bg-blue-50' : ''
+                        }`}
+                        onClick={() => !isAlreadySelected && handleSelectClient(client)}
+                      >
+                        <span className="text-gray-900">{client.ownerEmail || 'No email provided'}</span>
+                        {isAlreadySelected && (
+                          <span className="text-blue-600 ml-2">
+                            <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
+                            </svg>
+                          </span>
+                        )}
+                      </div>
+                    );
+                  })}
+                  
+                  {/* Add custom email option */}
                   <div 
-                    key={client.clientId} 
-                    className={`px-3 py-2 hover:bg-gray-100 cursor-pointer text-sm flex items-center justify-between ${
-                      isAlreadySelected ? 'bg-blue-50' : ''
-                    }`}
-                    onClick={() => !isAlreadySelected && handleSelectClient(client)}
+                    className="px-3 py-2 hover:bg-gray-100 cursor-pointer text-sm border-t border-gray-200 flex items-center"
+                    onClick={() => handleAddCustomEmail(searchQuery)}
                   >
-                    <span className="text-gray-900">{client.ownerEmail || 'No email provided'}</span>
-                    {isAlreadySelected && (
-                      <span className="text-blue-600 ml-2">
-                        <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
-                        </svg>
-                      </span>
-                    )}
+                    <span className="text-[#0B498B] font-medium">Add: {searchQuery}</span>
                   </div>
-                );
-              })}
+                </>
+              ) : (
+                <div 
+                  className="px-3 py-2 hover:bg-gray-100 cursor-pointer text-sm flex items-center"
+                  onClick={() => handleAddCustomEmail(searchQuery)}
+                >
+                  <span className="text-[#0B498B] font-medium">Add: {searchQuery}</span>
+                </div>
+              )}
             </div>
           )}
           
