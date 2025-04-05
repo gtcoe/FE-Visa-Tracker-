@@ -233,13 +233,13 @@ const AddClientForm = ({ onSubmit }: AddClientFormProps) => {
             />
           </div>
           <div className="col-span-1">
-            <label className="block text-xs text-[#1C1C1C] mb-2">Client Name</label>
+            <label className="block text-xs text-[#1C1C1C] mb-2">Company or corporate Name</label>
             <input
               type="text"
               name="name"
               value={formData.name}
               onChange={handleChange}
-              placeholder="Enter client name"
+              placeholder="Enter name"
               className="w-full px-3 py-2 border border-[#E6EAF2] rounded-[8px] focus:outline-none focus:ring-2 focus:ring-[#0B498B]/20 focus:border-none text-[#1C1C1C] text-sm"
             />
           </div>

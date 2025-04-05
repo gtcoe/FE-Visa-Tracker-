@@ -23,6 +23,7 @@ import { Client as APIClient } from '@component/components/ManageClients/ManageC
 import { submitServiceRequest, ServiceRequestPayload, ServiceRequestResponse } from '@component/api/application';
 import { STORAGE_KEY } from '@component/constants/formConstants';
 import { ToastNotifyError } from '@component/components/common/Toast';
+import { APPLICATION_STATUS } from '@component/constants/appConstants';
 
 // Local client interface for dropdown
 interface Client {
@@ -184,6 +185,8 @@ const ServiceRequest = () => {
       
       // Navigate to the Common Screen with reference number as a query parameter
       localStorage.setItem(STORAGE_KEY.APPLICATION_INFO, '');
+      localStorage.setItem(STORAGE_KEY.APPLICATION_STATUS, APPLICATION_STATUS.STEP1_DONE.toString());
+
       router.push(`/services/common?reference=${response.requestCode || ''}`);
     } catch (error) {
       console.error('Error submitting service request:', error);

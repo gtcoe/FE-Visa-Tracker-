@@ -255,6 +255,8 @@ const FillServiceForm = ({
 }) => {
   const router = useRouter();
   const [applicationId, setApplicationId] = useState<number | null>(null);
+  const [applicationStatus, setApplicationStatus] = useState<number>(0);
+  const [addressSaved, setAddressSaved] = useState<boolean>(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
   
   // Check if we're in a new tab with prefill URL parameter
@@ -277,6 +279,12 @@ const FillServiceForm = ({
     if (storedAppId) {
       setApplicationId(parseInt(storedAppId, 10));
       console.log('Set applicationId state to:', parseInt(storedAppId, 10));
+    }
+
+    const storedAppStatus = localStorage.getItem(STORAGE_KEY.APPLICATION_STATUS);
+    if (storedAppStatus) {
+      setApplicationStatus(parseInt(storedAppStatus, 10));
+      console.log('Set applicationStatus state to:', parseInt(storedAppStatus, 10));
     }
     
     // Get form mode from localStorage or set based on prefill parameter
@@ -448,6 +456,7 @@ const FillServiceForm = ({
             });
           }
         } else {
+          console.log('applicationId', applicationId);
           console.log('No application data found in localStorage');
         }
       } catch (error) {
@@ -690,6 +699,7 @@ const FillServiceForm = ({
         // Store the response data in localStorage for use in summary page
         if (response.data && response.data.application_requests) {
           response.data.application_requests.status = APPLICATION_STATUS.STEP3_DONE;
+          localStorage.setItem(STORAGE_KEY.APPLICATION_STATUS, APPLICATION_STATUS.STEP3_DONE.toString());
           localStorage.setItem(STORAGE_KEY.APPLICATION_INFO, JSON.stringify(response.data.application_requests));
         }
         
@@ -724,6 +734,7 @@ const FillServiceForm = ({
   
   const handleUpdateApplicant = useCallback(async () => {
     try {
+      setAddressSaved(true);
       // await handleSubmit({ preventDefault: () => {} } as React.FormEvent);
       ToastNotifySuccess("Applicant updated successfully");
     } catch (error) {
@@ -1389,7 +1400,7 @@ const FillServiceForm = ({
               onClick={handleUpdateApplicant}
               className="bg-[#0B498B] text-white px-4 py-2 rounded-md hover:bg-[#083968] transition-colors focus:outline-none focus:ring-2 focus:ring-[#0B498B] focus:ring-opacity-50 font-medium"
             >
-              Update Applicant
+              {applicationStatus === APPLICATION_STATUS.STEP3_DONE || addressSaved ? 'Update Address' : 'Save Address'}
             </button>
             )}
           </div>
@@ -1437,7 +1448,7 @@ const FillServiceForm = ({
           className="bg-[#0B498B] text-white px-8 py-2.5 rounded-md hover:bg-[#083968] transition-colors focus:outline-none focus:ring-1 focus:ring-[#0B498B] font-medium"
           disabled={isSubmitting}
         >
-          {isSubmitting ? 'Submitting...' : formMode === FORM_MODE.VIEW ? 'Next' : 'Update & Continue'}
+          {isSubmitting ? 'Submitting...' : formMode === FORM_MODE.VIEW ? 'Next' : (applicationStatus === APPLICATION_STATUS.STEP3_DONE ? 'Update & Continue' : 'Save & Continue')}
         </button>
       </div>
     </div>

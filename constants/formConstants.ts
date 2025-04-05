@@ -20,7 +20,8 @@ export enum STORAGE_KEY {
   ACTIVE_TAB = 'activeTab',
   SERVICE_REFERENCE_NUMBER = 'referenceNumber',
   APPLICATION_INFO = 'applicationInfo',
-  USER_ID = 'userId'
+  USER_ID = 'userId',
+  APPLICATION_STATUS = 'applicationStatus'
 } 
 
 export const APPEND_VISA_REQUEST_TYPES = {

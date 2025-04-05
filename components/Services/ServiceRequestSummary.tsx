@@ -167,7 +167,7 @@ const ServiceRequestSummary: React.FC<{
         // Clear localStorage data that's no longer needed
         localStorage.removeItem(STORAGE_KEY.APPLICATION_INFO);
         localStorage.removeItem(STORAGE_KEY.SERVICE_REFERENCE_NUMBER);
-        
+        localStorage.removeItem(STORAGE_KEY.APPLICATION_STATUS);
         // Navigate to dashboard or success page
         router.push('/application-tracker');
       } else {
