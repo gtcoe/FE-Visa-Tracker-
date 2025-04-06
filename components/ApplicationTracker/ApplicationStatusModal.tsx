@@ -119,7 +119,7 @@ const ApplicationStatusModal: React.FC<ApplicationStatusModalProps> = ({
                 <div className="text-center p-3 text-sm font-medium text-[#1C1C1C]">STATUS</div>
               </div>
               <div className="grid grid-cols-4">
-                <div className="p-3 border-r border-t border-gray-200 text-sm text-black">
+                <div className="p-3 border-r border-t border-gray-200 text-sm text-black text-center">
                   {application.client_remarks || '-'}
                 </div>
                 <div className="p-3 border-r border-t border-gray-200 text-center text-sm text-black">
