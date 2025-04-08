@@ -16,6 +16,15 @@ export interface StatusFormData {
   dateTo: string;
 }
 
+// Invoice status enum
+export enum INVOICE_STATUS {
+  NOT_GENERATED = 0,
+  GENERATED = 1,
+  PAID = 2,
+  PARTIALLY_PAID = 3,
+  OVERDUE = 4
+}
+
 // Application data from API response
 export interface ApplicationData {
   id: number;
@@ -87,10 +96,18 @@ export interface ApplicationData {
   entry_type: number;
   updated_by_email: string;
   
-  // New date fields for application tracking
+  // Date fields for application tracking
   dox_received_at?: string;
   submission_at?: string;
   collection_at?: string;
+  
+  // Billing and invoice related fields
+  invoice_status?: INVOICE_STATUS;
+  visa_fee?: number;
+  visa_fee_currency?: string;
+  
+  // Fields for visa fee history
+  visa_fee_history?: VisaFeeHistoryItem[];
   
   // For backward compatibility with UI - can be computed properties
   refNo?: string;
@@ -99,6 +116,17 @@ export interface ApplicationData {
   agentCorporate?: string;
   billingToCompany?: string;
   visaType?: string;
+}
+
+// Interface for visa fee history items
+export interface VisaFeeHistoryItem {
+  id: number;
+  application_id: number;
+  fee_amount: number;
+  fee_currency: string;
+  updated_by: number;
+  updated_by_email: string;
+  updated_at: string;
 }
 
 // API response structure

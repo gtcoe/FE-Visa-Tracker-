@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { StatusDetailsProps, ApplicationData } from "@component/types/application-tracker";
 import { APPLICATION_EXTERNAL_STATUS, STATUS_DISPLAY_MAP } from "@component/constants/appConstants";
-import { COUNTRY, VISA_CATEGORY } from "@component/constants/dropdown/geographical";
+import { COUNTRY, PROCESSING_BRANCH, PROCESSING_BRANCH_LABELS, VISA_CATEGORY } from "@component/constants/dropdown/geographical";
 import { formatDate } from "@component/utils/dateUtils";
 import { USER_TYPE } from "@component/constants/userConstants";
 import ApplicationStatusModal from './ApplicationStatusModal';
@@ -22,6 +22,12 @@ const getStatusDisplay = (statusId: number) => {
   // Cast the numeric status ID to the enum type to use as an index in the map
   const statusEnum = statusId as unknown as APPLICATION_EXTERNAL_STATUS;
   return STATUS_DISPLAY_MAP[statusEnum] || 'Unknown';
+};
+
+// Helper function to format dates for display
+const formatDateForDisplay = (dateString?: string): string => {
+  if (!dateString) return '-';
+  return formatDate(dateString);
 };
 
 interface ExtendedStatusDetailsProps extends StatusDetailsProps {
@@ -143,55 +149,94 @@ const StatusDetails = ({
         <table className="min-w-full border-collapse border border-[#E6EAF2]">
           <thead>
             <tr className="bg-[#F9FAFB] border-t border-b border-[#E6EAF2]">
-              <th className="py-4 px-4 text-center text-xs font-medium text-[#696969] uppercase border-r border-[#E6EAF2]">Ref No</th>
-              <th className="py-4 px-4 text-center text-xs font-medium text-[#696969] uppercase border-r border-[#E6EAF2]">Name</th>
-              <th className="py-4 px-4 text-center text-xs font-medium text-[#696969] uppercase border-r border-[#E6EAF2]">Client Name</th>
-              <th className="py-4 px-4 text-center text-xs font-medium text-[#696969] uppercase border-r border-[#E6EAF2]">Referrer</th>
-              <th className="py-4 px-4 text-center text-xs font-medium text-[#696969] uppercase border-r border-[#E6EAF2]">Country</th>
-              <th className="py-4 px-4 text-center text-xs font-medium text-[#696969] uppercase border-r border-[#E6EAF2]">Visa Type</th>
-              <th className="py-4 px-4 text-center text-xs font-medium text-[#696969] uppercase border-r border-[#E6EAF2]">Travel Date</th>
-              <th className="py-4 px-4 text-center text-xs font-medium text-[#696969] uppercase border-r border-[#E6EAF2]">Status</th>
-              <th className="py-4 px-4 text-center text-xs font-medium text-[#696969] uppercase border-r border-[#E6EAF2]">Remarks</th>
-              <th className="py-4 px-4 text-center text-xs font-medium text-[#696969] uppercase">Action</th>
+              <th className="py-4 px-3 text-center text-xs font-medium text-[#696969] uppercase border-r border-[#E6EAF2]">Reference No.</th>
+              <th className="py-4 px-3 text-center text-xs font-medium text-[#696969] uppercase border-r border-[#E6EAF2]">Handling Branch</th>
+              <th className="py-4 px-3 text-center text-xs font-medium text-[#696969] uppercase border-r border-[#E6EAF2]">Entry Generation Branch</th>
+              <th className="py-4 px-3 text-center text-xs font-medium text-[#696969] uppercase border-r border-[#E6EAF2]">Agent/Corporate</th>
+              <th className="py-4 px-3 text-center text-xs font-medium text-[#696969] uppercase border-r border-[#E6EAF2]">Billing to Company</th>
+              <th className="py-4 px-3 text-center text-xs font-medium text-[#696969] uppercase border-r border-[#E6EAF2]">File No/ Company Name</th>
+              <th className="py-4 px-3 text-center text-xs font-medium text-[#696969] uppercase border-r border-[#E6EAF2]">Referrer</th>
+              <th className="py-4 px-3 text-center text-xs font-medium text-[#696969] uppercase border-r border-[#E6EAF2]">Applicant Name</th>
+              <th className="py-4 px-3 text-center text-xs font-medium text-[#696969] uppercase border-r border-[#E6EAF2]">Country</th>
+              <th className="py-4 px-3 text-center text-xs font-medium text-[#696969] uppercase border-r border-[#E6EAF2]">Visa Type</th>
+              <th className="py-4 px-3 text-center text-xs font-medium text-[#696969] uppercase border-r border-[#E6EAF2]">Status</th>
+              <th className="py-4 px-3 text-center text-xs font-medium text-[#696969] uppercase border-r border-[#E6EAF2]">Entry Generation Date</th>
+              <th className="py-4 px-3 text-center text-xs font-medium text-[#696969] uppercase border-r border-[#E6EAF2]">Dox Received Date</th>
+              <th className="py-4 px-3 text-center text-xs font-medium text-[#696969] uppercase border-r border-[#E6EAF2]">Submission Date</th>
+              <th className="py-4 px-3 text-center text-xs font-medium text-[#696969] uppercase border-r border-[#E6EAF2]">Collection Date</th>
+              <th className="py-4 px-3 text-center text-xs font-medium text-[#696969] uppercase border-r border-[#E6EAF2]">Modified By</th>
+              <th className="py-4 px-3 text-center text-xs font-medium text-[#696969] uppercase border-r border-[#E6EAF2]">Invoice Status</th>
+              <th className="py-4 px-3 text-center text-xs font-medium text-[#696969] uppercase border-r border-[#E6EAF2]">Update Visa Fee</th>
+              <th className="py-4 px-3 text-center text-xs font-medium text-[#696969] uppercase border-r border-[#E6EAF2]">Visa Fee History</th>
+              <th className="py-4 px-3 text-center text-xs font-medium text-[#696969] uppercase">Action</th>
             </tr>
           </thead>
           <tbody>
             {currentItems.map((app, index) => (
               <tr key={`${app.id}-${index}`} className="border-b border-[#E6EAF2]">
-                <td className="px-4 py-4 text-sm text-[#0B498B] font-medium border-r border-[#E6EAF2] text-center">
+                <td className="px-3 py-4 text-sm text-[#0B498B] font-medium border-r border-[#E6EAF2] text-center">
                   <button 
                     className="text-[#0B498B] font-medium hover:underline cursor-pointer"
                     onClick={() => handleReferenceClick(app)}
                   >
-                    {app.reference_number}
+                    {app.reference_number || '-'}
                   </button>
                 </td>
-                <td className="px-4 py-4 text-sm text-[#1C1C1C] border-r border-[#E6EAF2] text-center">
-                  {app.first_name} {app.last_name}
+                <td className="px-3 py-4 text-sm text-[#1C1C1C] border-r border-[#E6EAF2] text-center">
+                  {PROCESSING_BRANCH_LABELS[app.processing_branch as PROCESSING_BRANCH] || '-'}
                 </td>
-                <td className="px-4 py-4 text-sm text-[#1C1C1C] border-r border-[#E6EAF2] text-center">
-                  {app.name}
+                <td className="px-3 py-4 text-sm text-[#1C1C1C] border-r border-[#E6EAF2] text-center">
+                  {PROCESSING_BRANCH_LABELS[app.processing_branch as PROCESSING_BRANCH] || '-'}
                 </td>
-                <td className="px-4 py-4 text-sm text-[#1C1C1C] border-r border-[#E6EAF2] text-center">
-                  {app.referrer}
+                <td className="px-3 py-4 text-sm text-[#1C1C1C] border-r border-[#E6EAF2] text-center">
+                  {app.type === 1 ? 'Agent' : 'Corporate'}
                 </td>
-                <td className="px-4 py-4 text-sm text-[#1C1C1C] border-r border-[#E6EAF2] text-center">
-                  {getCountryName(app.visa_country)}
+                <td className="px-3 py-4 text-sm text-[#1C1C1C] border-r border-[#E6EAF2] text-center">
+                  {app.name || '-'}
                 </td>
-                <td className="px-4 py-4 text-sm text-[#1C1C1C] border-r border-[#E6EAF2] text-center">
-                  {getVisaCategory(app.visa_category)}
+                <td className="px-3 py-4 text-sm text-[#1C1C1C] border-r border-[#E6EAF2] text-center">
+                  {app.file_number_1 || '-'}
                 </td>
-                <td className="px-4 py-4 text-sm text-[#1C1C1C] border-r border-[#E6EAF2] text-center">
-                  {formatDate(app.travel_date)}
-                  {app.is_travel_date_tentative === 1 && <span className="text-xs text-[#696969] block">(Tentative)</span>}
+                <td className="px-3 py-4 text-sm text-[#1C1C1C] border-r border-[#E6EAF2] text-center">
+                  {app.referrer || '-'}
                 </td>
-                <td className="px-4 py-4 text-sm text-[#1C1C1C] border-r border-[#E6EAF2] text-center">
-                  {getStatusDisplay(app.external_status)}
+                <td className="px-3 py-4 text-sm text-[#1C1C1C] border-r border-[#E6EAF2] text-center">
+                  {`${app.first_name || ''} ${app.last_name || ''}`.trim() || '-'}
                 </td>
-                <td className="px-4 py-4 text-sm text-[#1C1C1C] border-r border-[#E6EAF2] text-center">
-                  {app.remarks}
+                <td className="px-3 py-4 text-sm text-[#1C1C1C] border-r border-[#E6EAF2] text-center">
+                  {getCountryName(app.visa_country) || '-'}
                 </td>
-                <td className="px-4 py-4 text-sm text-[#0B498B] font-medium text-center">
+                <td className="px-3 py-4 text-sm text-[#1C1C1C] border-r border-[#E6EAF2] text-center">
+                  {getVisaCategory(app.visa_category) || '-'}
+                </td>
+                <td className="px-3 py-4 text-sm text-[#1C1C1C] border-r border-[#E6EAF2] text-center">
+                  {getStatusDisplay(app.external_status) || '-'}
+                </td>
+                <td className="px-3 py-4 text-sm text-[#1C1C1C] border-r border-[#E6EAF2] text-center">
+                  {formatDateForDisplay(app.created_at)}
+                </td>
+                <td className="px-3 py-4 text-sm text-[#1C1C1C] border-r border-[#E6EAF2] text-center">
+                  {formatDateForDisplay(app.dox_received_at)}
+                </td>
+                <td className="px-3 py-4 text-sm text-[#1C1C1C] border-r border-[#E6EAF2] text-center">
+                  {formatDateForDisplay(app.submission_at)}
+                </td>
+                <td className="px-3 py-4 text-sm text-[#1C1C1C] border-r border-[#E6EAF2] text-center">
+                  {formatDateForDisplay(app.collection_at)}
+                </td>
+                <td className="px-3 py-4 text-sm text-[#1C1C1C] border-r border-[#E6EAF2] text-center">
+                  {app.updated_by_email || '-'}
+                </td>
+                <td className="px-3 py-4 text-sm text-[#1C1C1C] border-r border-[#E6EAF2] text-center">
+                  -
+                </td>
+                <td className="px-3 py-4 text-sm text-[#1C1C1C] border-r border-[#E6EAF2] text-center">
+                  -
+                </td>
+                <td className="px-3 py-4 text-sm text-[#1C1C1C] border-r border-[#E6EAF2] text-center">
+                  -
+                </td>
+                <td className="px-3 py-4 text-sm text-[#0B498B] font-medium text-center">
                   {isAdminOrManager ? 
                     <a 
                       href={`/application-details/${app.application_id}`} 
@@ -200,7 +245,7 @@ const StatusDetails = ({
                     >
                       EDIT
                     </a> 
-                    : ''
+                    : '-'
                   }
                 </td>
               </tr>

@@ -149,19 +149,6 @@ export const FILE_NO_LABELS: Record<FILE_NO, string> = {
   [FILE_NO.COMPANY1]: 'Company 1'
 };
 
-// Branch Options
-export enum BRANCH {
-  BRANCH1 = 1,
-  BRANCH2 = 2,
-  BRANCH3 = 3
-}
-
-export const BRANCH_LABELS: Record<BRANCH, string> = {
-  [BRANCH.BRANCH1]: 'Branch 1',
-  [BRANCH.BRANCH2]: 'Branch 2',
-  [BRANCH.BRANCH3]: 'Branch 3'
-};
-
 // Queue Options
 export enum QUEUE {
   IN_TRANSIT = 1,
