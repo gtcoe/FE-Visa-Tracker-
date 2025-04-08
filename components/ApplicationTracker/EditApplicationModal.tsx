@@ -1,9 +1,10 @@
-import { useState, useEffect, useRef } from 'react';
+import { useState, useEffect, useRef, useCallback, ChangeEvent } from 'react';
 import { ApplicationData } from '@component/types/application-tracker';
 import { COUNTRY, VISA_CATEGORY } from '@component/constants/dropdown/geographical';
 import { formatDate } from '@component/utils/dateUtils';
 import { APPLICATION_EXTERNAL_STATUS, APPLICATION_QUEUES, STATUS_DISPLAY_MAP, QUEUE_DISPLAY_MAP, QUEUE_TO_STATUS } from '@component/constants/appConstants';
 import { getStatusIdFromDisplay, getQueueIdFromDisplay, getStatusOptionsForQueue } from '@component/utils/mapUtils';
+import { ToastNotifyError } from '../common/Toast';
 
 interface EditApplicationModalProps {
   isOpen: boolean;
@@ -11,6 +12,193 @@ interface EditApplicationModalProps {
   application: ApplicationData | null;
   onSave: (updatedApplication: any) => Promise<void>;
 }
+
+// Define a more flexible type for change events
+type FormChangeEvent = {
+  target: {
+    name: string;
+    value: string;
+  };
+};
+
+// Define a type that accepts our complex handleChange function
+type ChangeHandler = (
+  e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement> | FormChangeEvent | string, 
+  valueOrKey?: any
+) => void;
+
+// Define interfaces for DateInput props
+interface DateInputProps {
+  name: string;
+  value: string;
+  onChange: ChangeHandler;
+  label: string;
+  required?: boolean;
+  placeholder?: string;
+}
+
+// Custom DateInput component that supports both manual entry and date picker
+const DateInput: React.FC<DateInputProps> = ({ 
+  name, 
+  value, 
+  onChange, 
+  label, 
+  required = false,
+  placeholder = "DD/MM/YYYY"
+}) => {
+  const [inputValue, setInputValue] = useState('');
+  const [showPicker, setShowPicker] = useState(false);
+  const pickerRef = useRef<HTMLInputElement>(null);
+  const inputRef = useRef<HTMLInputElement>(null);
+  const containerRef = useRef<HTMLDivElement>(null);
+  const hiddenDateInputRef = useRef<HTMLInputElement>(null);
+  
+  // Convert ISO format to display format (DD/MM/YYYY)
+  useEffect(() => {
+    if (value) {
+      try {
+        // If it's already in ISO format, convert to DD/MM/YYYY for display
+        if (value.includes('-')) {
+          const date = new Date(value);
+          if (!isNaN(date.getTime())) {
+            const day = String(date.getDate()).padStart(2, '0');
+            const month = String(date.getMonth() + 1).padStart(2, '0');
+            const year = date.getFullYear();
+            setInputValue(`${day}/${month}/${year}`);
+          }
+        } else {
+          // If it's already in DD/MM/YYYY format, use it directly
+          setInputValue(value || '');
+        }
+      } catch (e) {
+        console.log(e);
+        setInputValue(value || '');
+      }
+    } else {
+      setInputValue('');
+    }
+  }, [value]);
+  
+  // Handle clicking outside to close the date picker
+  useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      if (containerRef.current && !containerRef.current.contains(event.target as Node)) {
+        setShowPicker(false);
+      }
+    };
+    
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => {
+      document.removeEventListener('mousedown', handleClickOutside);
+    };
+  }, []);
+  
+  // Handle manual typing in DD/MM/YYYY format
+  const handleInputChange = (e: ChangeEvent<HTMLInputElement>) => {
+    const rawValue = e.target.value;
+    setInputValue(rawValue);
+    
+    // Auto-add slashes while typing (if not deleting)
+    if (rawValue.length === 2 && inputValue.length < 2 && !rawValue.includes('/')) {
+      setInputValue(rawValue + '/');
+    } else if (rawValue.length === 5 && inputValue.length < 5 && rawValue.indexOf('/', 3) === -1) {
+      setInputValue(rawValue + '/');
+    }
+    
+    // Convert DD/MM/YYYY to YYYY-MM-DD for the actual value
+    if (rawValue.match(/^\d{2}\/\d{2}\/\d{4}$/)) {
+      const [day, month, year] = rawValue.split('/');
+      const isoDate = `${year}-${month}-${day}`;
+      // Create a synthetic event to pass to the parent onChange handler
+      const syntheticEvent: FormChangeEvent = {
+        target: {
+          name,
+          value: isoDate
+        }
+      };
+      onChange(syntheticEvent);
+    }
+  };
+  
+  // Handle date selection from the picker
+  const handleDatePickerChange = (e: ChangeEvent<HTMLInputElement>) => {
+    const isoDate = e.target.value; // YYYY-MM-DD
+    
+    // Create a synthetic event to pass to the parent onChange handler
+    const syntheticEvent: FormChangeEvent = {
+      target: {
+        name,
+        value: isoDate
+      }
+    };
+    
+    onChange(syntheticEvent);
+    
+    // Convert ISO to DD/MM/YYYY for display
+    if (isoDate) {
+      const [year, month, day] = isoDate.split('-');
+      setInputValue(`${day}/${month}/${year}`);
+    }
+  };
+  
+  // Toggle date picker visibility
+  const openCalendar = useCallback(() => {
+    if (hiddenDateInputRef.current) {
+      // Use the native date picker
+      hiddenDateInputRef.current.showPicker?.();
+    }
+  }, []);
+  
+  // Handle keyboard accessibility
+  const handleKeyDown = useCallback((e: React.KeyboardEvent) => {
+    if (e.key === 'Escape') {
+      setShowPicker(false);
+    }
+  }, []);
+  
+  return (
+    <div ref={containerRef} onKeyDown={handleKeyDown}>
+      <label className="block text-xs font-normal text-[#1C1C1C] mb-2">
+        {label}{required && <span className="text-red-500 ml-0.5">*</span>}
+      </label>
+      <div className="relative mb-7">
+        <input
+          ref={inputRef}
+          type="text"
+          value={inputValue}
+          onChange={handleInputChange}
+          placeholder={placeholder}
+          className="w-full px-4 py-2 border border-[#E6EAF2] rounded focus:outline-none focus:ring-1 focus:ring-[#0B498B] text-sm placeholder-[#A0A0A0] pr-10 text-gray-700"
+          aria-label={`${label} in format DD/MM/YYYY`}
+        />
+        <button
+          type="button"
+          onClick={openCalendar}
+          className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-500 hover:text-gray-700 focus:outline-none"
+          aria-label="Open date picker"
+          title="Open date picker"
+        >
+          <svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <path d="M12.6667 2.66675H3.33333C2.59695 2.66675 2 3.2637 2 4.00008V13.3334C2 14.0698 2.59695 14.6667 3.33333 14.6667H12.6667C13.403 14.6667 14 14.0698 14 13.3334V4.00008C14 3.2637 13.403 2.66675 12.6667 2.66675Z" stroke="#A0A0A0" strokeWidth="1.33333" strokeLinecap="round" strokeLinejoin="round"/>
+            <path d="M10.6667 1.33325V3.99992" stroke="#A0A0A0" strokeWidth="1.33333" strokeLinecap="round" strokeLinejoin="round"/>
+            <path d="M5.33325 1.33325V3.99992" stroke="#A0A0A0" strokeWidth="1.33333" strokeLinecap="round" strokeLinejoin="round"/>
+            <path d="M2 6.66675H14" stroke="#A0A0A0" strokeWidth="1.33333" strokeLinecap="round" strokeLinejoin="round"/>
+          </svg>
+        </button>
+        
+        {/* Hidden date input for direct calendar access */}
+        <input
+          ref={hiddenDateInputRef}
+          type="date"
+          className="sr-only"
+          defaultValue={value || ''}
+          onChange={handleDatePickerChange}
+          aria-hidden="true"
+        />
+      </div>
+    </div>
+  );
+};
 
 const EditApplicationModal = ({ isOpen, onClose, application, onSave }: EditApplicationModalProps) => {
   const modalRef = useRef<HTMLDivElement>(null);
@@ -25,10 +213,12 @@ const EditApplicationModal = ({ isOpen, onClose, application, onSave }: EditAppl
     teamRemarks: '',
     clientRemarks: '',
     billingRemarks: '',
+    doxReceivedAt: '',
+    submissionAt: '',
+    collectionAt: '',
   });
   
   const [isLoading, setIsLoading] = useState(false);
-  const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
     if (application) {
@@ -43,6 +233,9 @@ const EditApplicationModal = ({ isOpen, onClose, application, onSave }: EditAppl
         teamRemarks: application.team_remarks || '',
         clientRemarks: application.client_remarks || '',
         billingRemarks: application.billing_remarks || '',
+        doxReceivedAt: application.dox_received_at || '',
+        submissionAt: application.submission_at || '',
+        collectionAt: application.collection_at || '',
       });
     }
   }, [application]);
@@ -73,34 +266,44 @@ const EditApplicationModal = ({ isOpen, onClose, application, onSave }: EditAppl
     };
   }, [isOpen, onClose]);
 
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>) => {
-    const { name, value } = e.target;
-    
-    if (name === 'queue') {
-      const queueId = getQueueIdFromDisplay(value);
+  const handleChange: ChangeHandler = (e, valueOrKey?) => {
+    // Handle different types of change events
+    if (typeof e === 'object' && 'target' in e) {
+      const { name, value } = e.target;
       
-      // When queue changes, we need to also update the status to a valid one for this queue
-      const statusOptions = getStatusOptionsForQueue(queueId);
-      const firstStatusForQueue = statusOptions.length > 0 ? statusOptions[0].id : APPLICATION_EXTERNAL_STATUS.UNDER_PROCESS;
-      
-      setFormData(prev => ({
-        ...prev,
-        queue: queueId,
-        // Automatically select the first status for the new queue
-        status: firstStatusForQueue
-      }));
+      if (name === 'queue') {
+        const queueId = getQueueIdFromDisplay(value as string);
+        
+        // When queue changes, we need to also update the status to a valid one for this queue
+        const statusOptions = getStatusOptionsForQueue(queueId);
+        const firstStatusForQueue = statusOptions.length > 0 ? statusOptions[0].id : APPLICATION_EXTERNAL_STATUS.UNDER_PROCESS;
+        
+        setFormData(prev => ({
+          ...prev,
+          queue: queueId,
+          // Automatically select the first status for the new queue
+          status: firstStatusForQueue
+        }));
+      } 
+      else if (name === 'status') {
+        setFormData(prev => ({
+          ...prev,
+          status: getStatusIdFromDisplay(value as string)
+        }));
+      } 
+      else {
+        // For other fields, use the value directly
+        setFormData(prev => ({
+          ...prev,
+          [name]: value
+        }));
+      }
     } 
-    else if (name === 'status') {
+    // Handle dropdown changes (name, value) format
+    else if (typeof e === 'string' && valueOrKey !== undefined) {
       setFormData(prev => ({
         ...prev,
-        status: getStatusIdFromDisplay(value)
-      }));
-    } 
-    else {
-      // For other fields, use the value directly
-      setFormData(prev => ({
-        ...prev,
-        [name]: value
+        [e]: valueOrKey
       }));
     }
   };
@@ -111,6 +314,15 @@ const EditApplicationModal = ({ isOpen, onClose, application, onSave }: EditAppl
     setIsLoading(true);
     
     try {
+      // Get the user token ID from localStorage
+      const userInfo = localStorage.getItem('userInfo');
+      const userId = userInfo ? JSON.parse(userInfo).id : null;
+      
+      if (!userId) {
+        ToastNotifyError('User authentication error');
+        return;
+      }
+      
       const updatedData = {
         id: application.application_id,
         queue: formData.queue,
@@ -118,13 +330,17 @@ const EditApplicationModal = ({ isOpen, onClose, application, onSave }: EditAppl
         team_remarks: formData.teamRemarks,
         client_remarks: formData.clientRemarks,
         billing_remarks: formData.billingRemarks,
+        dox_received_at: formData.doxReceivedAt,
+        submission_at: formData.submissionAt,
+        collection_at: formData.collectionAt,
+        token_user_id: userId,
       };
-      console.log("updatedData", updatedData);
       
       await onSave(updatedData);
       onClose();
     } catch (err) {
       console.error('Error updating application:', err);
+      ToastNotifyError('Failed to update application');
     } finally {
       setIsLoading(false);
     }
@@ -185,11 +401,6 @@ const EditApplicationModal = ({ isOpen, onClose, application, onSave }: EditAppl
 
         {/* Modal Body */}
         <div className="px-6 pt-0 pb-[34px]">
-          {error && (
-            <div className="mb-4 bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded">
-              {error}
-            </div>
-          )}
 
           <div className="grid grid-cols-3 gap-4 mb-5">
             <div className="w-full px-4 py-3 border border-[#E7E7E7] rounded-lg bg-white">
@@ -274,40 +485,73 @@ const EditApplicationModal = ({ isOpen, onClose, application, onSave }: EditAppl
             </div>
           </div>
 
-          <div className="mb-4">
-            <div className="text-xs font-normal text-[#1C1C1C] mb-2">Team Remarks</div>
-            <textarea
-              name="teamRemarks"
-              value={formData.teamRemarks}
-              onChange={handleChange}
-              rows={1}
-              className="w-full px-4 py-2 border border-[#E6EAF2] rounded text-gray-700 focus:outline-none placeholder-[#8A8A8A]"
-              placeholder="Previous remarks"
-            ></textarea>
-          </div>
+          {/* Remark fields and Date fields in a 2-column layout */}
+          <div className="grid grid-cols-2 gap-6 mb-5">
+            {/* Left column - Remarks */}
+            <div className="space-y-4">
+              <div>
+                <div className="text-xs font-normal text-[#1C1C1C] mb-2">Team Remarks</div>
+                <textarea
+                  name="teamRemarks"
+                  value={formData.teamRemarks}
+                  onChange={handleChange}
+                  rows={1}
+                  className="w-full px-4 py-2 border border-[#E6EAF2] rounded text-gray-700 focus:outline-none placeholder-[#8A8A8A]"
+                  placeholder="Previous remarks"
+                ></textarea>
+              </div>
 
-          <div className="mb-4">
-            <div className="text-xs font-normal text-[#1C1C1C] mb-2">Client Remarks</div>
-            <textarea
-              name="clientRemarks"
-              value={formData.clientRemarks}
-              onChange={handleChange}
-              rows={1}
-              className="w-full px-4 py-2 border border-[#E6EAF2] rounded text-gray-700 focus:outline-none placeholder-[#8A8A8A]"
-              placeholder="Previous remarks"
-            ></textarea>
-          </div>
+              <div>
+                <div className="text-xs font-normal text-[#1C1C1C] mb-2">Client Remarks</div>
+                <textarea
+                  name="clientRemarks"
+                  value={formData.clientRemarks}
+                  onChange={handleChange}
+                  rows={1}
+                  className="w-full px-4 py-2 border border-[#E6EAF2] rounded text-gray-700 focus:outline-none placeholder-[#8A8A8A]"
+                  placeholder="Previous remarks"
+                ></textarea>
+              </div>
 
-          <div className="mb-4">
-            <div className="text-xs font-normal text-[#1C1C1C] mb-2">Billing Remarks</div>
-            <textarea
-              name="billingRemarks"
-              value={formData.billingRemarks}
-              onChange={handleChange}
-              rows={1}
-              className="w-full px-4 py-2 border border-[#E6EAF2] rounded text-gray-700 focus:outline-none placeholder-[#8A8A8A]"
-              placeholder="Previous remarks"
-            ></textarea>
+              <div>
+                <div className="text-xs font-normal text-[#1C1C1C] mb-2">Billing Remarks</div>
+                <textarea
+                  name="billingRemarks"
+                  value={formData.billingRemarks}
+                  onChange={handleChange}
+                  rows={1}
+                  className="w-full px-4 py-2 border border-[#E6EAF2] rounded text-gray-700 focus:outline-none placeholder-[#8A8A8A]"
+                  placeholder="Previous remarks"
+                ></textarea>
+              </div>
+            </div>
+
+            {/* Right column - Date fields */}
+            <div className="space-y-4">
+              <DateInput
+                name="doxReceivedAt"
+                value={formData.doxReceivedAt}
+                onChange={handleChange}
+                label="Dox Received At"
+                placeholder="DD/MM/YYYY"
+              />
+
+              <DateInput
+                name="submissionAt"
+                value={formData.submissionAt}
+                onChange={handleChange}
+                label="Submission At"
+                placeholder="DD/MM/YYYY"
+              />
+
+              <DateInput
+                name="collectionAt"
+                value={formData.collectionAt}
+                onChange={handleChange}
+                label="Collection At"
+                placeholder="DD/MM/YYYY"
+              />
+            </div>
           </div>
 
           {/* Last update info and Save button in the same row */}

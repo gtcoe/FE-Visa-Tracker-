@@ -87,6 +87,11 @@ export interface ApplicationData {
   entry_type: number;
   updated_by_email: string;
   
+  // New date fields for application tracking
+  dox_received_at?: string;
+  submission_at?: string;
+  collection_at?: string;
+  
   // For backward compatibility with UI - can be computed properties
   refNo?: string;
   handlingBranch?: string;

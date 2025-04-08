@@ -479,7 +479,7 @@ export const getClientsByType = async (clientType: string | number): Promise<Cli
 // Function to update an application
 export const updateApplication = async (applicationData: any) => {
   try {
-    console.log("applicationData", applicationData);
+    console.log("Updating application with data:", JSON.stringify(applicationData, null, 2));
     
     // Use the put function from httpClient
     const response = await put<any>(`${API_ENDPOINTS.UPDATE_APPLICATION_BY_ID}${applicationData.id}`, applicationData, { 
