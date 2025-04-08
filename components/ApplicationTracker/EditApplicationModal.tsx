@@ -314,14 +314,6 @@ const EditApplicationModal = ({ isOpen, onClose, application, onSave }: EditAppl
     setIsLoading(true);
     
     try {
-      // Get the user token ID from localStorage
-      const userInfo = localStorage.getItem('userInfo');
-      const userId = userInfo ? JSON.parse(userInfo).id : null;
-      
-      if (!userId) {
-        ToastNotifyError('User authentication error');
-        return;
-      }
       
       const updatedData = {
         id: application.application_id,
@@ -333,7 +325,6 @@ const EditApplicationModal = ({ isOpen, onClose, application, onSave }: EditAppl
         dox_received_at: formData.doxReceivedAt,
         submission_at: formData.submissionAt,
         collection_at: formData.collectionAt,
-        token_user_id: userId,
       };
       
       await onSave(updatedData);
